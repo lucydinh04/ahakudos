@@ -1,6 +1,6 @@
 import { createHmac, randomBytes } from 'node:crypto';
 import { appOrigin, checkPost, bodyObject, requireSession, noCache, fail, HttpError } from '../lib/security.js';
-const METHODS={layTrangThai:0,taoKudos:1,doiDongY:3,ghiDaMo:2,doiReaction:3,batEmail:1,guiEmailVeToi:2,henEmailThu:3,dungThu:0};
+const METHODS={layTrangThai:0,taoKudos:1,doiDongY:3,ghiDaMo:2,doiReaction:3,batEmail:1,guiEmailVeToi:2,henEmailThu:3,dungThu:0,duyetKudos:1,anKudos:2,suaKudosDuyet:2,datTuCam:1};
 export function gasUrl(){
  const raw=(process.env.GAS_EXEC_URL||'').trim();
  const pattern=/^https:\/\/script\.google\.com\/(?:macros\/s\/|a\/macros\/[A-Za-z0-9.-]+\/s\/|a\/[A-Za-z0-9.-]+\/macros\/s\/)[A-Za-z0-9_-]+\/exec$/;
