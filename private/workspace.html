@@ -3437,8 +3437,7 @@ body{background:var(--bg)}
 
 /* ---- Compose hero (navy + 3D-style character) ---- */
 .compose-hero{position:relative;overflow:hidden;border-radius:26px;margin:0 0 20px;
-  background-image:linear-gradient(90deg,rgba(7,42,80,.90) 0%,rgba(8,49,91,.72) 35%,rgba(8,49,91,.18) 70%,rgba(8,49,91,.02) 100%),url('/backgrounds/compose-hero-bg.png');
-  background-size:cover;background-position:center center;background-repeat:no-repeat;
+  background:radial-gradient(120% 140% at 88% 0,#1b5aa0 0,#0E4174 46%,#0A3159 100%);
   color:#fff;display:grid;grid-template-columns:1.35fr .95fr;gap:14px;align-items:center;
   padding:26px 30px;min-height:172px}
 .compose-hero .ch-copy .ch-eyebrow{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#BFE0FF}
@@ -3450,7 +3449,7 @@ body{background:var(--bg)}
   background:radial-gradient(circle,rgba(255,127,50,.34),transparent 62%);pointer-events:none}
 .compose-hero .ch-heart{position:absolute;font-size:0}
 @media(max-width:760px){
-  .compose-hero{grid-template-columns:1fr;padding:22px 22px 0;min-height:0;gap:0;background-position:58% center}
+  .compose-hero{grid-template-columns:1fr;padding:22px 22px 0;min-height:0;gap:0}
   .compose-hero .ch-copy h1{font-size:26px}
   .compose-hero .ch-art{max-width:180px;justify-self:center;margin-top:6px}
 }
@@ -3607,27 +3606,24 @@ body{background:var(--bg)}
 .v27-testbar{width:calc(100% - 80px);max-width:var(--hb-container);display:flex;gap:18px;align-items:center;justify-content:space-between;background:#fff4e8;border:1px solid #f1d2b4;border-radius:18px;padding:14px 20px;margin:0 auto 24px;color:#153d68}.v27-testbar>div{display:flex;gap:14px;align-items:center;flex-wrap:wrap}.v27-testbar b{font-size:13px;letter-spacing:.5px}.v27-testbar span{font-size:14px}.v27-testbar .btn{font-size:14px;min-height:42px;padding:9px 14px;flex-shrink:0}.v27-simulation-note{width:calc(100% - 80px);max-width:var(--hb-container);margin:-12px auto 22px;padding:14px 18px;background:#fff;font-size:14px;line-height:1.7;border-radius:12px;border:1px dashed #b6cce0;color:#58697e}.v27-mail-test{display:flex;justify-content:space-between;align-items:center;gap:20px;background:#fff5e9;border:1px solid #f2d7ba;border-radius:18px;padding:20px;margin:16px 0}.v27-mail-test b{font-size:17px}.v27-mail-test p{font-size:15px;margin:6px 0;overflow-wrap:anywhere}.v27-mail-test small{font-size:13px;line-height:1.6;color:#68788c}.v27-mail-test .btn{flex-shrink:0;font-size:14px}.v27-test-modal{max-width:720px!important;width:100%;max-height:calc(100dvh - 40px);overflow:auto;box-sizing:border-box}.v27-test-modal h2{padding-right:30px}.v27-test-description{font-size:15px!important;line-height:1.8}.v27-test-block{padding:20px;background:#f9fbfe;border:1px solid #dce6ee;border-radius:18px;margin-top:16px}.v27-test-block>b{font-size:17px}.v27-test-block p{font-size:15px;line-height:1.7;margin:8px 0}.v27-test-block small{display:block;font-size:13px;line-height:1.7;color:#637588}.v27-test-block label{display:block;margin:14px 0 6px;font-size:14px;font-weight:600}.v27-test-block .select{width:100%;font-size:16px}.v27-test-block .btn{margin-top:15px;font-size:15px}.v27-owner{overflow-wrap:anywhere;font-weight:650;color:#0e4174}.v27-job-status{margin-top:12px;font-size:14px;line-height:1.75}.v27-test-actions{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap}.v27-test-actions .btn{font-size:14px}.v27-test-footnote{display:block;font-size:13px;line-height:1.8;color:#687a8d;margin-top:15px}button:disabled{cursor:not-allowed;opacity:.55}@media(max-width:1250px){.v27-testbar,.v27-simulation-note{width:calc(100% - 48px)}}@media(max-width:650px){.v27-testbar,.v27-simulation-note{width:calc(100% - 32px)}.v27-testbar,.v27-mail-test{flex-direction:column;align-items:stretch;padding:15px}.v27-testbar>div{gap:6px}.v27-test-modal{padding:22px 18px!important;max-height:calc(100dvh - 24px)}.v27-test-block{padding:15px}.v27-testbar .btn{white-space:normal}.v27-test-actions .btn{flex:1;min-width:140px}}
 </style>
 <style>.v28-test-actions{display:flex;flex-wrap:wrap;gap:8px}.v28-test-actions .btn{font-size:14px}body{min-height:100vh}</style><style id="aha-banners">
-.aha-banner{display:flex;flex-direction:row-reverse;align-items:center;justify-content:space-between;gap:28px;border-radius:28px;padding:24px 28px;background:linear-gradient(135deg,#FFF3E7 0%,#FFF9F3 52%,#EAF2FB 100%);border:1px solid #F3E1D0;box-shadow:0 12px 34px rgba(29,70,111,.08);overflow:hidden;margin-bottom:20px;min-height:260px}
-.aha-banner .aha-illu{flex:0 0 auto;width:250px;height:250px;border-radius:24px;object-fit:contain;background:transparent;padding:0;box-shadow:0 14px 30px rgba(29,70,111,.10)}
-.aha-banner .aha-copy{flex:1;min-width:0;max-width:620px}
-.aha-banner .aha-eyebrow{font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:#FF7417;margin-bottom:10px}
-.aha-banner .aha-sub{font-size:18px;line-height:1.7;color:#42546B;margin:0 0 18px;max-width:560px}
-.aha-banner .aha-cta{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(145deg,#FF7D25,#FF6509);color:#fff;border:0;border-radius:14px;padding:13px 22px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 9px 18px rgba(255,111,15,.2)}
-.aha-banner.tone-blue{background:linear-gradient(135deg,#EAF2FB 0%,#F6FAFF 58%,#FFF3E7 100%);border-color:#D6E8F7}
+.aha-banner{display:flex;align-items:center;gap:20px;border-radius:22px;padding:18px 22px;background:linear-gradient(135deg,#FFF3E7 0%,#FFF9F3 55%,#EAF2FB 100%);border:1px solid #F3E1D0;box-shadow:0 10px 30px rgba(29,70,111,.06);overflow:hidden;margin-bottom:16px}
+.aha-banner .aha-illu{flex:0 0 auto;width:148px;height:148px;border-radius:18px;object-fit:contain;background:#fff;padding:6px;box-shadow:0 6px 18px rgba(29,70,111,.08)}
+.aha-banner .aha-copy{flex:1;min-width:0}
+.aha-banner .aha-eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:#FF7417;margin-bottom:6px}
+.aha-banner .aha-sub{font-size:15px;line-height:1.6;color:#42546B;margin:0 0 14px}
+.aha-banner .aha-cta{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(145deg,#FF7D25,#FF6509);color:#fff;border:0;border-radius:14px;padding:12px 20px;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 9px 18px rgba(255,111,15,.2)}
+.aha-banner.tone-blue{background:linear-gradient(135deg,#EAF2FB 0%,#F6FAFF 60%,#FFF3E7 100%);border-color:#D6E8F7}
 .aha-banner.tone-calm{background:linear-gradient(135deg,#F3F7FC,#FBFDFF);border-color:#E2ECF6}
-.aha-card{display:flex;align-items:center;gap:14px;border:1px solid #E7EDF3;border-radius:18px;padding:12px 14px;background:#fff}
-.aha-card .aha-thumb{flex:0 0 auto;width:74px;height:74px;border-radius:16px;object-fit:cover;background:#FFF6EC}
+.aha-card{display:flex;align-items:center;gap:14px;border:1px solid #E7EDF3;border-radius:16px;padding:12px 14px;background:#fff}
+.aha-card .aha-thumb{flex:0 0 auto;width:62px;height:62px;border-radius:14px;object-fit:contain;background:#FFF6EC}
 .aha-card .aha-card-body{flex:1;min-width:0}
-.aha-card .aha-card-title{font-size:15px;font-weight:800;color:#0E4174;line-height:1.4}
-.aha-card .aha-card-sub{font-size:13px;color:#7286A0;margin-top:3px;line-height:1.55}
+.aha-card .aha-card-title{font-size:14px;font-weight:800;color:#0E4174;line-height:1.35}
+.aha-card .aha-card-sub{font-size:13px;color:#7286A0;margin-top:2px}
 .aha-card .aha-card-cta{white-space:nowrap;background:transparent;border:0;color:#2F6FB8;font-weight:800;font-size:13px;cursor:pointer}
-.aha-success-art{width:68px;height:68px;border-radius:16px;object-fit:cover;flex:0 0 auto;box-shadow:0 8px 18px rgba(20,57,92,.12)}
-.boot-visual{min-height:70vh;display:grid;place-items:center;padding:36px;text-align:center}.boot-visual img{width:min(320px,70vw);border-radius:26px;box-shadow:0 14px 40px rgba(29,70,111,.12)}.boot-visual p{font-size:15px;color:#5d6d82;margin-top:16px}
-@media(max-width:800px){.aha-banner{min-height:220px;padding:20px 22px}.aha-banner .aha-illu{width:210px;height:210px}.aha-banner .aha-sub{font-size:16px}}
-@media(max-width:640px){.aha-banner{flex-direction:column;text-align:center;padding:18px;gap:14px}.aha-banner .aha-illu{width:min(300px,82vw);height:auto;aspect-ratio:1}.aha-banner .aha-copy{max-width:none}.aha-banner .aha-sub{font-size:15px}.aha-banner .aha-cta{width:100%;justify-content:center}.aha-card{align-items:flex-start}.aha-card .aha-card-cta{align-self:center}}
+@media(max-width:640px){.aha-banner{flex-direction:column;text-align:center;padding:18px}.aha-banner .aha-illu{width:176px;height:176px}.aha-banner .aha-cta{width:100%;justify-content:center}}
 </style></head>
 <body>
-  <div id="app"><div class="boot-visual"><div><img src="/illustrations/loading.png" alt="AhaKudos đang cập nhật thông tin"><p>Đang kết nối Google Sheets…</p></div></div></div>
+  <div id="app"><p style="text-align:center;padding:70px 24px">Đang kết nối Google Sheets…</p></div>
   <div id="toast-root" role="status" aria-live="polite"></div>
   <div id="modal-root"></div>
   <script>
@@ -3718,8 +3714,6 @@ body{background:var(--bg)}
     var heroUrl = hero.url || '';
     var heroAlt = hero.alt || 'AhaKudos';
     var subcopy = opts.subcopy || 'Mở AhaKudos để xem lời ghi nhận dành cho bạn.';
-    var subjectText = opts.subject || subject(rec);
-    var preheaderText = opts.preheader || preheader(rec);
     var logo = opts.logo || EMAIL_LOGO || '';
     var cta = opts.cta || rec.ctaUrl || '#';
     var ctaLabel = opts.ctaLabel || 'Xem Kudos';
@@ -3737,13 +3731,13 @@ body{background:var(--bg)}
 '<meta charset="utf-8">' +
 '<meta name="viewport" content="width=device-width,initial-scale=1">' +
 '<meta name="color-scheme" content="light">' +
-'<title>' + esc(subjectText) + '</title>' +
+'<title>' + esc(subject(rec)) + '</title>' +
 '<link rel="preconnect" href="https://fonts.googleapis.com">' +
 '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap">' +
 '<style>html,body,body *,body *::before,body *::after{font-family:\'Lexend\',sans-serif!important}@media screen and (max-width:480px){.em-outer{padding:14px 6px!important}.em-hero-pad{padding:14px 14px 0!important}.em-body-pad{padding:18px 16px 4px!important}.em-cta-pad a{padding:14px 26px!important}}</style>' +
 '</head>' +
 '<body style="margin:0;padding:0;background:#F3F7FC;font-family:\'Lexend\',sans-serif;color:#122B4A;">' +
-'<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">' + esc(preheaderText) + '</div>' +
+'<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">' + esc(preheader(rec)) + '</div>' +
 '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#F3F7FC;">' +
 '<tr><td class="em-outer" align="center" style="padding:28px 16px;">' +
 '<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:600px;background:#FFFFFF;border-radius:24px;overflow:hidden;">' +
@@ -4115,7 +4109,7 @@ function personalEmailControls(k){
 }
 async function ensureEmailEnabled(){
  if(testConfig.mailEnabled)return true;
- if(!window.confirm('Bật gửi thử đến '+testConfig.owner+'? Khi bật, KUDOS mới cũng tự gửi về CHÍNH hộp thư này. Giới hạn nội bộ 500 lượt gửi/ngày; không gửi đến địa chỉ mẫu.'))return false;
+ if(!window.confirm('Bật gửi thử đến '+testConfig.owner+'? Khi bật, KUDOS mới cũng tự gửi về CHÍNH hộp thư này. Tối đa 5 lần thử/ngày; không gửi đến địa chỉ mẫu.'))return false;
  testConfig=await rpc('batEmail',true);return true;
 }
 async function sendPersonalEmail(id){
@@ -4133,7 +4127,7 @@ function openTestPanel(){
  const time=j?new Date(j.dueAt).toLocaleString('vi-VN'):'';
  document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop"><section class="modal v27-test-modal" role="dialog" aria-modal="true" aria-labelledby="v27-test-title"><button class="modal-close" id="test-close" aria-label="Đóng">×</button><div class="kicker">V28 · VERCEL + GOOGLE</div><h2 id="v27-test-title">Dữ liệu, email & lịch thử</h2><p class="v27-test-description">Giữ giao diện AhaKudos V27. Các nhân vật và địa chỉ trong app là vai mẫu, không phải người dùng đăng nhập thật. Những card quà tặng chưa tạo hoặc trao quà.</p>
  <div class="v27-test-block"><b>1. Google Sheets đã kết nối</b><p>${kudos.length} KUDOS trong bản test. Gửi/nhận dùng cùng một bản ghi.</p><a href="${escapeHtml(testConfig.sheetUrl)}" target="_blank" rel="noopener" class="link-btn">Mở Sheet dữ liệu ↗</a></div>
- <div class="v27-test-block"><b>2. Email công ty duy nhất nhận thử</b><p class="v27-owner">${escapeHtml(testConfig.owner)}</p><p>Email <strong>${testConfig.mailEnabled?'đang BẬT':'đang TẮT'}</strong> · ${testConfig.attemptsToday}/${testConfig.dailyLimit} lượt gửi hôm nay.</p><small>Khi bật, KUDOS mới tự gửi về bạn. Không gửi lại những KUDOS cũ. MailApp xử lý lệnh gửi không có nghĩa người nhận đã đọc.</small><button class="btn primary" id="test-enable" ${testConfig.mailEnabled?'disabled':''}>${testConfig.mailEnabled?'Đã bật gửi về tôi':'Bật gửi email cho chính tôi'}</button></div>
+ <div class="v27-test-block"><b>2. Email công ty duy nhất nhận thử</b><p class="v27-owner">${escapeHtml(testConfig.owner)}</p><p>Email <strong>${testConfig.mailEnabled?'đang BẬT':'đang TẮT'}</strong> · ${testConfig.attemptsToday}/${testConfig.dailyLimit} lần thử hôm nay.</p><small>Khi bật, KUDOS mới tự gửi về bạn. Không gửi lại những KUDOS cũ. MailApp xử lý lệnh gửi không có nghĩa người nhận đã đọc.</small><button class="btn primary" id="test-enable" ${testConfig.mailEnabled?'disabled':''}>${testConfig.mailEnabled?'Đã bật gửi về tôi':'Bật gửi email cho chính tôi'}</button></div>
  <div class="v27-test-block"><b>3. Lịch thử một lần</b><p>Không đọc ngày sinh/ngày vào làm thật. Sớm nhất sau 5 phút; Google có thể chạy muộn hơn.</p><label for="test-person">Người nhận mẫu</label><select id="test-person" class="select">${PEOPLE.map(p=>`<option value="${p.email}" ${p.email===state.currentUser?'selected':''}>${escapeHtml(p.name)}</option>`).join('')}</select><label for="test-kind">Lời chúc mẫu</label><select id="test-kind" class="select"><option value="1000">Cảm ơn 1.000 ngày đồng hành</option><option value="birthday">Chúc mừng sinh nhật</option></select><button class="btn secondary" id="test-schedule" ${j&&['PENDING','RUNNING'].includes(j.status)?'disabled':''}>Hẹn email thử sau 5 phút</button><div class="v27-job-status">${j?'Lịch: <b>'+escapeHtml(j.status)+'</b><br>Sớm nhất: '+escapeHtml(time)+(j.kudosId?'<br><button class="link-btn" data-test-open="'+escapeHtml(j.kudosId)+'">Mở KUDOS tự động →</button>':''):'Chưa tạo lịch thử.'}</div></div>
  <div class="v27-test-actions"><button class="btn secondary" id="test-refresh">Kiểm tra trạng thái</button><button class="btn primary" id="test-stop">Dừng tất cả thử nghiệm</button></div><small class="v27-test-footnote">Dừng sẽ khóa lượt gửi mới và xóa lịch thử còn chờ. Không thu hồi email đã gửi. Website yêu cầu mã vào bản test và phiên xác thực. Không chia sẻ mã; chưa có SSO/đăng nhập nhân viên. Dữ liệu đi qua Vercel khi thao tác; chưa nối AhaHandbook hay AI bên ngoài.</small></section></div>`;
  document.querySelector('#test-close').onclick=()=>{if(!testPanelBusy){document.querySelector('#modal-root').innerHTML='';render();}};
@@ -4182,18 +4176,10 @@ let moderationBlacklist=(window.AHAKUDOS_TEST_BOOT.moderation&&window.AHAKUDOS_T
 // AHAKUDOS_BANNERS — cấu hình banner/hero dùng chung (từ backend state_.banners). 1 nguồn cho web + email.
 let BANNERS=window.AHAKUDOS_TEST_BOOT.banners||{};
 function banner(id){return BANNERS[id]||null;}
-// Email preview dùng cùng mapping trạng thái với email thật.
-function emailBannerId(k){
- if(k&&k.source==='AUTOMATION_TEST'){
-  if(k.templateId==='birthday')return 'birthday';
-  if(k.templateId==='wish')return 'milestone_complete';
- }
- if(k&&k.source==='ADMIN_TEST')return 'celebration';
- return 'new_kudos_received';
-}
+// Email nhận Kudos = hero minh hoạ mascot (public URL) + CTA. Dùng chung renderer với email thật.
 function buildReceiveEmail(k){
- const nb=banner(emailBannerId(k))||banner('new_kudos_received')||{};
- return EMAIL.build(k,{logo:EMAIL.logoData,forPreview:true,ctaLabel:nb.ctaLabel||'Xem Kudos',hero:{url:nb.image,alt:nb.headline},subcopy:nb.subheadline,subject:nb.emailSubject,preheader:nb.emailPreheader});
+ const nb=banner('new_kudos_received')||{};
+ return EMAIL.build(k,{logo:EMAIL.logoData,forPreview:true,ctaLabel:nb.ctaLabel||'Xem Kudos',hero:{url:nb.image,alt:nb.headline},subcopy:nb.subheadline});
 }
 // Thiệp KUDOS ở TRANG CHI TIẾT (đã xác thực): nội dung đầy đủ TRÊN background 3D người gửi chọn.
 function buildKudosCard(k){
@@ -4226,14 +4212,13 @@ function bannerHero(id,opts){
  const tone=opts.tone||(b.type==='system'?'tone-calm':(b.type==='receive'||b.type==='celebrate'?'':'tone-blue'));
  const img=b.image?`<img class="aha-illu" src="${b.image}" alt="${escapeHtml(b.headline)}" onerror="this.style.display='none'">`:'';
  const label=escapeHtml(opts.ctaLabel||b.ctaLabel||'');
- const cta=(!opts.hideCta&&b.ctaLabel&&b.ctaRoute)?`<button class="aha-cta" data-cta-route="${b.ctaRoute}"${opts.ctaId?` data-cta-id="${escapeHtml(opts.ctaId)}"`:''}>${label} <span aria-hidden="true">→</span></button>`:'';
+ const cta=(b.ctaLabel&&b.ctaRoute)?`<button class="aha-cta" data-cta-route="${b.ctaRoute}"${opts.ctaId?` data-cta-id="${escapeHtml(opts.ctaId)}"`:''}>${label} <span aria-hidden="true">→</span></button>`:'';
  const sub=escapeHtml(opts.subheadline||b.subheadline||'');
- const kicker=escapeHtml(opts.kicker||'AHAKUDOS · '+(b.type==='receive'?'LỜI GHI NHẬN':b.type==='success'?'ĐÃ HOÀN TẤT':b.type==='system'?'TRẠNG THÁI':'GHI NHẬN & LAN TỎA'));
- return `<div class="aha-banner ${tone}">${img}<div class="aha-copy"><div class="aha-eyebrow">${kicker}</div><p class="aha-sub">${sub}</p>${cta}</div></div>`;
+ return `<div class="aha-banner ${tone}">${img}<div class="aha-copy"><div class="aha-eyebrow">${escapeHtml(b.headline)}</div><p class="aha-sub">${sub}</p>${cta}</div></div>`;
 }
 function bannerCard(id,opts){
  opts=opts||{};const b=banner(id);if(!b)return '';
- const cta=(!opts.hideCta&&b.ctaLabel&&b.ctaRoute)?`<button class="aha-card-cta" data-cta-route="${b.ctaRoute}"${opts.ctaId?` data-cta-id="${escapeHtml(opts.ctaId)}"`:''}>${escapeHtml(b.ctaLabel)}</button>`:'';
+ const cta=(b.ctaLabel&&b.ctaRoute)?`<button class="aha-card-cta" data-cta-route="${b.ctaRoute}"${opts.ctaId?` data-cta-id="${escapeHtml(opts.ctaId)}"`:''}>${escapeHtml(b.ctaLabel)}</button>`:'';
  return `<div class="aha-card"><img class="aha-thumb" src="${b.image}" alt="" onerror="this.style.display='none'"><div class="aha-card-body"><div class="aha-card-title">${escapeHtml(b.headline)}</div><div class="aha-card-sub">${escapeHtml(b.subheadline||'')}</div></div>${cta}</div>`;
 }
 // CTA deep-link routing: dẫn tới đúng màn hình trong AhaKudos.
@@ -4314,8 +4299,16 @@ const adminMilestones=[];
 const cardTemplates=(BG&&BG.LIST&&BG.LIST.length)
   ? BG.LIST.map(t=>({id:t.id,name:t.name,sticker:t.sticker}))
   : [{id:'warm',name:'Ấm áp',sticker:'💛'}];
-function templateMeta(id){return cardTemplates.find(t=>t.id===id)||cardTemplates[0];}
-function bgFor(id){return BG?BG.get(id):null;}
+// Background theo sự kiện (Admin quản lý) — chỉ hiện sự kiện đang kích hoạt trong picker.
+let EVENTS_LIST=window.AHAKUDOS_TEST_BOOT.events||[];
+let ACTIVE_EVENT_IDS=window.AHAKUDOS_TEST_BOOT.activeEventIds||[];
+let editingEventId=null;
+function eventById(id){return (EVENTS_LIST||[]).find(e=>e.id===id)||null;}
+function recomputeActiveEvents(){const t=new Date().toISOString().slice(0,10);ACTIVE_EVENT_IDS=(EVENTS_LIST||[]).filter(e=>e.active&&(!e.from||t>=e.from)&&(!e.to||t<=e.to)).map(e=>e.id);}
+function activeEventTemplates(){return (EVENTS_LIST||[]).filter(e=>ACTIVE_EVENT_IDS.includes(e.id)).map(e=>({id:e.id,name:e.name,sticker:'🎁',event:true,url:e.url}));}
+function allTemplates(){return cardTemplates.concat(activeEventTemplates());}
+function templateMeta(id){return allTemplates().find(t=>t.id===id)||cardTemplates[0];}
+function bgFor(id){const e=eventById(id);if(e)return {id:e.id,name:e.name,sticker:'🎁',fallback:'#FFF3E6',url:e.url};return BG?BG.get(id):null;}
 
 const icons={
 home:'<path d="M3 11.5 12 4l9 7.5"/><path d="M5 10.5V20h14v-9.5"/><path d="M9 20v-6h6v6"/>',
@@ -4328,6 +4321,7 @@ culture:'<path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="4"/>',
 settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.86 2.86-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21H9.4v-.1A1.7 1.7 0 0 0 9 19.8a1.7 1.7 0 0 0-1-.4 1.7 1.7 0 0 0-1.88.34l-.06.06-2.86-2.86.06-.06A1.7 1.7 0 0 0 3.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H2V9.4h.1A1.7 1.7 0 0 0 3.2 9a1.7 1.7 0 0 0 .4-1 1.7 1.7 0 0 0-.34-1.88l-.06-.06L6.06 3.2l.06.06A1.7 1.7 0 0 0 8 3.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V2h4.2v.1a1.7 1.7 0 0 0 .4 1.1 1.7 1.7 0 0 0 1 .4 1.7 1.7 0 0 0 1.88-.34l.06-.06 2.86 2.86-.06.06A1.7 1.7 0 0 0 19.4 8c.1.36.3.7.6 1 .3.27.7.4 1.1.4h.1v4.2h-.1a1.7 1.7 0 0 0-1.1.4c-.3.3-.5.64-.6 1Z"/>',
 search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
 feed:'<path d="M5 5h14M5 12h14M5 19h9"/><circle cx="3" cy="5" r=".6"/><circle cx="3" cy="12" r=".6"/><circle cx="3" cy="19" r=".6"/>',
+image:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="m4 18 5-4.5 4 3 3.5-3L20 17"/>',
 mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>'
 };
 const svg=(n)=>`<svg viewBox="0 0 24 24">${icons[n]}</svg>`;
@@ -4351,6 +4345,7 @@ function sidebar(){
   ['admin-notify','mail','Thông báo Email'],
   ['admin-recognition','send','Gửi AhaKudos'],
   ['admin-quality','shield','Duyệt nội dung'],
+   ['admin-events','image','Nền sự kiện'],
   ['admin-dept','team','Phòng ban'],
   ['admin-culture','culture','Giá trị văn hóa'],
   ['admin-ops','settings','Sinh nhật & Thâm niên']
@@ -4425,12 +4420,11 @@ function employeeHome(){
  const latest=rec[0];
  const sentCount=sentBy(u.email).length;
  // Banner chúc mừng người NHẬN khi có KUDOS đầu tiên (mỗi user, ẩn được).
- const firstRecvVisual=banner('new_kudos_received')||{};
  const firstRecvBanner=(rec.length>0&&!firstRecvDismissed(u.email))?`
   <div class="first-recv-banner" role="status">
-   ${firstRecvVisual.image?`<img src="${firstRecvVisual.image}" alt="" style="width:72px;height:72px;object-fit:cover;border-radius:16px;flex:0 0 auto">`:`<div class="frb-icon" aria-hidden="true">🎉</div>`}
-   <div class="frb-copy"><b>Bạn vừa nhận được 1 Kudos mới!</b><span>Mở AhaKudos để xem lời ghi nhận dành cho bạn.</span></div>
-   <button class="btn primary frb-open" data-firstrecv-open="${latest.id}">Xem Kudos →</button>
+   <div class="frb-icon" aria-hidden="true">🎉</div>
+   <div class="frb-copy"><b>Chúc mừng ${escapeHtml(u.name.split(' ').slice(-1)[0])}! Bạn vừa nhận được KUDOS đầu tiên tại Ahamove.</b><span>Một đồng nghiệp đã ghi nhận điều bạn làm. Mở ra đọc và giữ lại cho riêng bạn nhé.</span></div>
+   <button class="btn primary frb-open" data-firstrecv-open="${latest.id}">Xem ngay →</button>
    <button class="frb-close" data-firstrecv-dismiss="${escapeHtml(u.email)}" aria-label="Đóng lời chúc">×</button>
   </div>`:'';
  // Card action KUDOS đầu tiên (đưa LÊN TRÊN thông tin sinh nhật).
@@ -4579,7 +4573,15 @@ function composeRecord(){
 }
 function sendKudos(){
 return `<section class="page active kudos-compose-page">
- ${bannerHero('compose_hero',{subheadline:'Chọn một đồng nghiệp, viết điều bạn thật sự trân trọng và gửi lời ghi nhận đúng lúc.'})}
+ ${bannerHero('compose_hero')}
+ <div class="compose-hero">
+  <div class="ch-copy">
+   <div class="ch-eyebrow">AHAKUDOS · GHI NHẬN & LAN TỎA</div>
+   <h1>Ghi nhận điều tuyệt vời mỗi ngày!</h1>
+   <p>Một lời cảm ơn cụ thể là nhiều động lực cho hành trình phía trước của đồng nghiệp.</p>
+  </div>
+  <div class="ch-art">${ART?ART.heroCharacter():''}<span class="ch-glow" aria-hidden="true"></span></div>
+ </div>
  <div class="hb-compose-steps" aria-label="Các bước gửi KUDOS"><span class="hb-step-intro">GỬI MỘT LỜI GHI NHẬN</span><ol><li><span>01</span>Người nhận & background</li><li><span>02</span>Nội dung KUDOS</li><li><span>03</span>Xem trước email</li><li><span>04</span>Phạm vi & gửi</li></ol></div>
  <div class="form-layout kudos-compose-layout">
   <article class="card form-card kudos-compose-form">
@@ -4598,7 +4600,7 @@ return `<section class="page active kudos-compose-page">
     <div class="bg-carousel">
      <button type="button" class="bg-nav prev" data-bg-nav="-1" aria-label="Xem các background trước">‹</button>
      <div class="template-gallery kudos-background-gallery" role="group" aria-labelledby="background-picker-label">
-      ${cardTemplates.map((t,i)=>`<button type="button" class="template-option ${state.selectedTemplate===t.id?'selected':''}" data-template="${t.id}" aria-label="Background ${escapeHtml(t.name)}" aria-pressed="${state.selectedTemplate===t.id}">
+      ${allTemplates().map((t,i)=>`<button type="button" class="template-option ${state.selectedTemplate===t.id?'selected':''}" data-template="${t.id}" aria-label="Background ${escapeHtml(t.name)}" aria-pressed="${state.selectedTemplate===t.id}">
         <span class="template-thumb tpl-${t.id}" style="${BG?`background:${bgFor(t.id).fallback}`:''}">${BG?`<img class="art-img" src="${bgFor(t.id).url}" alt="" aria-hidden="true">`:(ART?ART.scene(t.id):`<i aria-hidden="true">${t.sticker}</i>`)}<span class="thumb-tick" aria-hidden="true">✓</span></span>
       </button>`).join('')}
      </div>
@@ -4793,7 +4795,6 @@ function kudosDetail(){
  return `<section class="page active kudos-detail-page">
    <button class="kd-back" data-page="${backTarget}">← ${isSender&&!isRecipient?'Về Hồ sơ':'Về trang chủ'}</button>
    <div class="page-head"><div><div class="kicker">${isRecipient?'KUDOS DÀNH CHO BẠN':'KUDOS BẠN ĐÃ GỬI'}</div><h1>${isRecipient?'Một lời ghi nhận dành cho bạn':'Lời ghi nhận bạn đã gửi'}</h1><p class="page-sub">${isRecipient?'Nội dung đầy đủ hiển thị trên background bạn đã được gửi. Trạng thái email ghi riêng bên dưới.':'Đây là lời ghi nhận bạn đã gửi (trên background đã chọn).'}</p></div></div>
-   ${isRecipient?bannerHero('received_emotional',{hideCta:true,subheadline:'Một người đồng nghiệp đã dành cho bạn lời ghi nhận này. Hãy mở và giữ lại khoảnh khắc đáng nhớ nhé.'}):''}
    ${buildKudosCard(k)}
    <div class="kd-panel"><div class="kd-row">${emailStatusPill}${visPill}</div>${isRecipient?'<div class="kd-save-note"><span>💾</span><div>Lời ghi nhận này được <b>tự động lưu</b> trong Hồ sơ KUDOS của bạn — không cần bấm "Lưu". Bạn có thể mở lại bất cứ lúc nào.</div></div>':''}</div>
    ${personalEmailControls(k)}
@@ -4803,6 +4804,91 @@ function kudosDetail(){
 }
 
 // ---- Admin (giữ nguyên) ----------------------------------------------------
+// ---- Dashboard dữ liệu thật + lọc ngày + export CSV (feedback #4) ----
+let dashFrom='',dashTo='';
+function dashFiltered(){return (kudos||[]).filter(r=>{const d=(r.createdAt||'').slice(0,10);if(dashFrom&&d<dashFrom)return false;if(dashTo&&d>dashTo)return false;return true;});}
+function adminDataDashboard(){
+ const recs=dashFiltered();
+ const uniq=(a)=>Array.from(new Set(a.filter(Boolean))).length;
+ const senders=uniq(recs.map(r=>r.senderEmail));
+ const receivers=uniq(recs.map(r=>r.recipientEmail));
+ const sent=recs.filter(r=>r.emailStatus==='SUBMITTED').length;
+ const held=recs.filter(r=>modStatusOf(r)==='HELD').length;
+ const pub=recs.filter(r=>r.visibility==='public'&&r.publicConsent==='approved').length;
+ const CULT={fair:'Công bằng & Tôn trọng',share:'Học hỏi & Chia sẻ',grow:'Gắn kết & Cùng phát triển'};
+ const cultCount={fair:0,share:0,grow:0};recs.forEach(r=>(r.values||[]).forEach(v=>{if(cultCount[v]!=null)cultCount[v]++;}));
+ const deptCount={};recs.forEach(r=>{const d=r.recipientDept||'—';deptCount[d]=(deptCount[d]||0)+1;});
+ const deptTop=Object.entries(deptCount).sort((a,b)=>b[1]-a[1]).slice(0,6);
+ const maxDept=Math.max(1,...deptTop.map(d=>d[1]));
+ const maxCult=Math.max(1,cultCount.fair,cultCount.share,cultCount.grow);
+ const tile=(ic,label,val,sub)=>`<article class="metric"><div class="metric-icon">${ic}</div><span>${label}</span><strong>${val}</strong><em>${sub||''}</em></article>`;
+ const rangeLabel=(dashFrom||dashTo)?`${dashFrom||'…'} → ${dashTo||'…'}`:'toàn bộ';
+ return `<article class="card admin-card" style="padding:18px;margin-bottom:14px">
+   <style>
+    .dash-filter{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-top:6px}
+    .dash-presets{display:flex;gap:6px;flex-wrap:wrap}
+    .chip-btn{border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer}
+    .chip-btn:hover{border-color:#BCD3EA}
+    .dash-range{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .dash-range .input{height:40px;width:auto}
+    .dash-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+    .dash-col h4{margin:0 0 10px;font-size:14px;color:var(--navy)}
+    .dash-bar-row{display:grid;grid-template-columns:minmax(120px,1.4fr) 2fr auto;gap:10px;align-items:center;margin-bottom:9px;font-size:13px;color:var(--text)}
+    .dash-bar{height:9px;background:#EDF2F7;border-radius:999px;overflow:hidden}
+    .dash-bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--orange),#FFB55E)}
+    .dash-bar-row b{color:var(--navy)}
+    @media(max-width:820px){.dash-breakdown{grid-template-columns:1fr}.dash-filter{flex-direction:column;align-items:stretch}.dash-range{justify-content:space-between}}
+   </style>
+   <div class="card-head"><div><div class="kicker">DỮ LIỆU THẬT · TỪ GOOGLE SHEET</div><h3>Tổng quan KUDOS</h3><div class="sub">Lọc theo thời gian tạo KUDOS (${rangeLabel}). Xuất CSV để làm báo cáo.</div></div></div>
+   <div class="dash-filter">
+     <div class="dash-presets">
+       <button class="chip-btn" data-dash-preset="7">7 ngày</button>
+       <button class="chip-btn" data-dash-preset="30">30 ngày</button>
+       <button class="chip-btn" data-dash-preset="month">Tháng này</button>
+       <button class="chip-btn" data-dash-preset="all">Tất cả</button>
+     </div>
+     <div class="dash-range"><input id="dash-from" class="input" type="date" value="${dashFrom}"><span>→</span><input id="dash-to" class="input" type="date" value="${dashTo}"><button class="btn secondary" id="dash-apply">Lọc</button><button class="btn primary" id="dash-export">⬇ Xuất CSV (${recs.length})</button></div>
+   </div>
+   <div class="metric-grid" style="margin-top:14px">
+     ${tile('⌘','Tổng KUDOS',recs.length,rangeLabel==='toàn bộ'?'toàn bộ':'trong khoảng')}
+     ${tile('👥','Người gửi',senders,'khác nhau')}
+     ${tile('★','Người nhận',receivers,'khác nhau')}
+     ${tile('✉','Đã gửi email',sent,'SUBMITTED')}
+     ${tile('△','Chờ duyệt',held,'kiểm duyệt')}
+     ${tile('◎','Công khai',pub,'đã duyệt')}
+   </div>
+   <div class="dash-breakdown">
+     <div class="dash-col"><h4>Theo giá trị văn hoá</h4>${['grow','share','fair'].map(k=>`<div class="dash-bar-row"><span>${CULT[k]}</span><div class="dash-bar"><i style="width:${Math.round(cultCount[k]/maxCult*100)}%"></i></div><b>${cultCount[k]}</b></div>`).join('')}</div>
+     <div class="dash-col"><h4>Theo phòng ban (nhận nhiều nhất)</h4>${deptTop.length?deptTop.map(([d,c])=>`<div class="dash-bar-row"><span>${escapeHtml(d)}</span><div class="dash-bar"><i style="width:${Math.round(c/maxDept*100)}%"></i></div><b>${c}</b></div>`).join(''):'<p class="sub">Chưa có dữ liệu trong khoảng lọc.</p>'}</div>
+   </div>
+ </article>`;
+}
+function dashExportCsv(){
+ const recs=dashFiltered();
+ const CULT={fair:'Cong bang & Ton trong',share:'Hoc hoi & Chia se',grow:'Gan ket & Cung phat trien'};
+ const head=['Thoi_gian_tao','Nguoi_gui','Phong_ban_gui','Nguoi_nhan','Phong_ban_nhan','Gia_tri_van_hoa','Pham_vi','Duyet_cong_khai','Kiem_duyet','Email','Noi_dung'];
+ const esc=(v)=>{const s=String(v==null?'':v).replace(/"/g,'""');return /[",\n\r]/.test(s)?`"${s}"`:s;};
+ const lines=[head.join(',')];
+ recs.forEach(r=>{lines.push([r.createdAt||'',r.senderName||'',r.senderDept||'',r.recipientName||'',r.recipientDept||'',(r.values||[]).map(v=>CULT[v]||v).join(' | '),r.visibility||'',r.publicConsent||'',modStatusOf(r),r.emailStatus||'',String(r.message||'').replace(/\r?\n/g,' ')].map(esc).join(','));});
+ const csv='﻿'+lines.join('\r\n');
+ try{
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ahakudos_export_'+new Date().toISOString().slice(0,10)+'.csv';
+  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},600);
+  toast('Đã xuất '+recs.length+' KUDOS ra CSV.');
+ }catch(e){toast('Không xuất được CSV: '+e.message);}
+}
+function bindAdminDashboard(){
+ document.querySelectorAll('[data-dash-preset]').forEach(b=>b.addEventListener('click',()=>{
+   const p=b.dataset.dashPreset,now=new Date(),iso=d=>d.toISOString().slice(0,10);
+   if(p==='all'){dashFrom='';dashTo='';}
+   else if(p==='month'){dashFrom=iso(new Date(now.getFullYear(),now.getMonth(),1));dashTo=iso(now);}
+   else{const days=parseInt(p,10),from=new Date(now);from.setDate(now.getDate()-days+1);dashFrom=iso(from);dashTo=iso(now);}
+   render();
+ }));
+ const apply=document.querySelector('#dash-apply');if(apply)apply.addEventListener('click',()=>{dashFrom=(document.querySelector('#dash-from').value||'');dashTo=(document.querySelector('#dash-to').value||'');render();});
+ const exp=document.querySelector('#dash-export');if(exp)exp.addEventListener('click',dashExportCsv);
+}
 function adminHome(){
 const depts=[
  ['Central Operations',120,82,68,62,210,'Gắn kết & Cùng phát triển'],['Supply Operations',95,64,67,51,176,'Công bằng & Tôn trọng'],
@@ -4813,6 +4899,8 @@ const depts=[
 return `<section class="page active">
  <div class="admin-head"><div class="admin-logo-chip">${logo(true)}</div><div><h1>Trung tâm quản trị</h1><p>Không gian vận hành AhaKudos toàn công ty.</p></div></div>
  <div class="page-head"><div><div class="kicker">PROGRAM CONTROL</div><h1>Tổng quan AhaKudos</h1><p class="page-sub">Ghi nhận · Chất lượng · AhaKudos từ Admin · Sinh nhật & Thâm niên · Dữ liệu văn hóa</p></div><button class="btn primary" data-page="admin-recognition">+ Gửi AhaKudos</button></div>
+ ${adminDataDashboard()}
+ <div class="kicker" style="margin:2px 0 8px;color:#94A3B5">SỐ MINH HOẠ CHƯƠNG TRÌNH (DEMO V27)</div>
  <div class="metric-grid">
   ${[
    ['★','Nhân viên nhận KUDOS','420 · 72%','Độ phủ toàn công ty'],
@@ -4855,6 +4943,93 @@ function adminCulture(){
 return `<section class="page active"><div class="page-head"><div><div class="kicker">DỮ LIỆU VĂN HÓA</div><h1>Giá trị văn hóa đang được thể hiện</h1><p class="page-sub">Nhìn thấy các Giá trị qua những câu chuyện KUDOS thực tế.</p></div></div>
  <div class="metric-grid" style="grid-template-columns:repeat(3,1fr)">${[['Gắn kết & Cùng phát triển','520 · 42%','285 nhân viên'],['Học hỏi & Chia sẻ','410 · 33%','240 nhân viên'],['Công bằng & Tôn trọng','310 · 25%','195 nhân viên']].map((x,i)=>`<article class="metric"><div class="metric-icon">${i===0?'♥':i===1?'✦':'✓'}</div><span>${x[0]}</span><strong>${x[1]}</strong><em>${x[2]} được ghi nhận</em></article>`).join('')}</div>
  <article class="card admin-card"><div class="card-head"><div><div class="kicker">TỶ TRỌNG</div><h3>Giá trị văn hóa theo toàn công ty</h3></div></div><div class="culture-bars">${[['Gắn kết & Cùng phát triển',42],['Học hỏi & Chia sẻ',33],['Công bằng & Tôn trọng',25]].map(x=>`<div class="culture-item"><div class="culture-bar-head"><span>${x[0]}</span><b>${x[1]}%</b></div><div class="culture-line"><i style="width:${x[1]}%"></i></div></div>`).join('')}</div></article></section>`;
+}
+function clientNormUrl(u){
+ const s=String(u||'').trim();if(!s)return '';
+ const m=s.match(/drive\.google\.com\/file\/d\/([A-Za-z0-9_-]{10,})/)||s.match(/[?&]id=([A-Za-z0-9_-]{10,})/);
+ if(m&&/drive\.google\.com/.test(s))return 'https://lh3.googleusercontent.com/d/'+m[1];
+ return /^https:\/\//i.test(s)?s:'';
+}
+function adminEvents(){
+ const ev=editingEventId?eventById(editingEventId):null;
+ const list=EVENTS_LIST||[];
+ const today=new Date().toISOString().slice(0,10);
+ const statusOf=(e)=>{if(!e.active)return {t:'Đang tắt',c:'#8390a3',b:'#eef1f5'};if(e.from&&today<e.from)return {t:'Chờ tới lịch',c:'#9a6e1d',b:'#fff4e3'};if(e.to&&today>e.to)return {t:'Hết hạn',c:'#8390a3',b:'#eef1f5'};return {t:'Đang chạy',c:'#2a8f5a',b:'#eaf8ef'};};
+ const rows=list.length?list.map(e=>{const s=statusOf(e);return `<div class="ev-row">
+     <span class="ev-thumb" style="background-image:url('${escapeHtml(e.url)}')"></span>
+     <div class="ev-info"><b>${escapeHtml(e.name)}</b><div class="ev-meta"><span class="ev-status" style="color:${s.c};background:${s.b}">${s.t}</span>${(e.from||e.to)?`<span class="ev-dates">${escapeHtml(e.from||'…')} → ${escapeHtml(e.to||'…')}</span>`:''}</div>${e.note?`<div class="ev-note">${escapeHtml(e.note)}</div>`:''}</div>
+     <div class="ev-actions">
+       <button class="btn secondary" data-ev-toggle="${e.id}" data-on="${e.active?'':'1'}">${e.active?'Tắt':'Bật'}</button>
+       <button class="btn secondary" data-ev-edit="${e.id}">Sửa</button>
+       <button class="btn danger" data-ev-del="${e.id}">Xoá</button>
+     </div>
+   </div>`;}).join(''):`<div class="empty"><div class="icon">🖼️</div><h3>Chưa có sự kiện nào</h3><p>Thêm background theo dịp (Tết, sinh nhật, kỷ niệm…) để nhân viên chọn khi gửi Kudos.</p></div>`;
+ const pUrl=ev?ev.url:'';
+ return `<section class="page active">
+  <style>
+   .ev-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.82fr);gap:16px;align-items:start}
+   .ev-form .field{margin-bottom:14px}
+   .ev-form label{display:block;font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px}
+   .ev-check{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink)}
+   .ev-date-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+   .ev-preview{position:sticky;top:96px}
+   .ev-prev-thumb{width:100%;height:200px;border-radius:18px;background:#FFF3E6 center/cover no-repeat;border:1px solid var(--line);box-shadow:0 8px 22px rgba(23,58,94,.1)}
+   .ev-hint{font-size:13px;color:var(--muted);line-height:1.7;margin-top:6px}
+   .ev-list{display:grid;gap:12px;margin-top:14px}
+   .ev-row{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff}
+   .ev-thumb{flex:0 0 auto;width:64px;height:64px;border-radius:14px;background:#FFF3E6 center/cover no-repeat}
+   .ev-info{flex:1;min-width:0}.ev-info b{font-size:14px;color:var(--navy)}
+   .ev-meta{display:flex;gap:8px;align-items:center;margin-top:5px;flex-wrap:wrap}
+   .ev-status{font-size:12px;font-weight:700;border-radius:999px;padding:4px 10px}
+   .ev-dates{font-size:12px;color:var(--muted)}.ev-note{font-size:12px;color:var(--muted);margin-top:4px}
+   .ev-actions{display:flex;gap:6px;flex-wrap:wrap}.ev-actions .btn{padding:8px 12px;font-size:13px}
+   @media(max-width:900px){.ev-layout{grid-template-columns:1fr}.ev-preview{position:static}.ev-row{flex-wrap:wrap}.ev-actions{width:100%;justify-content:flex-end}}
+  </style>
+  <div class="page-head"><div><div class="kicker">NỀN THEO SỰ KIỆN</div><h1>Quản lý background sự kiện</h1><p class="page-sub">Thêm background theo dịp bằng URL ảnh (hỗ trợ Google Drive “Bất kỳ ai có link”). Sự kiện đang bật + trong lịch sẽ hiện trong danh sách chọn khi nhân viên gửi Kudos và trên trang chi tiết.</p></div></div>
+  <div class="ev-layout">
+   <article class="card admin-card ev-form" style="padding:18px">
+     <div class="card-head"><div><div class="kicker">${ev?'SỬA SỰ KIỆN':'THÊM SỰ KIỆN'}</div><h3>${ev?escapeHtml(ev.name):'Sự kiện mới'}</h3></div>${ev?'<button class="link-btn" id="ev-cancel">+ Thêm mới</button>':''}</div>
+     <div class="field"><label>Tên sự kiện</label><input id="ev-name" class="input" maxlength="80" placeholder="VD: Tết 2026" value="${ev?escapeHtml(ev.name):''}"></div>
+     <div class="field"><label>URL ảnh nền (HTTPS hoặc Google Drive share link)</label><input id="ev-url" class="input" placeholder="https://… hoặc https://drive.google.com/file/d/…/view" value="${escapeHtml(pUrl)}"><div class="ev-hint">Drive: bấm Share → “Anyone with the link” → dán link. Hệ thống tự chuyển sang link hiển thị trực tiếp.</div></div>
+     <div class="ev-date-row">
+       <div class="field"><label>Từ ngày (tuỳ chọn)</label><input id="ev-from" class="input" type="date" value="${ev?escapeHtml(ev.from||''):''}"></div>
+       <div class="field"><label>Đến ngày (tuỳ chọn)</label><input id="ev-to" class="input" type="date" value="${ev?escapeHtml(ev.to||''):''}"></div>
+     </div>
+     <div class="field"><label>Ghi chú (tuỳ chọn)</label><input id="ev-note" class="input" maxlength="200" value="${ev?escapeHtml(ev.note||''):''}"></div>
+     <div class="field"><label class="ev-check"><input id="ev-active" type="checkbox" ${(!ev||ev.active)?'checked':''}> Kích hoạt (cho phép chọn ngay)</label></div>
+     <div class="form-actions" style="display:flex;gap:8px;justify-content:flex-end"><button class="btn primary" id="ev-save" data-id="${ev?ev.id:''}">${ev?'Lưu thay đổi':'Thêm sự kiện'}</button></div>
+   </article>
+   <aside class="card admin-card ev-preview" style="padding:18px">
+     <div class="card-head"><div><div class="kicker">XEM TRƯỚC</div><h3>Giống phía nhân viên</h3></div></div>
+     <div class="ev-prev-thumb" id="ev-prev" style="${pUrl?`background-image:url('${escapeHtml(pUrl)}')`:''}"></div>
+     <div class="ev-hint">Đây là cách nền hiển thị trong ô chọn background và nền thiệp ở trang chi tiết KUDOS.</div>
+   </aside>
+  </div>
+  <article class="card admin-card" style="padding:16px 18px;margin-top:14px"><div class="card-head"><div><div class="kicker">DANH SÁCH</div><h3>Sự kiện (${list.length})</h3></div></div>
+   <div class="ev-list">${rows}</div>
+  </article>
+ </section>`;
+}
+function bindAdminEvents(){
+ const prev=document.querySelector('#ev-prev');const urlIn=document.querySelector('#ev-url');
+ if(urlIn&&prev)urlIn.addEventListener('input',()=>{const u=clientNormUrl(urlIn.value);prev.style.backgroundImage=u?`url('${u}')`:'';});
+ const cancel=document.querySelector('#ev-cancel');if(cancel)cancel.addEventListener('click',()=>{editingEventId=null;render();});
+ const save=document.querySelector('#ev-save');
+ if(save)save.addEventListener('click',async()=>{
+   const payload={id:save.dataset.id||'',name:document.querySelector('#ev-name').value.trim(),url:document.querySelector('#ev-url').value.trim(),from:document.querySelector('#ev-from').value,to:document.querySelector('#ev-to').value,note:document.querySelector('#ev-note').value.trim(),active:document.querySelector('#ev-active').checked};
+   if(!payload.name){toast('Nhập tên sự kiện.');return;}
+   if(!clientNormUrl(payload.url)){toast('URL ảnh chưa hợp lệ (cần HTTPS hoặc Drive link).');return;}
+   save.disabled=true;
+   try{const res=await rpc('luuEvent',payload);EVENTS_LIST=res.events||[];recomputeActiveEvents();editingEventId=null;toast(res.notice||'Đã lưu.');render();}catch(e){save.disabled=false;toast(e.message);}
+ });
+ document.querySelectorAll('[data-ev-edit]').forEach(b=>b.addEventListener('click',()=>{editingEventId=b.dataset.evEdit;render();window.scrollTo(0,0);}));
+ document.querySelectorAll('[data-ev-del]').forEach(b=>b.addEventListener('click',async()=>{
+   if(!window.confirm('Xoá sự kiện này? Kudos đã gửi vẫn giữ nền của chúng.'))return;
+   b.disabled=true;try{const res=await rpc('xoaEvent',b.dataset.evDel);EVENTS_LIST=res.events||[];recomputeActiveEvents();if(editingEventId===b.dataset.evDel)editingEventId=null;toast(res.notice||'Đã xoá.');render();}catch(e){b.disabled=false;toast(e.message);}
+ }));
+ document.querySelectorAll('[data-ev-toggle]').forEach(b=>b.addEventListener('click',async()=>{
+   b.disabled=true;try{const res=await rpc('datEventKichHoat',b.dataset.evToggle,b.dataset.on==='1');EVENTS_LIST=res.events||[];recomputeActiveEvents();toast(res.notice||'Đã cập nhật.');render();}catch(e){b.disabled=false;toast(e.message);}
+ }));
 }
 function adminQuality(){
  const held=kudos.filter(k=>modStatusOf(k)==='HELD');
@@ -5067,7 +5242,6 @@ function adminOps(){
  ];
  return `<section class="page active">
    <div class="page-head"><div><div class="kicker">AHAKUDOS TỰ ĐỘNG</div><h1>Sinh nhật & Thâm niên</h1><p class="page-sub">Thiết lập gửi hàng loạt, xem trước nội dung và kiểm tra danh sách trước khi kích hoạt.</p></div><button class="btn primary" id="open-bulk-send">+ Thiết lập gửi hàng loạt</button></div>
-   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:16px">${bannerCard('birthday',{hideCta:true})}${bannerCard('milestone_complete',{hideCta:true})}</div>
    <div class="milestone-admin-summary">
      <article class="card milestone-summary-card"><div class="milestone-summary-icon">🎂</div><div><span>Sinh nhật tháng này</span><strong>50</strong><small>49 lịch mẫu · 1 mẫu cần kiểm tra</small></div><span class="automation-status">● Lịch minh họa</span></article>
      <article class="card milestone-summary-card"><div class="milestone-summary-icon navy">✦</div><div><span>Thâm niên tháng này</span><strong>27</strong><small>27 lịch mẫu · chưa nối dữ liệu HR</small></div><span class="automation-status">● Lịch minh họa</span></article>
@@ -5097,7 +5271,7 @@ function render(){
  if(state.mode==='employee'){
   content=state.page==='public-feed'?publicFeedPage():state.page==='send-kudos'?sendKudos():state.page==='kudos-profile'?profile():state.page==='kudos-detail'?kudosDetail():employeeHome();
  } else {
-  content=state.page==='admin-notify'?adminNotify():state.page==='admin-recognition'?adminRecognition():state.page==='admin-quality'?adminQuality():state.page==='admin-dept'?adminDept():state.page==='admin-culture'?adminCulture():state.page==='admin-ops'?adminOps():adminHome();
+  content=state.page==='admin-notify'?adminNotify():state.page==='admin-recognition'?adminRecognition():state.page==='admin-quality'?adminQuality():state.page==='admin-events'?adminEvents():state.page==='admin-dept'?adminDept():state.page==='admin-culture'?adminCulture():state.page==='admin-ops'?adminOps():adminHome();
  }
  document.querySelector('#app').innerHTML=shell(content);
  bind();
@@ -5219,6 +5393,8 @@ function bind(){
  if(state.page==='admin-ops') bindAdminMilestones();
  if(state.page==='admin-notify') bindAdminNotify();
  if(state.page==='admin-quality') bindAdminQuality();
+ if(state.page==='admin-events') bindAdminEvents();
+ if(state.page==='admin-home') bindAdminDashboard();
  document.querySelectorAll('[data-cta-route]').forEach(b=>b.addEventListener('click',()=>ctaGo(b.dataset.ctaRoute,b.dataset.ctaId)));
  if(state.mode==='employee'&&state.page==='employee-home') bindHome();
  document.querySelectorAll('.queue-actions button').forEach(b=>b.addEventListener('click',()=>{toast('Trạng thái duyệt minh họa, chưa lưu server.'); b.closest('.queue-item').style.opacity='.55'}));
@@ -5469,8 +5645,7 @@ function showSuccessBanner(record,isFirst){
  const root=document.querySelector('#toast-root');root.querySelector('.kudos-success-banner')?.remove();
  const b=document.createElement('div');b.className='kudos-success-banner'+(isFirst?' first-kudos-banner':'');b.setAttribute('role','status');
  const vis=record.visibility==='public'?'Đề nghị công khai — chờ người nhận đồng ý.':'Lời ghi nhận riêng tư, đã lưu để xem lại.';
- const sb=banner('send_success')||{};
- b.innerHTML=`${sb.image?`<img class="aha-success-art" src="${sb.image}" alt="">`:`<div class="success-banner-icon">${isFirst?'🎉':'✓'}</div>`}<div class="success-banner-copy"><strong>${isFirst?'Chúc mừng! Bạn vừa gửi KUDOS đầu tiên':'Đã gửi KUDOS!'}</strong><span>${escapeHtml(mailStatusText(record))} · Lời ghi nhận đã được lưu để xem lại.</span><em>${vis}</em></div><button class="success-banner-close" aria-label="Đóng">×</button>`;
+ b.innerHTML=`<div class="success-banner-icon">${isFirst?'🎉':'✓'}</div><div class="success-banner-copy"><strong>${isFirst?'Chúc mừng! Bạn vừa gửi KUDOS đầu tiên':'Đã lưu lời ghi nhận vào Google Sheets'}</strong><span>${escapeHtml(mailStatusText(record))} · Email thật chỉ gửi về chủ bản test.</span><em>${vis}</em></div><button class="success-banner-close" aria-label="Đóng">×</button>`;
  root.appendChild(b);requestAnimationFrame(()=>b.classList.add('show'));const close=()=>b.remove();b.querySelector('button').onclick=close;setTimeout(close,6500);
 }
 function openAvatarEditor(){
