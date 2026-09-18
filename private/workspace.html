@@ -4109,7 +4109,7 @@ function personalEmailControls(k){
 }
 async function ensureEmailEnabled(){
  if(testConfig.mailEnabled)return true;
- if(!window.confirm('Bật gửi thử đến '+testConfig.owner+'? Khi bật, KUDOS mới cũng tự gửi về CHÍNH hộp thư này. Tối đa 5 lần thử/ngày; không gửi đến địa chỉ mẫu.'))return false;
+ if(!window.confirm('Bật gửi thử đến '+testConfig.owner+'? Khi bật, KUDOS mới cũng tự gửi về CHÍNH hộp thư này. Tối đa 500 lượt gửi KUDOS/ngày; không gửi đến địa chỉ mẫu.'))return false;
  testConfig=await rpc('batEmail',true);return true;
 }
 async function sendPersonalEmail(id){
