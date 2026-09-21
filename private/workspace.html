@@ -3610,6 +3610,13 @@ body{background:var(--bg)}
 .first-gift .fk-gift-icon svg,.first-gift .fk-gift-icon .fk-svg{width:42px;height:42px;display:block}
 .first-gift .gift-row{align-items:center}
 
+
+.confession-default-panel{display:grid;grid-template-columns:120px minmax(0,1fr) auto;align-items:center;gap:20px;margin:26px 0 4px;padding:20px 22px;border:1px solid #DDE8F3;border-radius:22px;background:linear-gradient(135deg,#F8FBFF 0%,#FFF7EF 100%);box-shadow:0 10px 28px rgba(14,65,116,.07)}
+.confession-mascot{width:110px;height:86px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.confession-brand-mark{display:inline-flex;align-items:center;justify-content:center}.confession-brand-mark img{display:block;width:150px;height:auto;max-width:none;transform:translateX(24px)}
+.confession-default-copy{min-width:0}.confession-default-copy .kicker{font-size:11px;letter-spacing:.14em;color:#FF7F32;margin-bottom:5px}.confession-default-copy b{display:block;font-size:16px;line-height:1.5;color:#0E4174}.confession-default-copy p{margin:5px 0 0;font-size:13.5px;line-height:1.7;color:#62748A}
+.confession-default-status{display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border-radius:999px;background:#FFF1E7;color:#B9581C;font-size:12px;font-weight:800;white-space:nowrap}
+@media(max-width:640px){.confession-default-panel{grid-template-columns:76px 1fr;gap:12px;padding:16px}.confession-mascot{width:72px;height:64px}.confession-brand-mark img{width:112px;transform:translateX(18px)}.confession-default-status{grid-column:1/-1;justify-self:start}.confession-default-copy b{font-size:15px}}
 </style>
 <style>
 .v27-testbar{width:calc(100% - 80px);max-width:var(--hb-container);display:flex;gap:18px;align-items:center;justify-content:space-between;background:#fff4e8;border:1px solid #f1d2b4;border-radius:18px;padding:14px 20px;margin:0 auto 24px;color:#153d68}.v27-testbar>div{display:flex;gap:14px;align-items:center;flex-wrap:wrap}.v27-testbar b{font-size:13px;letter-spacing:.5px}.v27-testbar span{font-size:14px}.v27-testbar .btn{font-size:14px;min-height:42px;padding:9px 14px;flex-shrink:0}.v27-simulation-note{width:calc(100% - 80px);max-width:var(--hb-container);margin:-12px auto 22px;padding:14px 18px;background:#fff;font-size:14px;line-height:1.7;border-radius:12px;border:1px dashed #b6cce0;color:#58697e}.v27-mail-test{display:flex;justify-content:space-between;align-items:center;gap:20px;background:#fff5e9;border:1px solid #f2d7ba;border-radius:18px;padding:20px;margin:16px 0}.v27-mail-test b{font-size:17px}.v27-mail-test p{font-size:15px;margin:6px 0;overflow-wrap:anywhere}.v27-mail-test small{font-size:13px;line-height:1.6;color:#68788c}.v27-mail-test .btn{flex-shrink:0;font-size:14px}.v27-test-modal{max-width:720px!important;width:100%;max-height:calc(100dvh - 40px);overflow:auto;box-sizing:border-box}.v27-test-modal h2{padding-right:30px}.v27-test-description{font-size:15px!important;line-height:1.8}.v27-test-block{padding:20px;background:#f9fbfe;border:1px solid #dce6ee;border-radius:18px;margin-top:16px}.v27-test-block>b{font-size:17px}.v27-test-block p{font-size:15px;line-height:1.7;margin:8px 0}.v27-test-block small{display:block;font-size:13px;line-height:1.7;color:#637588}.v27-test-block label{display:block;margin:14px 0 6px;font-size:14px;font-weight:600}.v27-test-block .select{width:100%;font-size:16px}.v27-test-block .btn{margin-top:15px;font-size:15px}.v27-owner{overflow-wrap:anywhere;font-weight:650;color:#0e4174}.v27-job-status{margin-top:12px;font-size:14px;line-height:1.75}.v27-test-actions{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap}.v27-test-actions .btn{font-size:14px}.v27-test-footnote{display:block;font-size:13px;line-height:1.8;color:#687a8d;margin-top:15px}button:disabled{cursor:not-allowed;opacity:.55}@media(max-width:1250px){.v27-testbar,.v27-simulation-note{width:calc(100% - 48px)}}@media(max-width:650px){.v27-testbar,.v27-simulation-note{width:calc(100% - 32px)}.v27-testbar,.v27-mail-test{flex-direction:column;align-items:stretch;padding:15px}.v27-testbar>div{gap:6px}.v27-test-modal{padding:22px 18px!important;max-height:calc(100dvh - 24px)}.v27-test-block{padding:15px}.v27-testbar .btn{white-space:normal}.v27-test-actions .btn{flex:1;min-width:140px}}
@@ -3672,8 +3679,8 @@ body{background:var(--bg)}
 .kd-card-label{font-size:12px;line-height:1.4;letter-spacing:.16em;font-weight:800;color:#0E4174;margin-bottom:16px;text-transform:uppercase}
 .kd-sender-line{display:flex;align-items:center;gap:10px;font-size:13.5px;line-height:1.55;color:#3F5F80;font-weight:650;margin-bottom:20px}
 .kd-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex:none;background:#0E4174;color:#fff;font-size:12px;font-weight:800;box-shadow:0 6px 14px rgba(14,65,116,.16)}
-.kd-template-brand{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.70);border:1px solid rgba(14,65,116,.12);border-radius:999px;padding:7px 11px;margin-bottom:18px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 7px 18px rgba(14,65,116,.08)}
-.kd-template-brand-logo{display:inline-flex;align-items:center}.kd-template-brand-logo img{display:block;height:18px;width:auto;max-width:96px}.kd-template-brand-name{display:inline-flex;align-items:baseline;font-size:13px;line-height:1;color:#0E4174;letter-spacing:-.02em}.kd-template-brand-name b{font-weight:800}.kd-template-brand-name strong{font-weight:800;color:#FF7F32}
+.kd-template-brand{display:inline-flex;align-items:center;gap:9px;background:#FFFFFF;border:1px solid rgba(14,65,116,.14);border-radius:999px;padding:9px 13px;margin-bottom:18px;box-shadow:0 8px 22px rgba(14,65,116,.16)}
+.kd-template-brand-logo{display:inline-flex;align-items:center}.kd-template-brand-logo img{display:block;height:24px;width:auto;max-width:128px}.kd-template-brand-name{display:inline-flex;align-items:baseline;font-size:13px;line-height:1;color:#0E4174;letter-spacing:-.02em}.kd-template-brand-name b{font-weight:800}.kd-template-brand-name strong{font-weight:800;color:#FF7F32}
 .kd-sender-stack{display:flex;flex-direction:column;gap:3px;margin-bottom:20px}.kd-sender-caption{font-size:10px;letter-spacing:.16em;font-weight:800;color:#6B829A}.kd-sender-name{font-size:17px;line-height:1.4;color:#0E4174}.kd-sender-dept{font-size:12.5px;line-height:1.5;color:#526B84;font-weight:650}
 .kd-card-fullbg .kd-card-msg{font-size:clamp(19px,1.75vw,26px);line-height:1.58;color:#0E4174;font-weight:650;white-space:pre-wrap;overflow-wrap:anywhere;text-wrap:pretty;text-shadow:0 1px 0 rgba(255,255,255,.65)}
 .kd-card-fullbg .kd-card-msg.kd-card-msg--medium{font-size:clamp(18px,1.55vw,23px);line-height:1.62}
@@ -3691,7 +3698,7 @@ body{background:var(--bg)}
  .kd-card-label{font-size:10px;margin-bottom:12px}
  .kd-sender-line{font-size:12px;gap:8px;margin-bottom:14px}
  .kd-avatar{width:32px;height:32px;font-size:11px}
- .kd-template-brand{margin-bottom:14px;padding:6px 9px}.kd-template-brand-logo img{height:16px}.kd-template-brand-name{font-size:12px}
+ .kd-template-brand{margin-bottom:14px;padding:7px 10px}.kd-template-brand-logo img{height:20px}.kd-template-brand-name{font-size:12px}
  .kd-sender-stack{margin-bottom:14px}.kd-sender-name{font-size:15px}.kd-sender-dept{font-size:11.5px}
  .kd-card-fullbg .kd-card-msg{font-size:18px;line-height:1.56}
  .kd-card-fullbg .kd-card-msg.kd-card-msg--medium{font-size:17px;line-height:1.6}
@@ -4364,7 +4371,7 @@ const state={
   currentUser:(personByEmail(localStorage.getItem('v28-vercel-self-ahakudos-current')||'')||personByEmail(ME_DEFAULT)).email,
   values:new Set(),
   selectedTemplate:(BG&&BG.LIST&&BG.LIST.length?BG.LIST[0].id:'warm'),
-  sendVisibility:'private', // an toàn theo mặc định: người nhận có thể nhận & đọc riêng tư
+  sendVisibility:'public', // V28.24: nhân viên mặc định gửi vào KUDOS CONFESSION; Admin kiểm soát trước khi publish
   prefillRecipient:'',
   selectedRecipient:null,
   manualRecipient:false,
@@ -4482,9 +4489,8 @@ function contextbar(){
  const tenureDays=Number.isFinite(Number(u.tenureDays))?Number(u.tenureDays):null;
  const tenureLine=tenureDays!==null
    ?`Cảm ơn bạn đã đồng hành cùng Ahamove <strong class="tenure-days">${tenureDays.toLocaleString('vi-VN')}</strong> ngày.`
-   :'Cảm ơn bạn đã đồng hành cùng Ahamove trên hành trình này.';
- const orgLine=[u.dept,u.section].filter(Boolean).map(escapeHtml).join(' · ');
- const employeeGreeting=`<b>Xin chào, ${firstName}! <span class="wave" aria-hidden="true">👋</span></b><span>${tenureLine}</span>${orgLine?`<small>${orgLine}</small>`:''}`;
+   :'Cảm ơn bạn đã đồng hành cùng Ahamove.';
+ const employeeGreeting=`<b>Xin chào, ${firstName}! <span class="wave" aria-hidden="true">👋</span></b><span>${tenureLine}</span>`;
  return `<div class="hb-contextbar">
   <div class="hb-context-left"><span class="hb-context-icon">${svg(state.mode==='employee'?'profile':'shield')}</span><div class="greeting">${state.mode==='employee'?employeeGreeting:'<b>Trung tâm quản trị</b><span>Không gian vận hành AhaKudos toàn công ty.</span>'}</div></div>
   <div class="hb-context-right">${state.mode==='employee'?demoRoleSwitcher():'<span class="hb-demo-label"><i></i>Bản trải nghiệm</span>'}<div class="search hb-directory"><input id="hb-directory-search" placeholder="Tìm đồng nghiệp, phòng ban..." autocomplete="off" aria-label="Tìm đồng nghiệp trong dữ liệu mẫu" aria-expanded="false" aria-controls="hb-directory-results">${svg('search')}<div class="recipient-suggestions hidden" id="hb-directory-results"></div></div></div>
@@ -4537,8 +4543,7 @@ function employeeHome(){
     <span class="completion-label">KUDOS ĐẦU TIÊN</span>
     <h3>Chúc mừng bạn!</h3>
     <p>Bạn đã hoàn thành <strong>KUDOS đầu tiên</strong> của mình 🎉</p>
-    <p>Hãy chờ đón một <strong>bất ngờ nho nhỏ</strong> dành riêng cho cột mốc này nhé!</p>
-    <p>Và đừng quên tiếp tục lan tỏa tinh thần ghi nhận — <strong>nhìn thấy điều tích cực, nói ra lời trân trọng và dành KUDOS cho những người đồng đội xứng đáng.</strong></p>
+    <p>Hãy chờ đón một <strong>bất ngờ nho nhỏ</strong> dành riêng cho cột mốc. Và đừng quên tiếp tục lan tỏa tinh thần ghi nhận này nhé!</p>
     <button class="btn primary wide" data-page="send-kudos">Gửi KUDOS ngay →</button>
    </div>
   </article>`:`
@@ -4674,7 +4679,7 @@ function composeRecord(){
    recipientName:manual?manualName:(r?r.name:''),recipientDept:manual?manualDept:(r?r.dept:''),recipientEmail:manual?manualEmail:(r?r.email:rawEmail),
    message:(document.querySelector('#message')?document.querySelector('#message').value:'')||'',
    templateId:state.selectedTemplate,values:[...state.values],
-   visibility:state.sendVisibility,publicConsent:state.sendVisibility==='public'?'pending':'none',
+   visibility:'public',publicConsent:'pending',
    ctaUrl:'#'
  };
 }
@@ -4688,7 +4693,7 @@ return `<section class="page active kudos-compose-page">
   </div>
   <div class="ch-art">${ART?ART.heroCharacter():''}<span class="ch-glow" aria-hidden="true"></span></div>
  </div>
- <div class="hb-compose-steps" aria-label="Các bước gửi KUDOS"><span class="hb-step-intro">GỬI MỘT LỜI GHI NHẬN</span><ol><li><span>01</span>Người nhận & background</li><li><span>02</span>Nội dung KUDOS</li><li><span>03</span>Xem trước KUDOS</li><li><span>04</span>Phạm vi & gửi</li></ol></div>
+ <div class="hb-compose-steps" aria-label="Các bước gửi KUDOS"><span class="hb-step-intro">GỬI MỘT LỜI GHI NHẬN</span><ol><li><span>01</span>Người nhận & background</li><li><span>02</span>Nội dung KUDOS</li><li><span>03</span>Xem trước KUDOS</li><li><span>04</span>Gửi & chờ Admin duyệt</li></ol></div>
  <div class="form-layout kudos-compose-layout">
   <article class="card form-card kudos-compose-form">
    <div class="field recipient-search-field">
@@ -4706,11 +4711,11 @@ return `<section class="page active kudos-compose-page">
     <div id="recipient-manual-mode" class="recipient-manual-mode ${state.manualRecipient?'':'hidden'}">
       <div class="recipient-manual-grid">
         <div><label for="recipient-manual-name">Họ tên người nhận</label><input id="recipient-manual-name" class="input" type="text" maxlength="120" placeholder="Nhập họ tên"></div>
-        <div><label for="recipient-manual-dept">Phòng ban / Đơn vị</label><input id="recipient-manual-dept" class="input" type="text" maxlength="120" placeholder="Nhập phòng ban hoặc đơn vị"></div>
+        <div><label for="recipient-manual-dept">Phòng ban / Bộ phận</label><input id="recipient-manual-dept" class="input" type="text" maxlength="120" placeholder="Nhập phòng ban hoặc bộ phận"></div>
       </div>
       <label for="recipient-manual-email">Email liên hệ</label>
       <input id="recipient-manual-email" class="input" type="email" autocomplete="off" placeholder="name@example.com">
-      <span class="field-hint">Có thể nhập email ngoài @ahamove.com. KUDOS vẫn có thể được gửi riêng hoặc đề xuất lên KUDOS CONFESSION; Admin là người quyết định cuối cùng.</span>
+      <span class="field-hint">Có thể nhập email ngoài @ahamove.com. KUDOS sẽ được đưa vào hàng chờ KUDOS CONFESSION; Admin là người duyệt trước khi hiển thị công khai.</span>
     </div>
    </div>
    <div class="field template-field">
@@ -4774,23 +4779,10 @@ return `<section class="page active kudos-compose-page">
     <p class="email-preview-note">Email chỉ thông báo rằng có KUDOS mới và dẫn vào màn này; nội dung lời ghi nhận không hiển thị trực tiếp trong email.</p>
    </section>
 
-   <div class="compose-continue"><button type="button" class="btn primary" id="continue-visibility">Tiếp tục: Chọn phạm vi hiển thị <span aria-hidden="true">→</span></button></div>
-
-   <div class="field visibility-field" id="visibility-field">
-    <label id="visibility-label">Ai có thể xem KUDOS này?</label>
-    <span class="field-hint">Mặc định là riêng tư. Nếu chọn KUDOS CONFESSION, Admin sẽ duyệt trước khi lời ghi nhận xuất hiện trên bảng.</span>
-    <div class="visibility-options" role="group" aria-labelledby="visibility-label">
-     <button type="button" class="visibility-option ${state.sendVisibility==='private'?'selected':''}" data-visibility="private" aria-pressed="${state.sendVisibility==='private'}">
-      <span class="visibility-icon lock" aria-hidden="true">●</span>
-      <div><b>Chỉ gửi riêng cho người nhận</b><p>Chỉ người nhận đọc được. Không xuất hiện trên KUDOS CONFESSION.</p></div>
-      <i aria-hidden="true">✓</i>
-     </button>
-     <button type="button" class="visibility-option ${state.sendVisibility==='public'?'selected':''}" data-visibility="public" aria-pressed="${state.sendVisibility==='public'}">
-      <span class="visibility-icon" aria-hidden="true">◎</span>
-      <div><b>KUDOS CONFESSION</b><p>Sau khi Admin duyệt, KUDOS sẽ hiển thị công khai với <b>họ tên và phòng ban người gửi</b>. Không có chế độ ẩn danh.</p></div>
-      <i aria-hidden="true">✓</i>
-     </button>
-    </div>
+   <div class="confession-default-panel" id="confession-default-panel">
+    <div class="confession-mascot" aria-hidden="true"><span class="confession-brand-mark">${logo(false)}</span></div>
+    <div class="confession-default-copy"><div class="kicker">KUDOS CONFESSION</div><b>Mỗi KUDOS gửi đi mặc định được đề xuất công khai.</b><p>Admin sẽ kiểm tra và duyệt trước khi lời ghi nhận xuất hiện trên KUDOS CONFESSION.</p></div>
+    <span class="confession-default-status">Chờ Admin duyệt</span>
    </div>
    <div class="compose-send-footer">
     <button type="button" class="link-btn" data-modal="rules">Xem quy tắc →</button>
@@ -5369,7 +5361,7 @@ function adminRecognition(){
          <div id="admin-manual-mode" class="recipient-manual-mode hidden">
            <div class="recipient-manual-grid">
              <div><label for="admin-manual-name">Họ tên người nhận</label><input id="admin-manual-name" class="input" type="text" maxlength="120" placeholder="Nhập họ tên"></div>
-             <div><label for="admin-manual-dept">Phòng ban / Đơn vị</label><input id="admin-manual-dept" class="input" type="text" maxlength="120" placeholder="Nhập phòng ban hoặc đơn vị"></div>
+             <div><label for="admin-manual-dept">Phòng ban / Bộ phận</label><input id="admin-manual-dept" class="input" type="text" maxlength="120" placeholder="Nhập phòng ban hoặc bộ phận"></div>
            </div>
            <label for="admin-manual-email">Email liên hệ</label><input id="admin-manual-email" class="input" type="email" placeholder="name@example.com">
            <span class="field-hint">Email ngoài @ahamove.com được phép nhập tự do. KUDOS này sẽ được giữ riêng tư.</span>
@@ -5861,7 +5853,7 @@ async function send(){
    const dept=(document.querySelector('#recipient-manual-dept')?.value||'').trim();
    const email=(document.querySelector('#recipient-manual-email')?.value||'').trim().toLowerCase();
    if(name.length<2){toast('Nhập họ tên người nhận.');return;}
-   if(dept.length<2){toast('Nhập Phòng ban / Đơn vị người nhận.');return;}
+   if(dept.length<2){toast('Nhập Phòng ban / Bộ phận người nhận.');return;}
    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){toast('Nhập email liên hệ hợp lệ.');return;}
    if(email===me().email.toLowerCase()){toast('Bạn không thể gửi cho chính mình.');return;}
    recipient={name,dept,email,manual:true};
@@ -5875,7 +5867,7 @@ async function send(){
  if(text.length<15||text.length>6000){toast('Nhập từ 15 đến 6.000 ký tự cho bản test.');return;}
  if(state.selectedTemplate!=='birthday'&&state.values.size===0){toast('Hãy chọn ít nhất 1 Giá trị văn hóa.');return;}
  const first=sentBy(me().email).length===0;
- const payload={senderEmail:me().email,recipientEmail:recipient.email,recipientManual:!!recipient.manual,recipientName:recipient.name,recipientDept:recipient.dept,message:text,values:[...state.values],templateId:state.selectedTemplate,visibility:state.sendVisibility};
+ const payload={senderEmail:me().email,recipientEmail:recipient.email,recipientManual:!!recipient.manual,recipientName:recipient.name,recipientDept:recipient.dept,message:text,values:[...state.values],templateId:state.selectedTemplate,visibility:'public'};
  const fingerprint=JSON.stringify(payload);
  if(!window.v27PendingRequest||window.v27PendingRequest.fingerprint!==fingerprint)window.v27PendingRequest={fingerprint,requestId:uid()};
  payload.requestId=window.v27PendingRequest.requestId;
@@ -5895,7 +5887,7 @@ function escapeHtml(str=''){return String(str).replace(/[&<>"']/g,m=>({'&':'&amp
 function showSuccessBanner(record,isFirst){
  const root=document.querySelector('#toast-root');root.querySelector('.kudos-success-banner')?.remove();
  const b=document.createElement('div');b.className='kudos-success-banner'+(isFirst?' first-kudos-banner':'');b.setAttribute('role','status');
- const vis=record.visibility==='public'?'KUDOS CONFESSION · đang chờ Admin duyệt.':'KUDOS riêng tư · đang chờ Admin duyệt trước khi gửi email.';
+ const vis='KUDOS CONFESSION · đang chờ Admin duyệt.';
  b.innerHTML=`<div class="success-banner-icon">${isFirst?'🎉':'✓'}</div><div class="success-banner-copy"><strong>${isFirst?'Chúc mừng! Bạn vừa gửi KUDOS đầu tiên':'Đã lưu lời ghi nhận vào Google Sheets'}</strong><span>${escapeHtml(mailStatusText(record))} · Email thật chỉ gửi về chủ bản test.</span><em>${vis}</em></div><button class="success-banner-close" aria-label="Đóng">×</button>`;
  root.appendChild(b);requestAnimationFrame(()=>b.classList.add('show'));const close=()=>b.remove();b.querySelector('button').onclick=close;setTimeout(close,6500);
 }
