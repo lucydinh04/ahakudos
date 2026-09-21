@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#123b67">
   <title>AhaKudos V27 — Test công ty</title>
+  <meta name="ahakudos-build" content="V28.27-HERO-CACHEBUST">
   <meta name="description" content="AhaKudos V27 — thử bằng tài khoản công ty, chỉ người tạo, email khóa về chính bạn.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1827,7 +1828,7 @@ td b{font-size:14px}
 
 /* V28.25 — user-requested mascot + plain logo refresh */
 .public-feed-mascot-card{background:linear-gradient(180deg,#F8FBFF 0%,#FFF7EF 100%);border-color:#DCE8F3}
-.public-feed-mascot-wrap{display:flex;justify-content:center;align-items:center;padding:8px 8px 2px}
+.public-feed-mascot-wrap{display:flex;justify-content:center;align-items:center;padding:2px 8px 6px}
 .public-feed-mascot-wrap img{display:block;width:min(100%,260px);height:auto;object-fit:contain;filter:drop-shadow(0 14px 28px rgba(14,65,116,.12))}
 .public-feed-mascot-card p{font-size:14px;line-height:1.75;color:#5f7188;text-align:left;margin:6px 0 0}
 .preview-message .preview-logo.plain,
@@ -3730,7 +3731,7 @@ body{background:var(--bg)}
 }
 </style>
 <style>
-/* V28.26 — KUDOS content format helper */
+/* V28.27 — KUDOS content format helper */
 .kudos-content-format{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 10px;padding:11px 12px;border:1px solid #DCE8F3;border-radius:14px;background:#F8FBFF;color:#365675;font-size:12.5px;line-height:1.5}
 .kudos-content-format>b{width:100%;font-size:13px;color:#0E4174}
 .kudos-content-format span{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #E3EBF4;border-radius:999px;padding:6px 9px}
@@ -4685,7 +4686,7 @@ function publicFeedPage(){
          <div class="public-stat"><strong>${list.reduce((s,k)=>s+Object.values(k.reactions||{}).reduce((a,b)=>a+Number(b||0),0),0)}</strong><span>Reaction</span></div>
        </article>
        <article class="card public-feed-side-card public-feed-mascot-card">
-         <div class="rail-title"><span>Linh vật Ahamove</span></div>
+         
          <div class="public-feed-mascot-wrap">${mascotIllustration()}</div>
          <p>Một lời cảm ơn nhỏ có thể bắt đầu từ hôm nay — gửi một KUDOS để ghi nhận điều tốt đẹp bạn vừa nhìn thấy.</p>
        </article>
@@ -5243,7 +5244,7 @@ function adminQuality(){
   min-height:420px;
   padding:52px 58px;
   background-color:#0e4174!important;
-  background-image:linear-gradient(90deg,rgba(5,35,76,.38) 0%,rgba(5,35,76,.20) 34%,rgba(5,35,76,.04) 55%,rgba(5,35,76,0) 72%),url('/backgrounds/home-launch-hero.png')!important;
+  background-image:linear-gradient(90deg,rgba(5,35,76,.38) 0%,rgba(5,35,76,.20) 34%,rgba(5,35,76,.04) 55%,rgba(5,35,76,0) 72%),url('/backgrounds/home-launch-hero-v2827.png')!important;
   background-size:cover!important;
   background-position:center center!important;
   background-repeat:no-repeat!important;
@@ -5274,7 +5275,7 @@ function adminQuality(){
 .hb-contextbar .greeting .tenure-days{color:#FF7417;font-weight:800}
 .hb-contextbar .greeting small{display:block;margin-top:3px;font-size:12.5px;line-height:1.5;color:#0E4174;font-weight:700}
 .hb-home .hb-hero{
-  background-image:linear-gradient(90deg,rgba(5,35,76,.34) 0%,rgba(5,35,76,.17) 37%,rgba(5,35,76,.02) 58%,rgba(5,35,76,0) 72%),url('/backgrounds/home-launch-hero.png')!important;
+  background-image:linear-gradient(90deg,rgba(5,35,76,.34) 0%,rgba(5,35,76,.17) 37%,rgba(5,35,76,.02) 58%,rgba(5,35,76,0) 72%),url('/backgrounds/home-launch-hero-v2827.png')!important;
   background-position:center center!important;
 }
 @media(max-width:720px){
