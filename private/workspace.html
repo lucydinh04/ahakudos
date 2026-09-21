@@ -3808,8 +3808,6 @@ body{background:var(--bg)}
 '<meta name="viewport" content="width=device-width,initial-scale=1">' +
 '<meta name="color-scheme" content="light">' +
 '<title>' + esc(subject(rec)) + '</title>' +
-'<link rel="preconnect" href="https://fonts.googleapis.com">' +
-'<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap">' +
 '<style>html,body,body *,body *::before,body *::after{font-family:\'Lexend\',sans-serif!important}@media screen and (max-width:480px){.em-outer{padding:14px 6px!important}.em-hero-pad{padding:14px 14px 0!important}.em-body-pad{padding:18px 16px 4px!important}.em-cta-pad a{padding:14px 26px!important}}</style>' +
 '</head>' +
 '<body style="margin:0;padding:0;background:#F3F7FC;font-family:\'Lexend\',sans-serif;color:#122B4A;">' +
@@ -4256,10 +4254,10 @@ function banner(id){return BANNERS[id]||null;}
 function buildReceiveEmail(k){
  const nb=banner('new_kudos_received')||{};
  const ev=(typeof eventById==='function'?eventById(k&&k.templateId):null);
- const heroUrl=(ev&&ev.url)||nb.image;
- const heroAlt=(ev&&ev.name)?`AhaKudos · ${ev.name}`:nb.headline;
- const subcopy=(ev&&ev.name)?`Bạn vừa nhận được một KUDOS trong sự kiện “${ev.name}”. Mở ra để xem lời ghi nhận nhé!`:nb.subheadline;
- return EMAIL.build(k,{logo:EMAIL.logoData,forPreview:true,ctaLabel:'Mở lời ghi nhận này',hero:{url:heroUrl,alt:heroAlt},subcopy:subcopy});
+ const heroUrl=nb.image;
+ const heroAlt=nb.headline;
+ const subcopy='Mở AhaKudos để xem lời ghi nhận dành cho bạn.';
+ return EMAIL.build(k,{logo:EMAIL.logoData,forPreview:true,ctaLabel:'Xem Kudos',hero:{url:heroUrl,alt:heroAlt},subcopy:subcopy});
 }
 // Thiệp KUDOS ở TRANG CHI TIẾT (đã xác thực): nội dung đầy đủ TRÊN background 3D người gửi chọn.
 function buildKudosCard(k){
