@@ -23,6 +23,19 @@
   ],
   "headers": [
     {
+      "source": "/backgrounds/home-launch-hero-v2830.png",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        },
+        {
+          "key": "X-AhaKudos-Asset",
+          "value": "V28.30-HERO"
+        }
+      ]
+    },
+    {
       "source": "/backgrounds/(.*)",
       "headers": [
         {
