@@ -3080,6 +3080,15 @@ td{font-size:15px;line-height:1.75;padding:16px 14px}
 }
 
 
+/* V28.1.3 — KUDOS preview thay cho email preview */
+.compose-kudos-review{margin-top:30px;scroll-margin-top:132px}
+.kudos-review-recipient{max-width:760px;margin:14px auto 10px;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 16px;border:1px solid #e2e9f1;border-radius:15px;background:#fff;color:#66778d;font-size:13px}
+.kudos-review-recipient strong{color:#173a67;font-size:14px;overflow-wrap:anywhere;text-align:right}
+.kudos-review-canvas{max-width:760px;margin:0 auto;padding:22px;border:1px solid #ecdccf;border-radius:24px;background:linear-gradient(135deg,#fff7ee,#f7f2ff)}
+.kudos-preview-card{width:100%;min-width:0}
+.kudos-preview-card .kd-card{box-shadow:0 14px 36px rgba(20,58,98,.12)!important}
+@media(max-width:640px){.compose-kudos-review{margin-top:22px}.kudos-review-recipient{align-items:flex-start;flex-direction:column;padding:11px 13px}.kudos-review-recipient strong{text-align:left}.kudos-review-canvas{padding:12px;border-radius:18px}.kudos-preview-card .kd-card{padding:18px 10px!important}.kudos-preview-card .kd-card-panel{padding:18px!important}}
+
 /* V19 — background picker + email preview */
 .kudos-background-gallery .template-option{align-items:stretch}
 .kudos-background-gallery .template-thumb{
@@ -3716,13 +3725,13 @@ body{background:var(--bg)}
     var subcopy = opts.subcopy || 'Mở AhaKudos để xem lời ghi nhận dành cho bạn.';
     var logo = opts.logo || EMAIL_LOGO || '';
     var cta = opts.cta || rec.ctaUrl || '#';
-    var ctaLabel = opts.ctaLabel || 'Xem Kudos';
+    var ctaLabel = opts.ctaLabel || 'Mở lời ghi nhận này';
     var rName = firstName(rec.recipientName);
     var ctaAttr = opts.forPreview ? 'href="#" onclick="return false;"' : 'href="' + esc(cta) + '"';
     var logoImg = logo
       ? '<img src="' + logo + '" alt="Ahamove" style="height:28px;display:block;">'
       : '<span style="font-family:\'Lexend\',sans-serif;font-size:20px;font-weight:800;color:#FF7417;">Ahamove</span>';
-    // Hero minh hoạ: ẢNH public HTTPS (Vercel /illustrations/*.png) — hiển thị ổn định trên Gmail desktop & mobile.
+    // Hero minh hoạ: hỗ trợ public HTTPS ở preview hoặc CID inline image ở email thật.
     var heroImg = heroUrl
       ? '<img src="' + esc(heroUrl) + '" alt="' + esc(heroAlt) + '" width="460" style="display:block;width:100%;max-width:460px;height:auto;border:0;outline:none;text-decoration:none;margin:0 auto;border-radius:20px;">'
       : '';
@@ -4109,7 +4118,7 @@ function personalEmailControls(k){
 }
 async function ensureEmailEnabled(){
  if(testConfig.mailEnabled)return true;
- if(!window.confirm('Bật gửi thử đến '+testConfig.owner+'? Khi bật, KUDOS mới cũng tự gửi về CHÍNH hộp thư này. Tối đa 500 lượt gửi KUDOS/ngày; không gửi đến địa chỉ mẫu.'))return false;
+ if(!window.confirm('Bật gửi thử đến '+testConfig.owner+'? Khi bật, KUDOS mới cũng tự gửi về CHÍNH hộp thư này. Tối đa '+testConfig.dailyLimit+' lượt gửi KUDOS/ngày; không gửi đến địa chỉ mẫu.'))return false;
  testConfig=await rpc('batEmail',true);return true;
 }
 async function sendPersonalEmail(id){
@@ -4127,7 +4136,7 @@ function openTestPanel(){
  const time=j?new Date(j.dueAt).toLocaleString('vi-VN'):'';
  document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop"><section class="modal v27-test-modal" role="dialog" aria-modal="true" aria-labelledby="v27-test-title"><button class="modal-close" id="test-close" aria-label="Đóng">×</button><div class="kicker">V28 · VERCEL + GOOGLE</div><h2 id="v27-test-title">Dữ liệu, email & lịch thử</h2><p class="v27-test-description">Giữ giao diện AhaKudos V27. Các nhân vật và địa chỉ trong app là vai mẫu, không phải người dùng đăng nhập thật. Những card quà tặng chưa tạo hoặc trao quà.</p>
  <div class="v27-test-block"><b>1. Google Sheets đã kết nối</b><p>${kudos.length} KUDOS trong bản test. Gửi/nhận dùng cùng một bản ghi.</p><a href="${escapeHtml(testConfig.sheetUrl)}" target="_blank" rel="noopener" class="link-btn">Mở Sheet dữ liệu ↗</a></div>
- <div class="v27-test-block"><b>2. Email công ty duy nhất nhận thử</b><p class="v27-owner">${escapeHtml(testConfig.owner)}</p><p>Email <strong>${testConfig.mailEnabled?'đang BẬT':'đang TẮT'}</strong> · ${testConfig.attemptsToday}/${testConfig.dailyLimit} lần thử hôm nay.</p><small>Khi bật, KUDOS mới tự gửi về bạn. Không gửi lại những KUDOS cũ. MailApp xử lý lệnh gửi không có nghĩa người nhận đã đọc.</small><button class="btn primary" id="test-enable" ${testConfig.mailEnabled?'disabled':''}>${testConfig.mailEnabled?'Đã bật gửi về tôi':'Bật gửi email cho chính tôi'}</button></div>
+ <div class="v27-test-block"><b>2. Email công ty duy nhất nhận thử</b><p class="v27-owner">${escapeHtml(testConfig.owner)}</p><p>Email <strong>${testConfig.mailEnabled?'đang BẬT':'đang TẮT'}</strong> · ${testConfig.attemptsToday}/${testConfig.dailyLimit} lượt gửi KUDOS hôm nay.</p><small>Khi bật, KUDOS mới tự gửi về bạn. Không gửi lại những KUDOS cũ. MailApp xử lý lệnh gửi không có nghĩa người nhận đã đọc.</small><button class="btn primary" id="test-enable" ${testConfig.mailEnabled?'disabled':''}>${testConfig.mailEnabled?'Đã bật gửi về tôi':'Bật gửi email cho chính tôi'}</button></div>
  <div class="v27-test-block"><b>3. Lịch thử một lần</b><p>Không đọc ngày sinh/ngày vào làm thật. Sớm nhất sau 5 phút; Google có thể chạy muộn hơn.</p><label for="test-person">Người nhận mẫu</label><select id="test-person" class="select">${PEOPLE.map(p=>`<option value="${p.email}" ${p.email===state.currentUser?'selected':''}>${escapeHtml(p.name)}</option>`).join('')}</select><label for="test-kind">Lời chúc mẫu</label><select id="test-kind" class="select"><option value="1000">Cảm ơn 1.000 ngày đồng hành</option><option value="birthday">Chúc mừng sinh nhật</option></select><button class="btn secondary" id="test-schedule" ${j&&['PENDING','RUNNING'].includes(j.status)?'disabled':''}>Hẹn email thử sau 5 phút</button><div class="v27-job-status">${j?'Lịch: <b>'+escapeHtml(j.status)+'</b><br>Sớm nhất: '+escapeHtml(time)+(j.kudosId?'<br><button class="link-btn" data-test-open="'+escapeHtml(j.kudosId)+'">Mở KUDOS tự động →</button>':''):'Chưa tạo lịch thử.'}</div></div>
  <div class="v27-test-actions"><button class="btn secondary" id="test-refresh">Kiểm tra trạng thái</button><button class="btn primary" id="test-stop">Dừng tất cả thử nghiệm</button></div><small class="v27-test-footnote">Dừng sẽ khóa lượt gửi mới và xóa lịch thử còn chờ. Không thu hồi email đã gửi. Website yêu cầu mã vào bản test và phiên xác thực. Không chia sẻ mã; chưa có SSO/đăng nhập nhân viên. Dữ liệu đi qua Vercel khi thao tác; chưa nối AhaHandbook hay AI bên ngoài.</small></section></div>`;
  document.querySelector('#test-close').onclick=()=>{if(!testPanelBusy){document.querySelector('#modal-root').innerHTML='';render();}};
@@ -4179,7 +4188,11 @@ function banner(id){return BANNERS[id]||null;}
 // Email nhận Kudos = hero minh hoạ mascot (public URL) + CTA. Dùng chung renderer với email thật.
 function buildReceiveEmail(k){
  const nb=banner('new_kudos_received')||{};
- return EMAIL.build(k,{logo:EMAIL.logoData,forPreview:true,ctaLabel:nb.ctaLabel||'Xem Kudos',hero:{url:nb.image,alt:nb.headline},subcopy:nb.subheadline});
+ const ev=(typeof eventById==='function'?eventById(k&&k.templateId):null);
+ const heroUrl=(ev&&ev.url)||nb.image;
+ const heroAlt=(ev&&ev.name)?`AhaKudos · ${ev.name}`:nb.headline;
+ const subcopy=(ev&&ev.name)?`Bạn vừa nhận được một KUDOS trong sự kiện “${ev.name}”. Mở ra để xem lời ghi nhận nhé!`:nb.subheadline;
+ return EMAIL.build(k,{logo:EMAIL.logoData,forPreview:true,ctaLabel:'Mở lời ghi nhận này',hero:{url:heroUrl,alt:heroAlt},subcopy:subcopy});
 }
 // Thiệp KUDOS ở TRANG CHI TIẾT (đã xác thực): nội dung đầy đủ TRÊN background 3D người gửi chọn.
 function buildKudosCard(k){
@@ -4434,7 +4447,9 @@ function employeeHome(){
    <div class="completion-copy">
     <span class="completion-label">KUDOS ĐẦU TIÊN</span>
     <h3>Chúc mừng bạn!</h3>
-    <p>Bạn đã hoàn thành KUDOS đầu tiên của mình. Chờ đón món quà chào mừng từ Head of Dept. nhé — và tiếp tục phát huy tinh thần ghi nhận, nói ra những điều tích cực bạn nhìn thấy ở đồng nghiệp.</p>
+    <p>Bạn đã hoàn thành <strong>KUDOS đầu tiên</strong> của mình 🎉</p>
+    <p>Hãy chờ đón một <strong>bất ngờ nho nhỏ</strong> dành riêng cho cột mốc này nhé!</p>
+    <p>Và đừng quên tiếp tục lan tỏa tinh thần ghi nhận — <strong>nhìn thấy điều tích cực, nói ra lời trân trọng và dành KUDOS cho những người đồng đội xứng đáng.</strong></p>
     <button class="btn primary wide" data-page="send-kudos">Gửi KUDOS ngay →</button>
    </div>
   </article>`:`
@@ -4573,7 +4588,6 @@ function composeRecord(){
 }
 function sendKudos(){
 return `<section class="page active kudos-compose-page">
- ${bannerHero('compose_hero')}
  <div class="compose-hero">
   <div class="ch-copy">
    <div class="ch-eyebrow">AHAKUDOS · GHI NHẬN & LAN TỎA</div>
@@ -4582,7 +4596,7 @@ return `<section class="page active kudos-compose-page">
   </div>
   <div class="ch-art">${ART?ART.heroCharacter():''}<span class="ch-glow" aria-hidden="true"></span></div>
  </div>
- <div class="hb-compose-steps" aria-label="Các bước gửi KUDOS"><span class="hb-step-intro">GỬI MỘT LỜI GHI NHẬN</span><ol><li><span>01</span>Người nhận & background</li><li><span>02</span>Nội dung KUDOS</li><li><span>03</span>Xem trước email</li><li><span>04</span>Phạm vi & gửi</li></ol></div>
+ <div class="hb-compose-steps" aria-label="Các bước gửi KUDOS"><span class="hb-step-intro">GỬI MỘT LỜI GHI NHẬN</span><ol><li><span>01</span>Người nhận & background</li><li><span>02</span>Nội dung KUDOS</li><li><span>03</span>Xem trước KUDOS</li><li><span>04</span>Phạm vi & gửi</li></ol></div>
  <div class="form-layout kudos-compose-layout">
   <article class="card form-card kudos-compose-form">
    <div class="field recipient-search-field">
@@ -4606,7 +4620,7 @@ return `<section class="page active kudos-compose-page">
      </div>
      <button type="button" class="bg-nav next" data-bg-nav="1" aria-label="Xem các background tiếp theo">›</button>
     </div>
-    <span class="field-hint">Vuốt hoặc dùng mũi tên để xem thêm. Background được áp dụng trực tiếp vào email bên dưới.</span>
+    <span class="field-hint">Vuốt hoặc dùng mũi tên để xem thêm. Background sẽ được dùng khi người nhận mở lời ghi nhận trong AhaKudos.</span>
    </div>
 
    <div class="compose-writing">
@@ -4644,19 +4658,16 @@ return `<section class="page active kudos-compose-page">
     <span class="field-hint" id="ai-values">Gợi ý sẽ được làm nổi nhẹ theo nội dung — bạn luôn là người tự chọn.</span>
    </div>
 
-   <section class="compose-email-review" id="email-preview" aria-labelledby="email-review-title">
+   <section class="compose-kudos-review" id="kudos-preview" aria-labelledby="kudos-review-title">
     <div class="email-review-heading">
-     <div><div class="kicker">EMAIL PREVIEW</div><h2 id="email-review-title" tabindex="-1">Xem trước đúng email người nhận sẽ thấy</h2><p>Bản xem trước dùng cùng khuôn email gửi thử. Cần kiểm tra cách hiển thị trong hộp thư thực tế.</p></div>
+     <div><div class="kicker">KUDOS PREVIEW</div><h2 id="kudos-review-title" tabindex="-1">Xem trước KUDOS mà người ấy sẽ nhận</h2><p>Đây là nội dung đầy đủ người nhận sẽ thấy sau khi bấm “Mở lời ghi nhận này” trong email thông báo.</p></div>
      <span class="email-review-sync"><i aria-hidden="true"></i>Tự động cập nhật</span>
     </div>
-    <div class="email-review-canvas">
-     <div class="email-preview-shell">
-      <div class="email-preview-topbar"><strong>AhaKudos</strong><span>Email mô phỏng</span></div>
-      <div class="email-preview-envelope"><span><b>Đến:</b> <span id="email-preview-to">Chưa chọn người nhận</span></span><span><b>Tiêu đề:</b> <span id="email-preview-subject">—</span></span></div>
-      <iframe id="email-preview-frame" class="email-preview-frame" title="Xem trước email KUDOS" scrolling="no" style="height:520px"></iframe>
-     </div>
+    <div class="kudos-review-recipient"><span>Người nhận</span><strong id="kudos-preview-recipient">Chưa chọn người nhận</strong></div>
+    <div class="kudos-review-canvas">
+      <div id="kudos-preview-card" class="kudos-preview-card" aria-live="polite"></div>
     </div>
-    <p class="email-preview-note">Bản xem trước dùng cùng nguồn dựng với email thật. Hiển thị chính xác trên từng ứng dụng email (Gmail, Outlook…) cần kiểm thử riêng.</p>
+    <p class="email-preview-note">Email chỉ thông báo rằng có KUDOS mới và dẫn vào màn này; nội dung lời ghi nhận không hiển thị trực tiếp trong email.</p>
    </section>
 
    <div class="compose-continue"><button type="button" class="btn primary" id="continue-visibility">Tiếp tục: Chọn phạm vi hiển thị <span aria-hidden="true">→</span></button></div>
@@ -4679,7 +4690,7 @@ return `<section class="page active kudos-compose-page">
    </div>
    <div class="compose-send-footer">
     <button type="button" class="link-btn" data-modal="rules">Xem quy tắc →</button>
-    <div class="form-actions"><button type="button" class="btn secondary" id="preview">Xem lại email ↑</button><button type="button" class="btn primary" id="send">Gửi KUDOS ${svg('send')}</button></div>
+    <div class="form-actions"><button type="button" class="btn secondary" id="preview">Xem lại KUDOS ↑</button><button type="button" class="btn primary" id="send">Gửi KUDOS ${svg('send')}</button></div>
    </div>
   </article>
  </div>
@@ -4805,10 +4816,48 @@ function kudosDetail(){
 
 // ---- Admin (giữ nguyên) ----------------------------------------------------
 // ---- Dashboard dữ liệu thật + lọc ngày + export CSV (feedback #4) ----
-let dashFrom='',dashTo='';
+let dashFrom='',dashTo='',dashDept='';
 function dashFiltered(){return (kudos||[]).filter(r=>{const d=(r.createdAt||'').slice(0,10);if(dashFrom&&d<dashFrom)return false;if(dashTo&&d>dashTo)return false;return true;});}
+function dashScoped(){return dashFiltered().filter(r=>!dashDept||r.recipientDept===dashDept);}
+function deptOptions(){var set={};(kudos||[]).forEach(r=>{if(r.recipientDept)set[r.recipientDept]=1;});return Object.keys(set).sort();}
+// Thanh lọc dùng chung: ngày (preset + tùy chọn) + phòng ban + xuất CSV. exportKey: 'kudos'|'dept'|'culture'.
+function filterBar(exportKey){
+ const opts=deptOptions().map(d=>`<option value="${escapeHtml(d)}" ${dashDept===d?'selected':''}>${escapeHtml(d)}</option>`).join('');
+ return `<style>
+   .dash-filter{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:6px 0 0}
+   .dash-presets{display:flex;gap:6px;flex-wrap:wrap}
+   .chip-btn{border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer}
+   .chip-btn:hover{border-color:#BCD3EA}
+   .dash-range{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+   .dash-range .input,.dash-range .select{height:40px;width:auto}
+   @media(max-width:820px){.dash-filter{flex-direction:column;align-items:stretch}.dash-range{flex-wrap:wrap}}
+  </style>
+  <div class="dash-filter">
+   <div class="dash-presets">
+     <button class="chip-btn" data-dash-preset="7">7 ngày</button>
+     <button class="chip-btn" data-dash-preset="30">30 ngày</button>
+     <button class="chip-btn" data-dash-preset="month">Tháng này</button>
+     <button class="chip-btn" data-dash-preset="all">Tất cả</button>
+   </div>
+   <div class="dash-range">
+     <input id="dash-from" class="input" type="date" value="${dashFrom}"><span>→</span><input id="dash-to" class="input" type="date" value="${dashTo}">
+     <select id="dash-dept" class="select"><option value="">Tất cả phòng ban</option>${opts}</select>
+     <button class="btn secondary" id="dash-apply">Lọc</button>
+     <button class="btn primary" data-export="${exportKey}">⬇ Xuất CSV</button>
+   </div>
+  </div>`;
+}
+function deptAgg(recs){
+ const CULT={fair:'Công bằng & Tôn trọng',share:'Học hỏi & Chia sẻ',grow:'Gắn kết & Cùng phát triển'};
+ const m={};recs.forEach(r=>{const d=r.recipientDept||'—';if(!m[d])m[d]={dept:d,received:0,senders:{},receivers:{},cult:{fair:0,share:0,grow:0}};const o=m[d];o.received++;if(r.senderEmail)o.senders[r.senderEmail]=1;if(r.recipientEmail)o.receivers[r.recipientEmail]=1;(r.values||[]).forEach(v=>{if(o.cult[v]!=null)o.cult[v]++;});});
+ return Object.keys(m).map(k=>{const o=m[k];const top=Object.keys(o.cult).sort((a,b)=>o.cult[b]-o.cult[a])[0];return {dept:o.dept,received:o.received,senders:Object.keys(o.senders).length,receivers:Object.keys(o.receivers).length,topCult:o.received&&o.cult[top]?CULT[top]:'—'};}).sort((a,b)=>b.received-a.received);
+}
+function csvEsc(v){const s=String(v==null?'':v).replace(/"/g,'""');return /[",\n\r]/.test(s)?`"${s}"`:s;}
+function downloadCsv(lines,prefix){try{const csv='﻿'+lines.join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=prefix+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},600);toast('Đã xuất CSV ('+(lines.length-1)+' dòng).');}catch(e){toast('Không xuất được CSV: '+e.message);}}
+function deptExportCsv(){const agg=deptAgg(dashScoped());const head=['Phong_ban','KUDOS_nhan','Nguoi_gui','Nguoi_nhan','Gia_tri_noi_bat'];const lines=[head.join(',')];agg.forEach(a=>lines.push([a.dept,a.received,a.senders,a.receivers,a.topCult].map(csvEsc).join(',')));downloadCsv(lines,'ahakudos_phongban_');}
+function cultureExportCsv(){const recs=dashScoped();const deptSet=[];recs.forEach(r=>{if(r.recipientDept&&deptSet.indexOf(r.recipientDept)<0)deptSet.push(r.recipientDept);});const head=['Phong_ban','Gan_ket_Cung_phat_trien','Hoc_hoi_Chia_se','Cong_bang_Ton_trong'];const lines=[head.join(',')];deptSet.forEach(d=>{const rr=recs.filter(x=>x.recipientDept===d);const c={fair:0,share:0,grow:0};rr.forEach(x=>(x.values||[]).forEach(v=>{if(c[v]!=null)c[v]++;}));lines.push([d,c.grow,c.share,c.fair].map(csvEsc).join(','));});downloadCsv(lines,'ahakudos_giatri_');}
 function adminDataDashboard(){
- const recs=dashFiltered();
+ const recs=dashScoped();
  const uniq=(a)=>Array.from(new Set(a.filter(Boolean))).length;
  const senders=uniq(recs.map(r=>r.senderEmail));
  const receivers=uniq(recs.map(r=>r.recipientEmail));
@@ -4825,30 +4874,16 @@ function adminDataDashboard(){
  const rangeLabel=(dashFrom||dashTo)?`${dashFrom||'…'} → ${dashTo||'…'}`:'toàn bộ';
  return `<article class="card admin-card" style="padding:18px;margin-bottom:14px">
    <style>
-    .dash-filter{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-top:6px}
-    .dash-presets{display:flex;gap:6px;flex-wrap:wrap}
-    .chip-btn{border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer}
-    .chip-btn:hover{border-color:#BCD3EA}
-    .dash-range{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-    .dash-range .input{height:40px;width:auto}
     .dash-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
     .dash-col h4{margin:0 0 10px;font-size:14px;color:var(--navy)}
     .dash-bar-row{display:grid;grid-template-columns:minmax(120px,1.4fr) 2fr auto;gap:10px;align-items:center;margin-bottom:9px;font-size:13px;color:var(--text)}
     .dash-bar{height:9px;background:#EDF2F7;border-radius:999px;overflow:hidden}
     .dash-bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--orange),#FFB55E)}
     .dash-bar-row b{color:var(--navy)}
-    @media(max-width:820px){.dash-breakdown{grid-template-columns:1fr}.dash-filter{flex-direction:column;align-items:stretch}.dash-range{justify-content:space-between}}
+    @media(max-width:820px){.dash-breakdown{grid-template-columns:1fr}}
    </style>
-   <div class="card-head"><div><div class="kicker">DỮ LIỆU THẬT · TỪ GOOGLE SHEET</div><h3>Tổng quan KUDOS</h3><div class="sub">Lọc theo thời gian tạo KUDOS (${rangeLabel}). Xuất CSV để làm báo cáo.</div></div></div>
-   <div class="dash-filter">
-     <div class="dash-presets">
-       <button class="chip-btn" data-dash-preset="7">7 ngày</button>
-       <button class="chip-btn" data-dash-preset="30">30 ngày</button>
-       <button class="chip-btn" data-dash-preset="month">Tháng này</button>
-       <button class="chip-btn" data-dash-preset="all">Tất cả</button>
-     </div>
-     <div class="dash-range"><input id="dash-from" class="input" type="date" value="${dashFrom}"><span>→</span><input id="dash-to" class="input" type="date" value="${dashTo}"><button class="btn secondary" id="dash-apply">Lọc</button><button class="btn primary" id="dash-export">⬇ Xuất CSV (${recs.length})</button></div>
-   </div>
+   <div class="card-head"><div><div class="kicker">DỮ LIỆU THẬT · TỪ GOOGLE SHEET</div><h3>Tổng quan KUDOS</h3><div class="sub">Lọc theo thời gian tạo KUDOS (${rangeLabel})${dashDept?(' · '+escapeHtml(dashDept)):''}. Xuất CSV để làm báo cáo.</div></div></div>
+   ${filterBar('kudos')}
    <div class="metric-grid" style="margin-top:14px">
      ${tile('⌘','Tổng KUDOS',recs.length,rangeLabel==='toàn bộ'?'toàn bộ':'trong khoảng')}
      ${tile('👥','Người gửi',senders,'khác nhau')}
@@ -4864,7 +4899,7 @@ function adminDataDashboard(){
  </article>`;
 }
 function dashExportCsv(){
- const recs=dashFiltered();
+ const recs=dashScoped();
  const CULT={fair:'Cong bang & Ton trong',share:'Hoc hoi & Chia se',grow:'Gan ket & Cung phat trien'};
  const head=['Thoi_gian_tao','Nguoi_gui','Phong_ban_gui','Nguoi_nhan','Phong_ban_nhan','Gia_tri_van_hoa','Pham_vi','Duyet_cong_khai','Kiem_duyet','Email','Noi_dung'];
  const esc=(v)=>{const s=String(v==null?'':v).replace(/"/g,'""');return /[",\n\r]/.test(s)?`"${s}"`:s;};
@@ -4878,7 +4913,7 @@ function dashExportCsv(){
   toast('Đã xuất '+recs.length+' KUDOS ra CSV.');
  }catch(e){toast('Không xuất được CSV: '+e.message);}
 }
-function bindAdminDashboard(){
+function bindAdminFilters(){
  document.querySelectorAll('[data-dash-preset]').forEach(b=>b.addEventListener('click',()=>{
    const p=b.dataset.dashPreset,now=new Date(),iso=d=>d.toISOString().slice(0,10);
    if(p==='all'){dashFrom='';dashTo='';}
@@ -4886,8 +4921,9 @@ function bindAdminDashboard(){
    else{const days=parseInt(p,10),from=new Date(now);from.setDate(now.getDate()-days+1);dashFrom=iso(from);dashTo=iso(now);}
    render();
  }));
- const apply=document.querySelector('#dash-apply');if(apply)apply.addEventListener('click',()=>{dashFrom=(document.querySelector('#dash-from').value||'');dashTo=(document.querySelector('#dash-to').value||'');render();});
- const exp=document.querySelector('#dash-export');if(exp)exp.addEventListener('click',dashExportCsv);
+ const apply=document.querySelector('#dash-apply');if(apply)apply.addEventListener('click',()=>{dashFrom=(document.querySelector('#dash-from').value||'');dashTo=(document.querySelector('#dash-to').value||'');const ds=document.querySelector('#dash-dept');if(ds)dashDept=ds.value;render();});
+ const ds=document.querySelector('#dash-dept');if(ds)ds.addEventListener('change',()=>{dashDept=ds.value;render();});
+ document.querySelectorAll('[data-export]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.export;if(k==='dept')deptExportCsv();else if(k==='culture')cultureExportCsv();else dashExportCsv();}));
 }
 function adminHome(){
 const depts=[
@@ -4936,14 +4972,34 @@ return `<section class="page active">
 </section>`;
 }
 function adminDept(){
- const depts=[['Central Operations',120,82,68,62,210,'Gắn kết & Cùng phát triển'],['Supply Operations',95,64,67,51,176,'Công bằng & Tôn trọng'],['Business Development',70,55,79,46,158,'Gắn kết & Cùng phát triển'],['Application',80,62,78,45,180,'Học hỏi & Chia sẻ'],['Platform',70,49,70,38,140,'Học hỏi & Chia sẻ'],['HR',40,35,88,30,105,'Gắn kết & Cùng phát triển'],['FA',35,22,63,18,68,'Công bằng & Tôn trọng'],['AI Franchise',30,23,77,25,92,'Học hỏi & Chia sẻ']];
- return `<section class="page active"><div class="page-head"><div><div class="kicker">THEO PHÒNG BAN</div><h1>Mức độ ghi nhận & tham gia</h1><p class="page-sub">Theo dõi số lượng song song với tỷ lệ.</p></div></div><article class="card admin-card"><div class="table-wrap"><table><thead><tr><th>Phòng ban</th><th>Nhân sự</th><th>Đã nhận</th><th>Tỷ lệ được ghi nhận</th><th>Đã gửi</th><th>Tổng KUDOS</th><th>Giá trị nổi bật</th></tr></thead><tbody>${depts.map(d=>`<tr><td>${d[0]}</td><td>${d[1]}</td><td>${d[2]}</td><td><span class="bar"><i style="width:${d[3]}%"></i></span>${d[3]}%</td><td>${d[4]}</td><td>${d[5]}</td><td>${d[6]}</td></tr>`).join('')}</tbody></table></div></article></section>`;
+ const recs=dashScoped();
+ const agg=deptAgg(recs);
+ const maxR=Math.max(1,...agg.map(a=>a.received));
+ const rows=agg.length?agg.map(a=>`<tr><td>${escapeHtml(a.dept)}</td><td><span class="bar"><i style="width:${Math.round(a.received/maxR*100)}%"></i></span>${a.received}</td><td>${a.senders}</td><td>${a.receivers}</td><td>${escapeHtml(a.topCult)}</td></tr>`).join(''):`<tr><td colspan="5" style="color:var(--muted);padding:14px">Chưa có dữ liệu trong khoảng lọc.</td></tr>`;
+ return `<section class="page active">
+   <div class="page-head"><div><div class="kicker">THEO PHÒNG BAN</div><h1>Mức độ ghi nhận & tham gia</h1><p class="page-sub">Dữ liệu thật từ KUDOS. Lọc theo thời gian / phòng ban và xuất CSV để báo cáo.</p></div></div>
+   ${filterBar('dept')}
+   <article class="card admin-card" style="padding:16px 18px;margin-top:14px"><div class="table-wrap"><table>
+     <thead><tr><th>Phòng ban</th><th>KUDOS nhận</th><th>Người gửi</th><th>Người nhận</th><th>Giá trị nổi bật</th></tr></thead>
+     <tbody>${rows}</tbody></table></div></article>
+ </section>`;
 }
 function adminCulture(){
-return `<section class="page active"><div class="page-head"><div><div class="kicker">DỮ LIỆU VĂN HÓA</div><h1>Giá trị văn hóa đang được thể hiện</h1><p class="page-sub">Nhìn thấy các Giá trị qua những câu chuyện KUDOS thực tế.</p></div></div>
- <div class="metric-grid" style="grid-template-columns:repeat(3,1fr)">${[['Gắn kết & Cùng phát triển','520 · 42%','285 nhân viên'],['Học hỏi & Chia sẻ','410 · 33%','240 nhân viên'],['Công bằng & Tôn trọng','310 · 25%','195 nhân viên']].map((x,i)=>`<article class="metric"><div class="metric-icon">${i===0?'♥':i===1?'✦':'✓'}</div><span>${x[0]}</span><strong>${x[1]}</strong><em>${x[2]} được ghi nhận</em></article>`).join('')}</div>
- <article class="card admin-card"><div class="card-head"><div><div class="kicker">TỶ TRỌNG</div><h3>Giá trị văn hóa theo toàn công ty</h3></div></div><div class="culture-bars">${[['Gắn kết & Cùng phát triển',42],['Học hỏi & Chia sẻ',33],['Công bằng & Tôn trọng',25]].map(x=>`<div class="culture-item"><div class="culture-bar-head"><span>${x[0]}</span><b>${x[1]}%</b></div><div class="culture-line"><i style="width:${x[1]}%"></i></div></div>`).join('')}</div></article></section>`;
+ const recs=dashScoped();
+ const CULT={grow:'Gắn kết & Cùng phát triển',share:'Học hỏi & Chia sẻ',fair:'Công bằng & Tôn trọng'};
+ const cnt={fair:0,share:0,grow:0};recs.forEach(r=>(r.values||[]).forEach(v=>{if(cnt[v]!=null)cnt[v]++;}));
+ const total=(cnt.fair+cnt.share+cnt.grow)||1;
+ const bars=['grow','share','fair'].map(k=>`<div class="culture-item"><div class="culture-bar-head"><b>${CULT[k]}</b><span>${cnt[k]} · ${Math.round(cnt[k]/total*100)}%</span></div><div class="culture-line"><i style="width:${Math.round(cnt[k]/total*100)}%"></i></div></div>`).join('');
+ const deptSet=[];recs.forEach(r=>{if(r.recipientDept&&deptSet.indexOf(r.recipientDept)<0)deptSet.push(r.recipientDept);});
+ const rows=deptSet.length?deptSet.map(d=>{const rr=recs.filter(x=>x.recipientDept===d);const c={fair:0,share:0,grow:0};rr.forEach(x=>(x.values||[]).forEach(v=>{if(c[v]!=null)c[v]++;}));return `<tr><td>${escapeHtml(d)}</td><td>${c.grow}</td><td>${c.share}</td><td>${c.fair}</td></tr>`;}).join(''):`<tr><td colspan="4" style="color:var(--muted);padding:14px">Chưa có dữ liệu trong khoảng lọc.</td></tr>`;
+ return `<section class="page active">
+   <div class="page-head"><div><div class="kicker">DỮ LIỆU VĂN HÓA</div><h1>Giá trị văn hóa đang được thể hiện</h1><p class="page-sub">Dữ liệu thật từ KUDOS (theo lượt chọn giá trị). Lọc theo thời gian / phòng ban và xuất CSV.</p></div></div>
+   ${filterBar('culture')}
+   <article class="card admin-card" style="padding:16px 18px;margin-top:14px"><div class="card-head"><div><div class="kicker">TỶ TRỌNG</div><h3>Toàn công ty</h3></div></div><div class="culture-bars">${bars}</div></article>
+   <article class="card admin-card" style="padding:16px 18px;margin-top:14px"><div class="card-head"><div><div class="kicker">THEO PHÒNG BAN</div><h3>Lượt giá trị theo phòng ban</h3></div></div><div class="table-wrap"><table><thead><tr><th>Phòng ban</th><th>Gắn kết & Cùng phát triển</th><th>Học hỏi & Chia sẻ</th><th>Công bằng & Tôn trọng</th></tr></thead><tbody>${rows}</tbody></table></div></article>
+ </section>`;
 }
+
 function clientNormUrl(u){
  const s=String(u||'').trim();if(!s)return '';
  const m=s.match(/drive\.google\.com\/file\/d\/([A-Za-z0-9_-]{10,})/)||s.match(/[?&]id=([A-Za-z0-9_-]{10,})/);
@@ -4973,7 +5029,10 @@ function adminEvents(){
    .ev-check{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink)}
    .ev-date-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
    .ev-preview{position:sticky;top:96px}
-   .ev-prev-thumb{width:100%;height:200px;border-radius:18px;background:#FFF3E6 center/cover no-repeat;border:1px solid var(--line);box-shadow:0 8px 22px rgba(23,58,94,.1)}
+   .ev-prev-kudos{width:100%;min-height:250px;border-radius:18px;background:#FFF3E6 center/cover no-repeat;border:1px solid var(--line);box-shadow:0 8px 22px rgba(23,58,94,.1);padding:18px;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
+   .ev-prev-kudos-card{width:min(92%,420px);background:rgba(255,255,255,.9);border-radius:16px;padding:18px;box-shadow:0 10px 25px rgba(23,58,94,.14)}
+   .ev-prev-kudos-card b{display:block;color:var(--navy);font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:9px}.ev-prev-kudos-card p{font-size:14px;line-height:1.7;color:var(--text);margin:0}.ev-prev-kudos-card span{display:inline-block;margin-top:10px;background:#EAF2FB;color:#2F6FB8;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:700}
+   .ev-email-sample{margin-top:16px;border:1px solid var(--line);border-radius:18px;background:#fff;overflow:hidden}.ev-email-sample img{display:block;width:100%;aspect-ratio:16/8.5;object-fit:cover;background:#F7F9FC}.ev-email-copy{padding:15px;text-align:center}.ev-email-copy b{display:block;color:var(--navy);font-size:15px}.ev-email-copy p{font-size:13px;line-height:1.6;color:var(--muted);margin:7px 0 12px}.ev-email-copy span{display:inline-block;background:var(--orange);color:#fff;border-radius:12px;padding:10px 16px;font-size:13px;font-weight:800}
    .ev-hint{font-size:13px;color:var(--muted);line-height:1.7;margin-top:6px}
    .ev-list{display:grid;gap:12px;margin-top:14px}
    .ev-row{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff}
@@ -4985,7 +5044,7 @@ function adminEvents(){
    .ev-actions{display:flex;gap:6px;flex-wrap:wrap}.ev-actions .btn{padding:8px 12px;font-size:13px}
    @media(max-width:900px){.ev-layout{grid-template-columns:1fr}.ev-preview{position:static}.ev-row{flex-wrap:wrap}.ev-actions{width:100%;justify-content:flex-end}}
   </style>
-  <div class="page-head"><div><div class="kicker">NỀN THEO SỰ KIỆN</div><h1>Quản lý background sự kiện</h1><p class="page-sub">Thêm background theo dịp bằng URL ảnh (hỗ trợ Google Drive “Bất kỳ ai có link”). Sự kiện đang bật + trong lịch sẽ hiện trong danh sách chọn khi nhân viên gửi Kudos và trên trang chi tiết.</p></div></div>
+  <div class="page-head"><div><div class="kicker">NỀN THEO SỰ KIỆN</div><h1>Quản lý background sự kiện</h1><p class="page-sub">Thêm template/background theo dịp bằng URL ảnh (hỗ trợ Google Drive “Bất kỳ ai có link”). Sự kiện đang bật + trong lịch sẽ hiện trong picker của nhân viên, trang chi tiết và có thể dùng làm visual notification email của event.</p></div></div>
   <div class="ev-layout">
    <article class="card admin-card ev-form" style="padding:18px">
      <div class="card-head"><div><div class="kicker">${ev?'SỬA SỰ KIỆN':'THÊM SỰ KIỆN'}</div><h3>${ev?escapeHtml(ev.name):'Sự kiện mới'}</h3></div>${ev?'<button class="link-btn" id="ev-cancel">+ Thêm mới</button>':''}</div>
@@ -5000,9 +5059,12 @@ function adminEvents(){
      <div class="form-actions" style="display:flex;gap:8px;justify-content:flex-end"><button class="btn primary" id="ev-save" data-id="${ev?ev.id:''}">${ev?'Lưu thay đổi':'Thêm sự kiện'}</button></div>
    </article>
    <aside class="card admin-card ev-preview" style="padding:18px">
-     <div class="card-head"><div><div class="kicker">XEM TRƯỚC</div><h3>Giống phía nhân viên</h3></div></div>
-     <div class="ev-prev-thumb" id="ev-prev" style="${pUrl?`background-image:url('${escapeHtml(pUrl)}')`:''}"></div>
-     <div class="ev-hint">Đây là cách nền hiển thị trong ô chọn background và nền thiệp ở trang chi tiết KUDOS.</div>
+     <div class="card-head"><div><div class="kicker">XEM TRƯỚC</div><h3>Đồng bộ phía nhân viên & email</h3></div></div>
+     <div class="ev-prev-kudos" id="ev-prev" style="${pUrl?`background-image:url('${escapeHtml(pUrl)}')`:''}">
+       <div class="ev-prev-kudos-card"><b>Lời ghi nhận dành cho bạn</b><p>Cảm ơn bạn đã chủ động hỗ trợ team hoàn thành công việc đúng hạn. Đây là nội dung mẫu để xem background.</p><span>Gắn kết & Cùng phát triển</span></div>
+     </div>
+     <div class="ev-hint">Preview KUDOS giống màn người nhận: nội dung nằm trên background sự kiện đã chọn.</div>
+     <div class="ev-email-sample"><img id="ev-mail-img" src="${escapeHtml(pUrl)}" alt=""><div class="ev-email-copy"><b>Bạn vừa nhận được một KUDOS mới</b><p>Email không hiển thị nội dung lời ghi nhận; hình sự kiện đóng vai trò visual notification khi event này được dùng.</p><span>Mở lời ghi nhận này</span></div></div>
    </aside>
   </div>
   <article class="card admin-card" style="padding:16px 18px;margin-top:14px"><div class="card-head"><div><div class="kicker">DANH SÁCH</div><h3>Sự kiện (${list.length})</h3></div></div>
@@ -5011,8 +5073,8 @@ function adminEvents(){
  </section>`;
 }
 function bindAdminEvents(){
- const prev=document.querySelector('#ev-prev');const urlIn=document.querySelector('#ev-url');
- if(urlIn&&prev)urlIn.addEventListener('input',()=>{const u=clientNormUrl(urlIn.value);prev.style.backgroundImage=u?`url('${u}')`:'';});
+ const prev=document.querySelector('#ev-prev');const mailImg=document.querySelector('#ev-mail-img');const urlIn=document.querySelector('#ev-url');
+ if(urlIn&&prev)urlIn.addEventListener('input',()=>{const u=clientNormUrl(urlIn.value);prev.style.backgroundImage=u?`url('${u}')`:'';if(mailImg)mailImg.src=u||'';});
  const cancel=document.querySelector('#ev-cancel');if(cancel)cancel.addEventListener('click',()=>{editingEventId=null;render();});
  const save=document.querySelector('#ev-save');
  if(save)save.addEventListener('click',async()=>{
@@ -5125,6 +5187,7 @@ function bindAdminQuality(){
  });
 }
 
+
 function adminRecognition(){
  const recognitionTypes=[
   ['acting','Acting / Đảm nhận vai trò tạm thời','Ghi nhận một giai đoạn chủ động nhận thêm vai trò hoặc trách nhiệm.'],
@@ -5227,6 +5290,7 @@ function adminNotify(){
    <article class="card admin-card notif-list">${rows||`<div class="empty"><div class="icon">✉</div><h3>Chưa có email thông báo</h3><p>Khi có KUDOS mới, email báo Admin sẽ xuất hiện tại đây.</p></div>`}</article>
  </section>`;
 }
+
 function adminOps(){
  const birthdayRows=[
    {id:'b1',initials:'PH',name:'Phương Hoa',dept:'Application',email:'hoa.phuong@ahamove.com',date:'01/09',when:'Ngày mai'},
@@ -5358,7 +5422,7 @@ function bindHandbookUI(){
  }
  document.querySelectorAll('.field').forEach(field=>{const label=field.querySelector('label');const control=field.querySelector('input[id],textarea[id],select[id]');if(label&&control)label.setAttribute('for',control.id);});
  const sendPreview=document.querySelector('#preview');
- if(sendPreview)sendPreview.addEventListener('click',()=>{const review=document.querySelector('#email-preview');review?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});document.querySelector('#email-review-title')?.focus({preventScroll:true});});
+ if(sendPreview)sendPreview.addEventListener('click',()=>{const review=document.querySelector('#kudos-preview');review?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});document.querySelector('#kudos-review-title')?.focus({preventScroll:true});});
  const adminPreview=document.querySelector('#admin-recognition-preview');
  if(adminPreview)adminPreview.addEventListener('click',()=>{document.querySelector('.admin-recognition-preview')?.scrollIntoView({behavior:'smooth',block:'start'});});
  document.querySelectorAll('[data-modal="rules"]').forEach(btn=>btn.addEventListener('click',()=>{
@@ -5394,7 +5458,7 @@ function bind(){
  if(state.page==='admin-notify') bindAdminNotify();
  if(state.page==='admin-quality') bindAdminQuality();
  if(state.page==='admin-events') bindAdminEvents();
- if(state.page==='admin-home') bindAdminDashboard();
+ if(state.page==='admin-home'||state.page==='admin-dept'||state.page==='admin-culture') bindAdminFilters();
  document.querySelectorAll('[data-cta-route]').forEach(b=>b.addEventListener('click',()=>ctaGo(b.dataset.ctaRoute,b.dataset.ctaId)));
  if(state.mode==='employee'&&state.page==='employee-home') bindHome();
  document.querySelectorAll('.queue-actions button').forEach(b=>b.addEventListener('click',()=>{toast('Trạng thái duyệt minh họa, chưa lưu server.'); b.closest('.queue-item').style.opacity='.55'}));
@@ -5533,17 +5597,13 @@ function qualityCoach(text,ctx){
  return {nudge};
 }
 function updatePreview(){
- const frame=document.querySelector('#email-preview-frame');
- if(!frame)return;
+ const card=document.querySelector('#kudos-preview-card');
+ if(!card)return;
  const rec=composeRecord();
- // Envelope reflects the FINAL data (recipient + subject from same source).
- const toEl=document.querySelector('#email-preview-to');
- const subEl=document.querySelector('#email-preview-subject');
- if(toEl)toEl.textContent=rec.recipientName?`${rec.recipientName} <${rec.recipientEmail}>`:(rec.recipientEmail||'Chưa chọn người nhận');
- if(subEl)subEl.textContent=EMAIL.subject(rec);
- // The preview IS the email (same renderer) → no stale data, no divergence.
- frame.srcdoc=buildReceiveEmail(rec);
- sizeFrameOnLoad(frame);
+ const recipient=document.querySelector('#kudos-preview-recipient');
+ if(recipient)recipient.textContent=rec.recipientName?`${rec.recipientName} · ${rec.recipientEmail}`:(rec.recipientEmail||'Chưa chọn người nhận');
+ // Preview dùng đúng renderer của màn KUDOS detail để người gửi thấy chính xác nội dung + background người nhận sẽ mở ra.
+ card.innerHTML=buildKudosCard(rec);
 }
 function renderSelectedRecipient(employee){
  const box=document.querySelector('#selected-recipient');if(!box)return;
