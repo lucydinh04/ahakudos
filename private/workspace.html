@@ -4474,8 +4474,15 @@ function demoRoleSwitcher(){
 }
 function contextbar(){
  const u=me();
+ const firstName=escapeHtml((u.name||'bạn').split(' ').slice(-1)[0]);
+ const tenureDays=Number.isFinite(Number(u.tenureDays))?Number(u.tenureDays):null;
+ const tenureLine=tenureDays!==null
+   ?`Cảm ơn bạn đã đồng hành cùng Ahamove <strong class="tenure-days">${tenureDays.toLocaleString('vi-VN')}</strong> ngày.`
+   :'Cảm ơn bạn đã đồng hành cùng Ahamove trên hành trình này.';
+ const orgLine=[u.dept,u.section].filter(Boolean).map(escapeHtml).join(' · ');
+ const employeeGreeting=`<b>Xin chào, ${firstName}! <span class="wave" aria-hidden="true">👋</span></b><span>${tenureLine}</span>${orgLine?`<small>${orgLine}</small>`:''}`;
  return `<div class="hb-contextbar">
-  <div class="hb-context-left"><span class="hb-context-icon">${svg(state.mode==='employee'?'profile':'shield')}</span><div class="greeting"><b>${state.mode==='employee'?`Xin chào, ${escapeHtml(u.name.split(' ').slice(-1)[0])}!`:'Trung tâm quản trị'}</b><span>${state.mode==='employee'?'Cùng lan tỏa điều tích cực mỗi ngày nhé!':'Không gian vận hành AhaKudos toàn công ty.'}</span></div></div>
+  <div class="hb-context-left"><span class="hb-context-icon">${svg(state.mode==='employee'?'profile':'shield')}</span><div class="greeting">${state.mode==='employee'?employeeGreeting:'<b>Trung tâm quản trị</b><span>Không gian vận hành AhaKudos toàn công ty.</span>'}</div></div>
   <div class="hb-context-right">${state.mode==='employee'?demoRoleSwitcher():'<span class="hb-demo-label"><i></i>Bản trải nghiệm</span>'}<div class="search hb-directory"><input id="hb-directory-search" placeholder="Tìm đồng nghiệp, phòng ban..." autocomplete="off" aria-label="Tìm đồng nghiệp trong dữ liệu mẫu" aria-expanded="false" aria-controls="hb-directory-results">${svg('search')}<div class="recipient-suggestions hidden" id="hb-directory-results"></div></div></div>
  </div>`;
 }
@@ -4510,9 +4517,6 @@ function employeeHome(){
  const latest=rec[0];
  const sentCount=sentBy(u.email).length;
  const birthdaySuggestions=birthdaySuggestionsFor(u.email);
- const firstName=escapeHtml((u.name||'bạn').split(' ').slice(-1)[0]);
- const tenureDays=Number.isFinite(Number(u.tenureDays))?Number(u.tenureDays):null;
- const tenureCopy=tenureDays!==null?`Cảm ơn bạn đã đồng hành cùng Ahamove <strong>${tenureDays.toLocaleString('vi-VN')}</strong> ngày.`:`Cảm ơn bạn đã đồng hành cùng Ahamove trên hành trình này.`;
  // Banner chúc mừng người NHẬN khi có KUDOS đầu tiên (mỗi user, ẩn được).
  const firstRecvBanner=(rec.length>0&&!firstRecvDismissed(u.email))?`
   <div class="first-recv-banner" role="status">
@@ -4559,7 +4563,6 @@ return `<section class="page active hb-home">
  ${firstRecvBanner}
  <article class="recognition-hero hb-hero">
   <div class="moment-copy">
-   <div class="hb-personal-greeting"><b>Xin chào, ${firstName} 👋</b><span>${tenureCopy}</span>${u.dept?`<small>${escapeHtml(u.dept)}${u.section?` · ${escapeHtml(u.section)}`:''}</small>`:''}</div>
    <span class="eyebrow">KHOẢNH KHẮC ĐƯỢC GHI NHẬN · AHAMOVE</span>
    <h1>“Điều mình làm <br>đã được nhìn thấy.”</h1>
    <p>Một lời ghi nhận cụ thể giúp đóng góp của bạn được lưu lại và trở thành một câu chuyện văn hóa có thể tiếp tục lan tỏa.</p>
@@ -5247,6 +5250,23 @@ function adminQuality(){
   .hb-home .hb-hero{min-height:455px;background-position:63% center!important}
   .hb-home .hb-hero .moment-copy{max-width:78%}
   .hb-home .hb-hero-actions{grid-template-columns:1fr!important;max-width:230px}
+}
+/* V28.19 — personal greeting lives in context strip, not in hero */
+.hb-contextbar .greeting{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+.hb-contextbar .greeting b{font-size:17px;line-height:1.4;color:#172331}
+.hb-contextbar .greeting b .wave{display:inline;font-size:18px}
+.hb-contextbar .greeting span{font-size:14px;line-height:1.55;color:#5f7188;margin-top:2px}
+.hb-contextbar .greeting .tenure-days{color:#FF7417;font-weight:800}
+.hb-contextbar .greeting small{display:block;margin-top:3px;font-size:12.5px;line-height:1.5;color:#0E4174;font-weight:700}
+.hb-home .hb-hero{
+  background-image:linear-gradient(90deg,rgba(5,35,76,.34) 0%,rgba(5,35,76,.17) 37%,rgba(5,35,76,.02) 58%,rgba(5,35,76,0) 72%),url('/backgrounds/home-launch-hero.png')!important;
+  background-position:center center!important;
+}
+@media(max-width:720px){
+ .hb-contextbar .greeting b{font-size:16px}
+ .hb-contextbar .greeting span{font-size:13px}
+ .hb-contextbar .greeting small{font-size:12px}
+ .hb-home .hb-hero{background-position:60% center!important}
 }
 
 /* V28.18 — Master Data greeting + public comments */
