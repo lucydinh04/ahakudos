@@ -1824,6 +1824,26 @@ td b{font-size:14px}
   }
 }
 
+
+/* V28.25 — user-requested mascot + plain logo refresh */
+.public-feed-mascot-card{background:linear-gradient(180deg,#F8FBFF 0%,#FFF7EF 100%);border-color:#DCE8F3}
+.public-feed-mascot-wrap{display:flex;justify-content:center;align-items:center;padding:8px 8px 2px}
+.public-feed-mascot-wrap img{display:block;width:min(100%,260px);height:auto;object-fit:contain;filter:drop-shadow(0 14px 28px rgba(14,65,116,.12))}
+.public-feed-mascot-card p{font-size:14px;line-height:1.75;color:#5f7188;text-align:left;margin:6px 0 0}
+.preview-message .preview-logo.plain,
+.email-preview-stage .preview-logo.plain,
+.sent-detail-card .preview-logo.plain{width:152px;background:#fff;border:1px solid rgba(14,65,116,.12);padding:8px 12px;border-radius:999px;box-shadow:0 8px 20px rgba(14,65,116,.10);margin-bottom:18px}
+.preview-message .preview-logo.plain img,
+.email-preview-stage .preview-logo.plain img,
+.sent-detail-card .preview-logo.plain img{display:block;width:100%;height:auto;object-fit:contain}
+.kd-template-brand-logo img{display:block;height:28px;width:auto;max-width:180px}
+@media(max-width:640px){
+ .public-feed-mascot-wrap img{width:min(100%,220px)}
+ .preview-message .preview-logo.plain,
+ .email-preview-stage .preview-logo.plain,
+ .sent-detail-card .preview-logo.plain{width:138px;padding:7px 11px}
+}
+
 </style>
   <style>
 /* =====================================================================
@@ -3709,6 +3729,14 @@ body{background:var(--bg)}
  .kudos-preview-card .kd-card-fullbg,.kudos-preview-card .kd-card-fullbg .kd-card-content{min-height:390px}
 }
 </style>
+<style>
+/* V28.26 — KUDOS content format helper */
+.kudos-content-format{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 10px;padding:11px 12px;border:1px solid #DCE8F3;border-radius:14px;background:#F8FBFF;color:#365675;font-size:12.5px;line-height:1.5}
+.kudos-content-format>b{width:100%;font-size:13px;color:#0E4174}
+.kudos-content-format span{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #E3EBF4;border-radius:999px;padding:6px 9px}
+.kudos-content-format strong{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#FFF0E4;color:#C65414;font-size:10px}
+@media(max-width:640px){.kudos-content-format{align-items:stretch}.kudos-content-format span{width:100%;border-radius:12px}}
+</style>
 </head>
 <body>
   <div id="app"><p style="text-align:center;padding:70px 24px">Đang kết nối Google Sheets…</p></div>
@@ -3717,6 +3745,8 @@ body{background:var(--bg)}
   <script>
     window.AHAKUDOS_ASSETS = {
       logoLight: "data:image/png;base64,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",
+      kudosLogo: "/branding/ahamove-logo-kudos.png",
+      mascotCutout: "/illustrations/mascot-cutout.png",
       logoDark: "data:image/png;base64,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",
       logoMark: "data:image/png;base64,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"
     };
@@ -3765,7 +3795,7 @@ body{background:var(--bg)}
   }
 
   // Ghi chú phạm vi hiển thị — ĐẶT NGOÀI vùng thiệp cảm xúc, nhỏ gọn, đúng trạng thái.
-  // 'pending' = đang chờ Admin duyệt phạm vi KUDOS CONFESSION.
+  // 'pending' = đang chờ Admin duyệt phạm vi CỘNG ĐỒNG KUDOS.
   function visibilityNote(rec) {
     var vis = rec.visibility === 'public' ? 'public' : 'private';
     if (vis === 'private') {
@@ -3773,9 +3803,9 @@ body{background:var(--bg)}
     }
     var consent = rec.publicConsent || 'pending';
     if (consent === 'approved') {
-      return { icon: '◎', text: 'KUDOS CONFESSION đã được <strong>Admin duyệt</strong> và đang hiển thị công khai cùng danh tính người gửi.' };
+      return { icon: '◎', text: 'CỘNG ĐỒNG KUDOS đã được <strong>Admin duyệt</strong> và đang hiển thị công khai cùng danh tính người gửi.' };
     }
-    return { icon: '🕓', text: 'KUDOS đang chờ <strong>Admin duyệt</strong> trước khi xuất hiện trên KUDOS CONFESSION.' };
+    return { icon: '🕓', text: 'KUDOS đang chờ <strong>Admin duyệt</strong> trước khi xuất hiện trên CỘNG ĐỒNG KUDOS.' };
   }
 
   function valuesHtml(rec) {
@@ -3854,8 +3884,8 @@ body{background:var(--bg)}
   }
   function adminVisibilityLabel(rec) {
     if (rec.visibility === 'public') {
-      if (rec.publicConsent === 'approved') return { c: '#2565a8', bg: '#eaf3ff', t: '◎ KUDOS CONFESSION · Admin đã duyệt' };
-      return { c: '#9a5a1e', bg: '#fff4e8', t: '🕓 KUDOS CONFESSION · chờ Admin duyệt' };
+      if (rec.publicConsent === 'approved') return { c: '#2565a8', bg: '#eaf3ff', t: '◎ CỘNG ĐỒNG KUDOS · Admin đã duyệt' };
+      return { c: '#9a5a1e', bg: '#fff4e8', t: '🕓 CỘNG ĐỒNG KUDOS · chờ Admin duyệt' };
     }
     return { c: '#5b6a7d', bg: '#f1f3f7', t: '● Riêng tư · Admin kiểm soát' };
   }
@@ -4290,7 +4320,7 @@ function buildKudosCard(k){
    ${bgLayer}
    <div class="kd-card-shade" aria-hidden="true"></div>
    <div class="kd-card-content">
-     <div class="kd-template-brand"><span class="kd-template-brand-logo">${logo(true)}</span><span class="kd-template-brand-name"><b>Aha</b><strong>Kudos</strong></span></div>
+     <div class="kd-template-brand"><span class="kd-template-brand-logo">${kudosLogo()}</span><span class="kd-template-brand-name"><b>Aha</b><strong>Kudos</strong></span></div>
      <div class="kd-card-label">LỜI GHI NHẬN DÀNH CHO BẠN</div>
      <div class="kd-sender-stack">
        <span class="kd-sender-caption">TỪ</span>
@@ -4371,7 +4401,7 @@ const state={
   currentUser:(personByEmail(localStorage.getItem('v28-vercel-self-ahakudos-current')||'')||personByEmail(ME_DEFAULT)).email,
   values:new Set(),
   selectedTemplate:(BG&&BG.LIST&&BG.LIST.length?BG.LIST[0].id:'warm'),
-  sendVisibility:'public', // V28.24: nhân viên mặc định gửi vào KUDOS CONFESSION; Admin kiểm soát trước khi publish
+  sendVisibility:'public', // V28.24: nhân viên mặc định gửi vào CỘNG ĐỒNG KUDOS; Admin kiểm soát trước khi publish
   prefillRecipient:'',
   selectedRecipient:null,
   manualRecipient:false,
@@ -4433,11 +4463,13 @@ const avatarMarkup=(className='')=>{
   return `<div class="avatar-fallback ${className}" data-avatar-edit>${initials(me().name)}</div>`;
 };
 const logo=(light=true)=>`<img src="${light?A.logoLight:A.logoDark}" alt="Ahamove">`;
+const kudosLogo=()=>`<img src="${A.kudosLogo||A.logoLight}" alt="Ahamove">`;
+const mascotIllustration=()=>`<img src="${A.mascotCutout||A.logoLight}" alt="Mascot Ahamove">`;
 
 function sidebar(){
  const emp=[
   ['employee-home','home','Trang chủ'],
-  ['public-feed','feed','KUDOS CONFESSION'],
+  ['public-feed','feed','CỘNG ĐỒNG KUDOS'],
   ['send-kudos','send','Gửi KUDOS'],
   ['kudos-profile','profile','Hồ sơ KUDOS']
  ];
@@ -4589,7 +4621,7 @@ return `<section class="page active hb-home">
     <div class="card-head"><div><div class="kicker">GẦN ĐÂY</div><h2>KUDOS bạn đã nhận</h2></div><button class="link-btn" data-page="kudos-profile">Xem tất cả →</button></div>
     <div class="feed">${recentList}</div>
    </article>
-   <button class="hb-public-callout" data-page="public-feed"><span class="hb-callout-icon">${svg('feed')}</span><span><b>KUDOS CONFESSION</b><small>Những lời ghi nhận được Admin duyệt để cùng Ahamovers nhìn thấy.</small></span><i aria-hidden="true">→</i></button>
+   <button class="hb-public-callout" data-page="public-feed"><span class="hb-callout-icon">${svg('feed')}</span><span><b>CỘNG ĐỒNG KUDOS</b><small>Những lời ghi nhận được Admin duyệt để cùng Ahamovers nhìn thấy.</small></span><i aria-hidden="true">→</i></button>
   </div>
   <aside class="right-rail">
    ${firstKudosCard}
@@ -4620,7 +4652,7 @@ function publicFeedPage(){
          <div class="mini-avatar recipient-public-avatar">${initials(k.recipientName)}</div>
          <div class="public-person"><b>${escapeHtml(k.recipientName)}</b><span>${escapeHtml(k.recipientDept||'')}</span></div>
        </div>
-       <div class="public-time"><span class="public-badge">◎ KUDOS CONFESSION</span><time>${escapeHtml(k.sentAtLabel||'Vừa xong')}</time></div>
+       <div class="public-time"><span class="public-badge">◎ CỘNG ĐỒNG KUDOS</span><time>${escapeHtml(k.sentAtLabel||'Vừa xong')}</time></div>
      </div>
      <div class="public-message-card tpl-${template.id} kudos-open" role="button" tabindex="0" data-open-kudos="${k.id}">
        <span class="public-sticker">${template.sticker}</span>
@@ -4638,24 +4670,24 @@ function publicFeedPage(){
  return `<section class="page active">
    <div class="page-head public-feed-head">
      <div>
-       <div class="kicker">KUDOS CONFESSION</div>
+       <div class="kicker">CỘNG ĐỒNG KUDOS</div>
        <h1>Những điều tốt đang diễn ra tại Ahamove</h1>
-       <p class="page-sub">Những KUDOS được Admin duyệt cho phạm vi KUDOS CONFESSION sẽ xuất hiện tại đây.</p>
+       <p class="page-sub">Những KUDOS được Admin duyệt cho phạm vi CỘNG ĐỒNG KUDOS sẽ xuất hiện tại đây.</p>
      </div>
      <div class="realtime-status"><i></i><div><b>Realtime</b><span>Đang cập nhật</span></div></div>
    </div>
    <div class="public-feed-layout">
-     <div class="public-feed-list" id="public-feed-list">${cards||`<div class="empty"><div class="icon">✦</div><h3>Chưa có KUDOS CONFESSION</h3><p>Những lời ghi nhận được Admin duyệt cho KUDOS CONFESSION sẽ xuất hiện tại đây.</p></div>`}</div>
+     <div class="public-feed-list" id="public-feed-list">${cards||`<div class="empty"><div class="icon">✦</div><h3>Chưa có CỘNG ĐỒNG KUDOS</h3><p>Những lời ghi nhận được Admin duyệt cho CỘNG ĐỒNG KUDOS sẽ xuất hiện tại đây.</p></div>`}</div>
      <aside class="public-feed-rail">
        <article class="card public-feed-side-card">
          <div class="rail-title"><span>Lan tỏa hôm nay</span></div>
-         <div class="public-stat"><strong>${list.length}</strong><span>KUDOS CONFESSION</span></div>
+         <div class="public-stat"><strong>${list.length}</strong><span>CỘNG ĐỒNG KUDOS</span></div>
          <div class="public-stat"><strong>${list.reduce((s,k)=>s+Object.values(k.reactions||{}).reduce((a,b)=>a+Number(b||0),0),0)}</strong><span>Reaction</span></div>
        </article>
-       <article class="card public-feed-side-card public-feed-guideline">
-         <div class="rail-title"><span>◎ Về quyền riêng tư</span></div>
-         <p>KUDOS CONFESSION luôn hiển thị <b>họ tên và phòng ban người gửi</b>. Lời ghi nhận chỉ lên bảng sau khi <b>Admin duyệt</b>.</p>
-         <p><b>Admin kiểm soát việc duyệt, ẩn và phạm vi hiển thị của KUDOS.</b></p>
+       <article class="card public-feed-side-card public-feed-mascot-card">
+         <div class="rail-title"><span>Linh vật Ahamove</span></div>
+         <div class="public-feed-mascot-wrap">${mascotIllustration()}</div>
+         <p>Một lời cảm ơn nhỏ có thể bắt đầu từ hôm nay — gửi một KUDOS để ghi nhận điều tốt đẹp bạn vừa nhìn thấy.</p>
        </article>
        <button class="btn primary wide" data-page="send-kudos">+ Gửi một KUDOS</button>
      </aside>
@@ -4715,7 +4747,7 @@ return `<section class="page active kudos-compose-page">
       </div>
       <label for="recipient-manual-email">Email liên hệ</label>
       <input id="recipient-manual-email" class="input" type="email" autocomplete="off" placeholder="name@example.com">
-      <span class="field-hint">Có thể nhập email ngoài @ahamove.com. KUDOS sẽ được đưa vào hàng chờ KUDOS CONFESSION; Admin là người duyệt trước khi hiển thị công khai.</span>
+      <span class="field-hint">Có thể nhập email ngoài @ahamove.com. KUDOS sẽ được đưa vào hàng chờ CỘNG ĐỒNG KUDOS; Admin là người duyệt trước khi hiển thị công khai.</span>
     </div>
    </div>
    <div class="field template-field">
@@ -4734,19 +4766,25 @@ return `<section class="page active kudos-compose-page">
 
    <div class="compose-writing">
     <div class="field message-field">
-     <label for="message">Lời KUDOS</label>
-     <textarea id="message" class="textarea" aria-describedby="count" placeholder="Hãy chia sẻ hành động cụ thể, tác động tạo ra và điều khiến bạn muốn ghi nhận..."></textarea>
+     <label for="message">Nội dung KUDOS</label>
+     <div class="kudos-content-format" aria-label="Format nội dung KUDOS">
+      <b>Format gợi ý cho một KUDOS:</b>
+      <span><strong>01</strong> Hành động cụ thể bạn đã nhìn thấy</span>
+      <span><strong>02</strong> Tác động hành động đó tạo ra</span>
+      <span><strong>03</strong> Điều bạn thật sự trân trọng ở đồng nghiệp</span>
+     </div>
+     <textarea id="message" class="textarea" aria-describedby="count" placeholder="Ví dụ: Cảm ơn bạn đã chủ động hỗ trợ team xử lý gấp đầu việc trước deadline. Nhờ vậy cả team kịp tiến độ và tránh được một lỗi quan trọng. Mình rất trân trọng sự chủ động và tinh thần đồng đội của bạn."></textarea>
      <span class="field-hint" id="count">0 ký tự</span>
     </div>
-    <div class="coach" role="region" aria-label="Trợ lý viết lời ghi nhận">
+    <div class="coach" role="region" aria-label="Trợ lý viết nội dung KUDOS">
      <div class="coach-head">
-      <span class="coach-title"><span aria-hidden="true">✦</span> Trợ lý viết lời ghi nhận</span>
+      <span class="coach-title"><span aria-hidden="true">✦</span> Trợ lý viết nội dung KUDOS</span>
       <span class="coach-live"><i aria-hidden="true"></i>Realtime</span>
       <button type="button" class="coach-toggle" id="coach-toggle" aria-expanded="false" aria-controls="coach-more">Xem thêm</button>
      </div>
-     <p class="coach-nudge" id="coach-nudge" role="status" aria-live="polite">Bắt đầu viết, mình sẽ gợi ý cách làm lời ghi nhận cụ thể và cá nhân hơn.</p>
+     <p class="coach-nudge" id="coach-nudge" role="status" aria-live="polite">Bắt đầu viết, mình sẽ kiểm tra xem nội dung đã đủ Hành động → Tác động → Điều trân trọng chưa.</p>
      <div class="coach-more hidden" id="coach-more">
-      <p>Một lời ghi nhận đáng nhớ thường có:</p>
+      <p>Một nội dung KUDOS đầy đủ thường có:</p>
       <ul>
        <li>Một <b>hành động cụ thể</b> bạn đã thấy (không chỉ "cảm ơn nhiều nha").</li>
        <li><b>Tác động</b> mà hành động đó tạo ra cho bạn, đội nhóm hoặc công việc.</li>
@@ -4778,12 +4816,6 @@ return `<section class="page active kudos-compose-page">
     </div>
     <p class="email-preview-note">Email chỉ thông báo rằng có KUDOS mới và dẫn vào màn này; nội dung lời ghi nhận không hiển thị trực tiếp trong email.</p>
    </section>
-
-   <div class="confession-default-panel" id="confession-default-panel">
-    <div class="confession-mascot" aria-hidden="true"><span class="confession-brand-mark">${logo(false)}</span></div>
-    <div class="confession-default-copy"><div class="kicker">KUDOS CONFESSION</div><b>Mỗi KUDOS gửi đi mặc định được đề xuất công khai.</b><p>Admin sẽ kiểm tra và duyệt trước khi lời ghi nhận xuất hiện trên KUDOS CONFESSION.</p></div>
-    <span class="confession-default-status">Chờ Admin duyệt</span>
-   </div>
    <div class="compose-send-footer">
     <button type="button" class="link-btn" data-modal="rules">Xem quy tắc →</button>
     <div class="form-actions"><button type="button" class="btn secondary" id="preview">Xem lại KUDOS ↑</button><button type="button" class="btn primary" id="send">Gửi KUDOS ${svg('send')}</button></div>
@@ -4803,7 +4835,7 @@ function profile(){
  const sentHtml=sent.length?`<div class="feed sent-history">${sent.map(k=>{
      const cn=(k.values||[]).map(v=>CULTURE[v]||v);
      const statusText=k.visibility==='public'
-        ?(k.publicConsent==='approved'?'◎ KUDOS CONFESSION · Admin đã duyệt':'🕓 Chờ Admin duyệt KUDOS CONFESSION')
+        ?(k.publicConsent==='approved'?'◎ CỘNG ĐỒNG KUDOS · Admin đã duyệt':'🕓 Chờ Admin duyệt CỘNG ĐỒNG KUDOS')
         :'● Chỉ người nhận biết';
      return `<div class="feed-item sent-feed-item kudos-open" role="button" tabindex="0" data-open-kudos="${k.id}">
        <div class="feed-head"><div class="mini-avatar">${initials(k.recipientName)}</div><div class="who"><b>${escapeHtml(k.recipientName)}</b><span>${escapeHtml(k.recipientEmail)}</span></div><time>${escapeHtml(k.sentAtLabel||'Đã gửi')}</time></div>
@@ -4836,7 +4868,7 @@ function kudosDetail(){
  const isSender=k.senderEmail&&k.senderEmail.toLowerCase()===u.email.toLowerCase();
  const isPublic=k.visibility==='public'&&k.publicConsent==='approved';
 
- // KUDOS CONFESSION đã được Admin duyệt có thể mở bởi mọi Ahamover; KUDOS riêng giữ gate người gửi/người nhận.
+ // CỘNG ĐỒNG KUDOS đã được Admin duyệt có thể mở bởi mọi Ahamover; KUDOS riêng giữ gate người gửi/người nhận.
  if(!isRecipient&&!isSender&&!isPublic){
    return `<section class="page active kudos-detail-page">
      <button class="kd-back" data-page="employee-home">← Về trang chủ</button>
@@ -4857,8 +4889,8 @@ function kudosDetail(){
  const emailHtml=buildReceiveEmail(k);
  const emailStatusPill=`<span class="status-pill status-queued"><i></i>${escapeHtml(mailStatusText(k))}</span>${k.viewedAt?'<span class="status-pill status-viewed">Vai người nhận mẫu đã mở trang</span>':''}`;
  const visPill=k.visibility==='public'
-   ?(k.publicConsent==='approved'?`<span class="status-pill status-public"><i></i>KUDOS CONFESSION · Admin đã duyệt</span>`
-     :`<span class="status-pill status-pending"><i></i>Chờ Admin duyệt KUDOS CONFESSION</span>`)
+   ?(k.publicConsent==='approved'?`<span class="status-pill status-public"><i></i>CỘNG ĐỒNG KUDOS · Admin đã duyệt</span>`
+     :`<span class="status-pill status-pending"><i></i>Chờ Admin duyệt CỘNG ĐỒNG KUDOS</span>`)
    :`<span class="status-pill status-private"><i></i>Chỉ người nhận biết</span>`;
 
  let consentBlock='';
@@ -4866,8 +4898,8 @@ function kudosDetail(){
  let senderBlock='';
  if(isSender&&!isRecipient){
    const s=k.visibility==='public'
-     ?(k.publicConsent==='approved'?`Admin đã duyệt KUDOS CONFESSION. Lời ghi nhận đang hiển thị công khai với danh tính người gửi.`
-       :`Bạn đã đề xuất KUDOS CONFESSION. KUDOS đang chờ Admin duyệt trước khi hiển thị.`)
+     ?(k.publicConsent==='approved'?`Admin đã duyệt CỘNG ĐỒNG KUDOS. Lời ghi nhận đang hiển thị công khai với danh tính người gửi.`
+       :`Bạn đã đề xuất CỘNG ĐỒNG KUDOS. KUDOS đang chờ Admin duyệt trước khi hiển thị.`)
      :`Bạn đã chọn gửi riêng cho ${escapeHtml(k.recipientName)}. KUDOS vẫn chờ Admin duyệt trước khi email được gửi.`;
    senderBlock=`<div class="kd-panel"><h3>Trạng thái</h3><p class="kd-sender-status">${s}</p></div>`;
  }
@@ -5176,7 +5208,7 @@ function adminQuality(){
       <div class="mod-item-who"><b>${escapeHtml(k.senderName||'Đồng nghiệp')}</b><span>${escapeHtml(k.senderDept||'')} → ${escapeHtml(k.recipientName||'')}</span></div>
       <span class="mod-flag">Chờ Admin duyệt</span>
     </div>
-    <div class="mod-reasons">${reasons.map(r=>`<span class="mod-reason-chip">⚑ ${escapeHtml(r)}</span>`).join('')||'<span class="mod-reason-chip">Chờ Admin duyệt</span>'}</div><div class="mod-scope-control"><span>Phạm vi:</span><button class="btn secondary ${k.visibility==='private'?'active':''}" data-mod-scope="private" data-kid="${k.id}">Riêng tư</button><button class="btn secondary ${k.visibility==='public'?'active':''}" data-mod-scope="public" data-kid="${k.id}">KUDOS CONFESSION</button></div>
+    <div class="mod-reasons">${reasons.map(r=>`<span class="mod-reason-chip">⚑ ${escapeHtml(r)}</span>`).join('')||'<span class="mod-reason-chip">Chờ Admin duyệt</span>'}</div><div class="mod-scope-control"><span>Phạm vi:</span><button class="btn secondary ${k.visibility==='private'?'active':''}" data-mod-scope="private" data-kid="${k.id}">Riêng tư</button><button class="btn secondary ${k.visibility==='public'?'active':''}" data-mod-scope="public" data-kid="${k.id}">CỘNG ĐỒNG KUDOS</button></div>
     <div class="mod-msg">${escapeHtml(k.message||'').replace(/\r?\n/g,'<br>')}</div>
     <div class="mod-actions">
       <button class="btn secondary" data-mod-detail="${k.id}">Xem chi tiết KUDOS</button><button class="btn secondary" data-mod-preview="${k.id}">Xem email</button>
@@ -5186,7 +5218,7 @@ function adminQuality(){
     </div>
   </div>`;
  };
- const heldHtml=held.length?held.map(card).join(''):`<div class="empty"><div class="icon">✅</div><h3>Không có KUDOS nào chờ duyệt</h3><p>Mọi KUDOS mới đều chờ Admin duyệt. Khi Admin duyệt, email mới được gửi và KUDOS CONFESSION mới được publish.</p></div>`;
+ const heldHtml=held.length?held.map(card).join(''):`<div class="empty"><div class="icon">✅</div><h3>Không có KUDOS nào chờ duyệt</h3><p>Mọi KUDOS mới đều chờ Admin duyệt. Khi Admin duyệt, email mới được gửi và CỘNG ĐỒNG KUDOS mới được publish.</p></div>`;
  return `<section class="page active">
   <style>
    .mod-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
@@ -5264,7 +5296,7 @@ function adminQuality(){
 
 </style>
   ${bannerHero('ai_review')}
-  <div class="page-head"><div><div class="kicker">ADMIN CONTROL</div><h1>Admin duyệt toàn bộ KUDOS</h1><p class="page-sub">Mọi KUDOS đều được giữ tại đây trước khi gửi email. Admin có thể xem chi tiết, chỉnh nội dung, chọn Riêng tư hoặc KUDOS CONFESSION, rồi mới Duyệt & gửi.</p></div></div>
+  <div class="page-head"><div><div class="kicker">ADMIN CONTROL</div><h1>Admin duyệt toàn bộ KUDOS</h1><p class="page-sub">Mọi KUDOS đều được giữ tại đây trước khi gửi email. Admin có thể xem chi tiết, chỉnh nội dung, chọn Riêng tư hoặc CỘNG ĐỒNG KUDOS, rồi mới Duyệt & gửi.</p></div></div>
   <div class="mod-stat-row">
    <div class="mod-stat"><span>Chờ duyệt</span><strong>${held.length}</strong></div>
    <div class="mod-stat"><span>Đã duyệt</span><strong>${approved.length}</strong></div>
@@ -5376,7 +5408,7 @@ function adminRecognition(){
        <div class="field"><label>Nội dung</label><textarea id="admin-recognition-message" class="textarea" placeholder="Chia sẻ cột mốc, đóng góp hoặc điều Ahamove muốn ghi nhận ở nhân sự..."></textarea></div>
        <div class="field admin-visibility-field"><label>Ai có thể xem AhaKudos này?</label>
          <div class="visibility-options">
-           <button type="button" class="visibility-option selected" data-admin-visibility="public"><span class="visibility-icon">◎</span><div><b>KUDOS CONFESSION</b><p>Hiển thị họ tên + phòng ban người gửi sau khi Admin duyệt; không có chế độ ẩn danh.</p></div><i>✓</i></button>
+           <button type="button" class="visibility-option selected" data-admin-visibility="public"><span class="visibility-icon">◎</span><div><b>CỘNG ĐỒNG KUDOS</b><p>Hiển thị họ tên + phòng ban người gửi sau khi Admin duyệt; không có chế độ ẩn danh.</p></div><i>✓</i></button>
            <button type="button" class="visibility-option" data-admin-visibility="private"><span class="visibility-icon lock">●</span><div><b>Chỉ người nhận biết</b><p>Không xuất hiện trên feed công khai; vẫn lưu trong Hồ sơ KUDOS của nhân sự.</p></div><i>✓</i></button>
          </div>
        </div>
@@ -5393,11 +5425,11 @@ function adminRecognition(){
        <div class="recipient-preview" id="admin-recipient-preview"><div class="mini-avatar">@</div><div><b>Chưa chọn người nhận</b><span>Nhập email nhân sự để tìm kiếm</span></div></div>
        <div class="preview-message tpl-celebrate" id="admin-preview-card">
          <div class="card-sticker" id="admin-card-sticker">🎉</div>
-         <div class="preview-logo">${logo(true)}</div>
+         <div class="preview-logo plain">${kudosLogo()}</div>
          <div class="kicker">AHAKUDOS · GHI NHẬN TỪ AHAMOVE</div>
          <h3 id="admin-preview-title">Cảm ơn bạn vì một hành trình đáng ghi nhận</h3>
          <p id="admin-preview-text">Nội dung AhaKudos sẽ xuất hiện tại đây.</p>
-         <div class="preview-visibility" id="admin-preview-visibility">◎ KUDOS CONFESSION</div>
+         <div class="preview-visibility" id="admin-preview-visibility">◎ CỘNG ĐỒNG KUDOS</div>
        </div>
        <div class="admin-email-preview-note"><span>✉</span><div><b>Email notification</b><p>Sau khi gửi thành công, người nhận sẽ nhận email với đúng nội dung và mẫu thiệp này.</p></div></div>
      </aside>
@@ -5411,7 +5443,7 @@ function adminNotify(){
    const k=kudosById(o.kudosId);
    const snippet=k?escapeHtml((k.message||'').slice(0,90))+((k.message||'').length>90?'…':''):'(KUDOS không còn trong dữ liệu demo)';
    const route=k?`${escapeHtml(k.senderName)} → ${escapeHtml(k.recipientName)}`:'';
-   const vis=k?(k.visibility==='public'?(k.publicConsent==='approved'?'◎ KUDOS CONFESSION':'🕓 Chờ Admin duyệt'):'● Riêng tư'):'';
+   const vis=k?(k.visibility==='public'?(k.publicConsent==='approved'?'◎ CỘNG ĐỒNG KUDOS':'🕓 Chờ Admin duyệt'):'● Riêng tư'):'';
    return `<div class="notif-row ${o.seen?'':'unseen'}" data-notif="${o.id}" role="button" tabindex="0">
      <span class="notif-dot" aria-hidden="true"></span>
      <div class="notif-main">
@@ -5529,7 +5561,7 @@ function showEmployeeHomeIntroBanner(){
      <div class="home-intro-header"><div class="home-intro-brandmark">${logo(true)}</div><div class="kicker">CHÀO MỪNG ĐẾN VỚI AHAKUDOS</div><p>AhaKudos là nơi bạn gửi lời ghi nhận đến đồng nghiệp, theo dõi những lời cảm ơn đang lan tỏa trong công ty và lưu lại hành trình ghi nhận của chính mình.</p></div>
      <div class="home-intro-card-grid">
        <div class="intro-showcase-card card-send"><div class="intro-showcase-icon" aria-hidden="true">💛</div><h3>Gửi KUDOS</h3><p>Viết lời ghi nhận cho một hành động cụ thể mà bạn trân trọng ở đồng nghiệp.</p><button class="intro-showcase-btn" data-home-intro-action="send">Gửi ngay</button></div>
-       <div class="intro-showcase-card card-feed"><div class="intro-showcase-icon" aria-hidden="true">🚀</div><h3>KUDOS CONFESSION</h3><p>Khám phá những lời ghi nhận đã được Admin duyệt để hiển thị công khai.</p><button class="intro-showcase-btn" data-home-intro-action="feed">Khám phá</button></div>
+       <div class="intro-showcase-card card-feed"><div class="intro-showcase-icon" aria-hidden="true">🚀</div><h3>CỘNG ĐỒNG KUDOS</h3><p>Khám phá những lời ghi nhận đã được Admin duyệt để hiển thị công khai.</p><button class="intro-showcase-btn" data-home-intro-action="feed">Khám phá</button></div>
        <div class="intro-showcase-card card-profile"><div class="intro-showcase-icon" aria-hidden="true">🏆</div><h3>Hồ sơ KUDOS</h3><p>Xem lại những KUDOS bạn đã gửi, đã nhận và giữ lại để đọc về sau.</p><button class="intro-showcase-btn" data-home-intro-action="profile">Xem thêm</button></div>
        <div class="intro-showcase-card card-milestone"><div class="intro-showcase-icon" aria-hidden="true">🎁</div><h3>Lời chúc đặc biệt</h3><p>Gửi lời chúc cho sinh nhật và những dấu mốc đặc biệt của đồng nghiệp.</p><button class="intro-showcase-btn" data-home-intro-action="explore">Đã rõ</button></div>
      </div>
@@ -5577,7 +5609,7 @@ function bindHandbookUI(){
  const adminPreview=document.querySelector('#admin-recognition-preview');
  if(adminPreview)adminPreview.addEventListener('click',()=>{document.querySelector('.admin-recognition-preview')?.scrollIntoView({behavior:'smooth',block:'start'});});
  document.querySelectorAll('[data-modal="rules"]').forEach(btn=>btn.addEventListener('click',()=>{
-  document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="hb-rules-title"><button class="modal-close" aria-label="Đóng">×</button><div class="kicker">GỬI KUDOS</div><h2 id="hb-rules-title">Quy tắc ghi nhận</h2><div class="rules"><div class="rule"><b>Người nhận</b><span>Tìm email Ahamove trong Master Data; nếu không có mail công ty, tick lựa chọn và nhập thông tin người nhận thủ công.</span></div><div class="rule"><b>Nội dung</b><span>Chia sẻ hành động cụ thể, tác động tạo ra và điều đáng ghi nhận.</span></div><div class="rule"><b>Giá trị văn hóa</b><span>Chọn từ 1 đến 3 Giá trị văn hóa phù hợp. Riêng KUDOS Sinh nhật không bắt buộc.</span></div><div class="rule"><b>Phạm vi</b><span>Mặc định riêng tư. KUDOS CONFESSION chỉ hiển thị sau khi Admin duyệt.</span></div></div><button class="btn primary wide hb-rules-close">Đã hiểu</button></div></div>`;
+  document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="hb-rules-title"><button class="modal-close" aria-label="Đóng">×</button><div class="kicker">GỬI KUDOS</div><h2 id="hb-rules-title">Quy tắc ghi nhận</h2><div class="rules"><div class="rule"><b>Người nhận</b><span>Tìm email Ahamove trong Master Data; nếu không có mail công ty, tick lựa chọn và nhập thông tin người nhận thủ công.</span></div><div class="rule"><b>Nội dung</b><span>Chia sẻ hành động cụ thể, tác động tạo ra và điều đáng ghi nhận.</span></div><div class="rule"><b>Giá trị văn hóa</b><span>Chọn từ 1 đến 3 Giá trị văn hóa phù hợp. Riêng KUDOS Sinh nhật không bắt buộc.</span></div><div class="rule"><b>Phạm vi</b><span>Mặc định được đề xuất lên CỘNG ĐỒNG KUDOS và chỉ hiển thị sau khi Admin duyệt.</span></div></div><button class="btn primary wide hb-rules-close">Đã hiểu</button></div></div>`;
   document.querySelectorAll('.modal-close,.hb-rules-close').forEach(b=>b.addEventListener('click',()=>document.querySelector('#modal-root').innerHTML=''));
  }));
 }
@@ -5670,7 +5702,7 @@ function showBulkSendSetup(initialType=null){
  const defaultTitle=singleType==='birthday'?'Chúc mừng sinh nhật {{Tên nhân sự}} 🎂':singleType==='anniversary'?'Cảm ơn {{Tên nhân sự}} vì một hành trình đáng nhớ ✨':'Chúc mừng {{Tên nhân sự}} với một cột mốc đáng nhớ tại Ahamove';
  const defaultMessage=singleType==='birthday'?'AhaKudos chúc {{Tên nhân sự}} một tuổi mới nhiều năng lượng, niềm vui và những hành trình đáng nhớ cùng Ahamove.':singleType==='anniversary'?'Cảm ơn {{Tên nhân sự}} đã đồng hành cùng Ahamove trong {{Thâm niên}}. Chúc bạn tiếp tục có thêm nhiều dấu ấn và hành trình đáng nhớ phía trước.':'AhaKudos gửi lời chúc mừng {{Tên nhân sự}} và ghi nhận một cột mốc đáng nhớ trong hành trình tại Ahamove.';
  const defaultSticker=singleType==='birthday'?'🎂':'✨';const defaultTemplate=singleType==='birthday'?'birthday':'celebrate';
- document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop bulk-modal-backdrop"><div class="modal bulk-send-modal"><button class="modal-close bulk-close">×</button><div class="kicker">GỬI AHAKUDOS HÀNG LOẠT</div><h2>Cá nhân hóa lời chúc trước khi gửi</h2><p>Mỗi người sẽ nhận cùng một template nhưng tên nhân sự và cột mốc được thay tự động theo dữ liệu HR.</p><div class="bulk-setup-grid"><div class="bulk-setup-form"><div class="field"><label>Nhóm gửi</label><div class="bulk-summary-chip">${singleType==='birthday'?'🎂 Sinh nhật':singleType==='anniversary'?'✦ Thâm niên':'Sinh nhật & Thâm niên'} · ${selected.length} nhân sự</div></div><div class="personalization-panel"><div class="personalization-icon">Aa</div><div><b>Cá nhân hóa tự động theo từng nhân sự</b><p>Dùng biến <code>{{Tên nhân sự}}</code> để hệ thống tự thay bằng tên thật. Với Thâm niên, có thể dùng thêm <code>{{Thâm niên}}</code>.</p><div class="personalization-chips"><button type="button" data-insert-token="{{Tên nhân sự}}">+ Tên nhân sự</button>${singleType!=='birthday'?`<button type="button" data-insert-token="{{Thâm niên}}">+ Thâm niên</button>`:''}</div></div></div><div class="field"><label>Tiêu đề</label><input id="bulk-title" class="input" value="${defaultTitle}"><span class="field-hint">Ví dụ khi gửi: “${personalizeMilestoneCopy(defaultTitle,selected[0])}”</span></div><div class="field"><label>Nội dung</label><textarea id="bulk-message" class="textarea">${defaultMessage}</textarea><span class="field-hint">Preview bên phải sẽ thay tên theo từng người khi bạn bấm Trước / Sau.</span></div><div class="field"><label>Mẫu thiệp</label><div class="template-gallery bulk-template-gallery">${cardTemplates.map((t,i)=>`<button type="button" class="template-option ${t.id===defaultTemplate?'selected':''}" data-bulk-template="${t.id}" aria-label="Chọn background ${i+1}" aria-pressed="${t.id===defaultTemplate}"><span class="template-thumb tpl-${t.id}"><i>${t.sticker}</i><b>AhaKudos</b></span></button>`).join('')}</div></div><div class="field"><label>Thời gian gửi</label><div class="bulk-schedule-options"><label class="bulk-schedule-option selected"><input type="radio" name="bulk-schedule" value="scheduled" checked><div><b>Theo ngày cột mốc</b><span>Gửi 09:00 đúng ngày Sinh nhật/Thâm niên của từng nhân sự.</span></div></label><label class="bulk-schedule-option"><input type="radio" name="bulk-schedule" value="now"><div><b>Gửi ngay</b><span>Gửi đồng loạt ngay sau khi xác nhận.</span></div></label></div></div></div><div class="bulk-preview-pane"><div class="bulk-preview-head"><div><div class="kicker">PREVIEW CÁ NHÂN HÓA</div><h3>Nội dung từng nhân sự sẽ nhận</h3></div><span id="bulk-preview-index">1 / ${selected.length}</span></div><div class="bulk-preview-person" id="bulk-preview-person"><div class="mini-avatar">${initials(selected[0].name)}</div><div><b>${selected[0].name}</b><span>${selected[0].email}</span><em>${selected[0].dept}</em></div><span class="personalized-badge">Cá nhân hóa</span></div><div class="preview-message tpl-${defaultTemplate}" id="bulk-preview-card"><div class="card-sticker" id="bulk-preview-sticker">${defaultSticker}</div><div class="preview-logo">${logo(true)}</div><div class="kicker">${singleType==='birthday'?'AHAKUDOS · HAPPY BIRTHDAY':'AHAKUDOS · CỘT MỐC ĐÁNG NHỚ'}</div><h3 id="bulk-preview-title">${personalizeMilestoneCopy(defaultTitle,selected[0])}</h3><p id="bulk-preview-text">${personalizeMilestoneCopy(defaultMessage,selected[0])}</p><div class="preview-visibility private">● Chỉ người nhận biết</div></div><div class="bulk-preview-nav"><button class="btn secondary" id="bulk-prev-person">← Người trước</button><button class="btn secondary" id="bulk-next-person">Người tiếp theo →</button></div><div class="bulk-recipient-list"><div class="bulk-list-head"><b>Danh sách nhận</b><span>${selected.length} nhân sự</span></div><div class="bulk-list-scroll">${selected.map(x=>`<div><span>${x.name}</span><em>${x.type==='birthday'?'Sinh nhật '+x.date:(x.milestone||'Thâm niên')+' · '+x.date}</em></div>`).join('')}</div></div></div></div><div class="bulk-modal-footer"><button class="btn secondary bulk-close">Hủy</button><button class="btn primary" id="bulk-confirm-send">Xác nhận gửi ${selected.length} AhaKudos</button></div></div></div>`;
+ document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop bulk-modal-backdrop"><div class="modal bulk-send-modal"><button class="modal-close bulk-close">×</button><div class="kicker">GỬI AHAKUDOS HÀNG LOẠT</div><h2>Cá nhân hóa lời chúc trước khi gửi</h2><p>Mỗi người sẽ nhận cùng một template nhưng tên nhân sự và cột mốc được thay tự động theo dữ liệu HR.</p><div class="bulk-setup-grid"><div class="bulk-setup-form"><div class="field"><label>Nhóm gửi</label><div class="bulk-summary-chip">${singleType==='birthday'?'🎂 Sinh nhật':singleType==='anniversary'?'✦ Thâm niên':'Sinh nhật & Thâm niên'} · ${selected.length} nhân sự</div></div><div class="personalization-panel"><div class="personalization-icon">Aa</div><div><b>Cá nhân hóa tự động theo từng nhân sự</b><p>Dùng biến <code>{{Tên nhân sự}}</code> để hệ thống tự thay bằng tên thật. Với Thâm niên, có thể dùng thêm <code>{{Thâm niên}}</code>.</p><div class="personalization-chips"><button type="button" data-insert-token="{{Tên nhân sự}}">+ Tên nhân sự</button>${singleType!=='birthday'?`<button type="button" data-insert-token="{{Thâm niên}}">+ Thâm niên</button>`:''}</div></div></div><div class="field"><label>Tiêu đề</label><input id="bulk-title" class="input" value="${defaultTitle}"><span class="field-hint">Ví dụ khi gửi: “${personalizeMilestoneCopy(defaultTitle,selected[0])}”</span></div><div class="field"><label>Nội dung</label><textarea id="bulk-message" class="textarea">${defaultMessage}</textarea><span class="field-hint">Preview bên phải sẽ thay tên theo từng người khi bạn bấm Trước / Sau.</span></div><div class="field"><label>Mẫu thiệp</label><div class="template-gallery bulk-template-gallery">${cardTemplates.map((t,i)=>`<button type="button" class="template-option ${t.id===defaultTemplate?'selected':''}" data-bulk-template="${t.id}" aria-label="Chọn background ${i+1}" aria-pressed="${t.id===defaultTemplate}"><span class="template-thumb tpl-${t.id}"><i>${t.sticker}</i><b>AhaKudos</b></span></button>`).join('')}</div></div><div class="field"><label>Thời gian gửi</label><div class="bulk-schedule-options"><label class="bulk-schedule-option selected"><input type="radio" name="bulk-schedule" value="scheduled" checked><div><b>Theo ngày cột mốc</b><span>Gửi 09:00 đúng ngày Sinh nhật/Thâm niên của từng nhân sự.</span></div></label><label class="bulk-schedule-option"><input type="radio" name="bulk-schedule" value="now"><div><b>Gửi ngay</b><span>Gửi đồng loạt ngay sau khi xác nhận.</span></div></label></div></div></div><div class="bulk-preview-pane"><div class="bulk-preview-head"><div><div class="kicker">PREVIEW CÁ NHÂN HÓA</div><h3>Nội dung từng nhân sự sẽ nhận</h3></div><span id="bulk-preview-index">1 / ${selected.length}</span></div><div class="bulk-preview-person" id="bulk-preview-person"><div class="mini-avatar">${initials(selected[0].name)}</div><div><b>${selected[0].name}</b><span>${selected[0].email}</span><em>${selected[0].dept}</em></div><span class="personalized-badge">Cá nhân hóa</span></div><div class="preview-message tpl-${defaultTemplate}" id="bulk-preview-card"><div class="card-sticker" id="bulk-preview-sticker">${defaultSticker}</div><div class="preview-logo plain">${kudosLogo()}</div><div class="kicker">${singleType==='birthday'?'AHAKUDOS · HAPPY BIRTHDAY':'AHAKUDOS · CỘT MỐC ĐÁNG NHỚ'}</div><h3 id="bulk-preview-title">${personalizeMilestoneCopy(defaultTitle,selected[0])}</h3><p id="bulk-preview-text">${personalizeMilestoneCopy(defaultMessage,selected[0])}</p><div class="preview-visibility private">● Chỉ người nhận biết</div></div><div class="bulk-preview-nav"><button class="btn secondary" id="bulk-prev-person">← Người trước</button><button class="btn secondary" id="bulk-next-person">Người tiếp theo →</button></div><div class="bulk-recipient-list"><div class="bulk-list-head"><b>Danh sách nhận</b><span>${selected.length} nhân sự</span></div><div class="bulk-list-scroll">${selected.map(x=>`<div><span>${x.name}</span><em>${x.type==='birthday'?'Sinh nhật '+x.date:(x.milestone||'Thâm niên')+' · '+x.date}</em></div>`).join('')}</div></div></div></div><div class="bulk-modal-footer"><button class="btn secondary bulk-close">Hủy</button><button class="btn primary" id="bulk-confirm-send">Xác nhận gửi ${selected.length} AhaKudos</button></div></div></div>`;
  let idx=0;let selectedTemplate=defaultTemplate;const title=document.querySelector('#bulk-title');const message=document.querySelector('#bulk-message');const card=document.querySelector('#bulk-preview-card');
  function insertToken(input,token){const start=input.selectionStart??input.value.length;const end=input.selectionEnd??input.value.length;input.value=input.value.slice(0,start)+token+input.value.slice(end);input.focus();input.selectionStart=input.selectionEnd=start+token.length;input.dispatchEvent(new Event('input',{bubbles:true}));}
  function updatePreview(){const person=selected[idx];document.querySelector('#bulk-preview-index').textContent=`${idx+1} / ${selected.length}`;document.querySelector('#bulk-preview-person').innerHTML=`<div class="mini-avatar">${initials(person.name)}</div><div><b>${person.name}</b><span>${person.email}</span><em>${person.dept}</em></div><span class="personalized-badge">Cá nhân hóa</span>`;document.querySelector('#bulk-preview-title').textContent=personalizeMilestoneCopy(title.value.trim()||'AhaKudos dành cho {{Tên nhân sự}}',person);document.querySelector('#bulk-preview-text').textContent=personalizeMilestoneCopy(message.value.trim()||'Nội dung sẽ xuất hiện tại đây.',person);cardTemplates.forEach(t=>card.classList.remove('tpl-'+t.id));card.classList.add('tpl-'+selectedTemplate);document.querySelector('#bulk-preview-sticker').textContent=templateMeta(selectedTemplate).sticker;}
@@ -5705,7 +5737,7 @@ function bindAdminRecognition(){
  function visibilityUi(){document.querySelectorAll('[data-admin-visibility]').forEach(x=>{x.disabled=false;x.classList.remove('disabled');x.classList.toggle('selected',x.dataset.adminVisibility===selectedVisibility);});}
  function syncManualPreview(){if(!manualRecipient)return;const emp={name:manualName.value.trim(),dept:manualDept.value.trim(),email:manualEmail.value.trim(),manual:true};if(emp.name||emp.email)renderEmployee(emp);else renderEmployee(null);updatePreview();}
  function applyMode(on){manualRecipient=!!on;companyMode.classList.toggle('hidden',manualRecipient);manualMode.classList.toggle('hidden',!manualRecipient);if(manualRecipient){emailInput.value='';suggestions.classList.add('hidden');renderEmployee(null);}visibilityUi();syncManualPreview();updatePreview();}
- function updatePreview(){document.querySelector('#admin-preview-title').textContent=title.value.trim()||'AhaKudos dành cho bạn';document.querySelector('#admin-preview-text').textContent=message.value.trim()||'Nội dung AhaKudos sẽ xuất hiện tại đây.';const card=document.querySelector('#admin-preview-card');cardTemplates.forEach(t=>card.classList.remove('tpl-'+t.id));card.classList.add('tpl-'+selectedTemplate);document.querySelector('#admin-card-sticker').textContent=templateMeta(selectedTemplate).sticker;const visibility=document.querySelector('#admin-preview-visibility');if(visibility){visibility.textContent=selectedVisibility==='public'?'◎ KUDOS CONFESSION':'● Chỉ người nhận biết';visibility.classList.toggle('private',selectedVisibility==='private');}}
+ function updatePreview(){document.querySelector('#admin-preview-title').textContent=title.value.trim()||'AhaKudos dành cho bạn';document.querySelector('#admin-preview-text').textContent=message.value.trim()||'Nội dung AhaKudos sẽ xuất hiện tại đây.';const card=document.querySelector('#admin-preview-card');cardTemplates.forEach(t=>card.classList.remove('tpl-'+t.id));card.classList.add('tpl-'+selectedTemplate);document.querySelector('#admin-card-sticker').textContent=templateMeta(selectedTemplate).sticker;const visibility=document.querySelector('#admin-preview-visibility');if(visibility){visibility.textContent=selectedVisibility==='public'?'◎ CỘNG ĐỒNG KUDOS':'● Chỉ người nhận biết';visibility.classList.toggle('private',selectedVisibility==='private');}}
  noCompany?.addEventListener('change',()=>applyMode(noCompany.checked));
  [manualName,manualDept,manualEmail].forEach(el=>el?.addEventListener('input',syncManualPreview));
  emailInput.addEventListener('input',()=>{if(manualRecipient)return;selectedEmployee=null;renderEmployee(null);const q=emailInput.value.trim().toLowerCase();if(!q){suggestions.classList.add('hidden');suggestions.innerHTML='';return}const matches=employees.filter(e=>e.email.toLowerCase().includes(q)).slice(0,5);suggestions.innerHTML=matches.length?matches.map(e=>`<button type="button" class="recipient-suggestion" data-admin-email="${e.email}"><div class="mini-avatar">${initials(e.name)}</div><div><b>${e.name}</b><span>${e.email}</span><em>${e.dept}</em></div></button>`).join(''):'<div class="recipient-no-result">Không tìm thấy email phù hợp. Có thể tick “không có mail công ty”.</div>';suggestions.classList.remove('hidden');suggestions.querySelectorAll('[data-admin-email]').forEach(btn=>btn.addEventListener('click',()=>{const emp=employees.find(e=>e.email===btn.dataset.adminEmail);emailInput.value=emp.email;suggestions.classList.add('hidden');renderEmployee(emp);}));});
@@ -5727,7 +5759,7 @@ function bindAdminRecognition(){
  applyMode(false);updatePreview();
 }
 function showAdminRecognitionSuccess(employee,title,visibility='public'){
- document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop"><div class="modal admin-recognition-success"><div class="success-sticker"><span>✨</span><i>✦</i><i>★</i><i>●</i></div><div class="kicker">AHAKUDOS ĐÃ ĐƯỢC LƯU</div><h2>${escapeHtml(title||'Lời ghi nhận đã được lưu')}</h2><p>AhaKudos đã được lưu và sẽ xuất hiện trong Hồ sơ KUDOS của <b>${escapeHtml(employee.name)}</b>.</p><div class="sent-visibility-detail ${visibility==='public'?'public':'private'}">${visibility==='public'?'◎ KUDOS CONFESSION · Chờ Admin duyệt':'● Chỉ người nhận biết · Không hiển thị trên KUDOS CONFESSION'}</div><div class="email-delivery-note"><span>✉</span><div><b>Email đang được xếp hàng gửi (mô phỏng)</b><p>Email thật chỉ về chủ bản test; xem EMAIL_QUEUE để biết trạng thái. Không gửi đến <strong>${escapeHtml(employee.email)}</strong>.</p></div></div><button class="btn primary wide admin-recognition-done">Hoàn tất</button></div></div>`;
+ document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop"><div class="modal admin-recognition-success"><div class="success-sticker"><span>✨</span><i>✦</i><i>★</i><i>●</i></div><div class="kicker">AHAKUDOS ĐÃ ĐƯỢC LƯU</div><h2>${escapeHtml(title||'Lời ghi nhận đã được lưu')}</h2><p>AhaKudos đã được lưu và sẽ xuất hiện trong Hồ sơ KUDOS của <b>${escapeHtml(employee.name)}</b>.</p><div class="sent-visibility-detail ${visibility==='public'?'public':'private'}">${visibility==='public'?'◎ CỘNG ĐỒNG KUDOS · Chờ Admin duyệt':'● Chỉ người nhận biết · Không hiển thị trên CỘNG ĐỒNG KUDOS'}</div><div class="email-delivery-note"><span>✉</span><div><b>Email đang được xếp hàng gửi (mô phỏng)</b><p>Email thật chỉ về chủ bản test; xem EMAIL_QUEUE để biết trạng thái. Không gửi đến <strong>${escapeHtml(employee.email)}</strong>.</p></div></div><button class="btn primary wide admin-recognition-done">Hoàn tất</button></div></div>`;
  document.querySelector('.admin-recognition-done').addEventListener('click',()=>{document.querySelector('#modal-root').innerHTML='';state.page='admin-home';render()});
 }
 
@@ -5887,7 +5919,7 @@ function escapeHtml(str=''){return String(str).replace(/[&<>"']/g,m=>({'&':'&amp
 function showSuccessBanner(record,isFirst){
  const root=document.querySelector('#toast-root');root.querySelector('.kudos-success-banner')?.remove();
  const b=document.createElement('div');b.className='kudos-success-banner'+(isFirst?' first-kudos-banner':'');b.setAttribute('role','status');
- const vis='KUDOS CONFESSION · đang chờ Admin duyệt.';
+ const vis='CỘNG ĐỒNG KUDOS · đang chờ Admin duyệt.';
  b.innerHTML=`<div class="success-banner-icon">${isFirst?'🎉':'✓'}</div><div class="success-banner-copy"><strong>${isFirst?'Chúc mừng! Bạn vừa gửi KUDOS đầu tiên':'Đã lưu lời ghi nhận vào Google Sheets'}</strong><span>${escapeHtml(mailStatusText(record))} · Email thật chỉ gửi về chủ bản test.</span><em>${vis}</em></div><button class="success-banner-close" aria-label="Đóng">×</button>`;
  root.appendChild(b);requestAnimationFrame(()=>b.classList.add('show'));const close=()=>b.remove();b.querySelector('button').onclick=close;setTimeout(close,6500);
 }
