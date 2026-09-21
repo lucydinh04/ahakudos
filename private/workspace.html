@@ -3673,6 +3673,9 @@ body{background:var(--bg)}
 .kd-sender-line{display:flex;align-items:center;gap:10px;font-size:13.5px;line-height:1.55;color:#3F5F80;font-weight:650;margin-bottom:20px}
 .kd-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex:none;background:#0E4174;color:#fff;font-size:12px;font-weight:800;box-shadow:0 6px 14px rgba(14,65,116,.16)}
 .kd-card-fullbg .kd-card-msg{font-size:clamp(19px,1.75vw,26px);line-height:1.58;color:#0E4174;font-weight:650;white-space:pre-wrap;overflow-wrap:anywhere;text-wrap:pretty;text-shadow:0 1px 0 rgba(255,255,255,.65)}
+.kd-card-fullbg .kd-card-msg.kd-card-msg--medium{font-size:clamp(18px,1.55vw,23px);line-height:1.62}
+.kd-card-fullbg .kd-card-msg.kd-card-msg--long{font-size:clamp(17px,1.4vw,21px);line-height:1.68}
+.kd-card-fullbg .kd-card-msg.kd-card-msg--xlong{font-size:clamp(16px,1.28vw,19px);line-height:1.72}
 .kd-value-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:20px}
 .kd-value-chip{display:inline-flex;align-items:center;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.64);border:1px solid rgba(14,65,116,.14);color:#0E4174;font-size:12.5px;line-height:1.35;font-weight:700;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .kudos-preview-card .kd-card-fullbg{width:min(100%,820px);min-height:350px}
@@ -3686,6 +3689,9 @@ body{background:var(--bg)}
  .kd-sender-line{font-size:12px;gap:8px;margin-bottom:14px}
  .kd-avatar{width:32px;height:32px;font-size:11px}
  .kd-card-fullbg .kd-card-msg{font-size:18px;line-height:1.56}
+ .kd-card-fullbg .kd-card-msg.kd-card-msg--medium{font-size:17px;line-height:1.6}
+ .kd-card-fullbg .kd-card-msg.kd-card-msg--long{font-size:16px;line-height:1.64}
+ .kd-card-fullbg .kd-card-msg.kd-card-msg--xlong{font-size:15px;line-height:1.68}
  .kd-value-row{margin-top:16px;gap:5px}
  .kd-value-chip{font-size:11px;padding:6px 9px}
  .kudos-preview-card .kd-card-fullbg,.kudos-preview-card .kd-card-fullbg .kd-card-content{min-height:390px}
@@ -4262,7 +4268,11 @@ function buildKudosCard(k){
  const CULT=(EMAIL&&EMAIL.CULTURE)||{fair:'Công bằng & Tôn trọng',share:'Học hỏi & Chia sẻ',grow:'Gắn kết & Cùng phát triển'};
  const vals=(k.values||[]).map(v=>CULT[v]||v);
  const chips=vals.map(n=>`<span class="kd-value-chip">${escapeHtml(n)}</span>`).join('');
- const msg=escapeHtml(k.message||'').replace(/\r?\n/g,'<br>');
+ const rawMsg=String(k.message||'').trim();
+ const msg=escapeHtml(rawMsg).replace(/\r?\n/g,'<br>');
+ const msgLen=rawMsg.replace(/\s+/g,' ').length;
+ const lineCount=(rawMsg.match(/\r?\n/g)||[]).length+1;
+ const msgClass=msgLen>320||lineCount>8?' kd-card-msg--xlong':msgLen>220||lineCount>6?' kd-card-msg--long':msgLen>140||lineCount>4?' kd-card-msg--medium':'';
  const senderDept=escapeHtml(k.senderDept||'');
  const senderLine=`${escapeHtml(k.senderName||'Đồng nghiệp')}${senderDept?` · ${senderDept}`:''} gửi bạn một lời ghi nhận`;
  const bgLayer=bgUrl
@@ -4277,7 +4287,7 @@ function buildKudosCard(k){
        <span class="kd-avatar" aria-hidden="true">${escapeHtml(initials(k.senderName))}</span>
        <span>${senderLine}</span>
      </div>
-     <div class="kd-card-msg">${msg}</div>
+     <div class="kd-card-msg${msgClass}">${msg}</div>
      ${vals.length?`<div class="kd-value-row">${chips}</div>`:''}
    </div>
  </div>`;
@@ -4365,11 +4375,15 @@ function setCurrentUser(email){state.currentUser=email;applyMyReactions();try{lo
 let liveFeedTimer=null;
 let liveFeedSeed=0;
 
-const birthdaySuggestions=[
-  {initials:'PH',name:'Phương Hoa',dept:'Application',email:'hoa.phuong@ahamove.com',date:'01/09',when:'Ngày mai'},
-  {initials:'MK',name:'Minh Khang',dept:'Platform',email:'khang.minh@ahamove.com',date:'03/09',when:'Còn 3 ngày'},
-  {initials:'TA',name:'Thu An',dept:'Business Development',email:'an.thu@ahamove.com',date:'05/09',when:'Còn 5 ngày'}
-];
+function birthdaySuggestionsFor(currentEmail){
+ const now=new Date();const year=now.getFullYear();const start=new Date(year,now.getMonth(),now.getDate());
+ return PEOPLE.filter(p=>p.email!==currentEmail&&p.dateOfBirth).map(p=>{
+   const parts=String(p.dateOfBirth).split('-').map(Number);if(parts.length!==3)return null;
+   let next=new Date(year,parts[1]-1,parts[2]);if(next<start)next=new Date(year+1,parts[1]-1,parts[2]);
+   const days=Math.round((next-start)/86400000);if(days<0||days>30)return null;
+   return {initials:initials(p.name),name:p.name,dept:p.dept||'',section:p.section||'',email:p.email,date:String(parts[2]).padStart(2,'0')+'/'+String(parts[1]).padStart(2,'0'),when:days===0?'Hôm nay':days===1?'Ngày mai':'Còn '+days+' ngày',days};
+ }).filter(Boolean).sort((a,b)=>a.days-b.days).slice(0,5);
+}
 const adminMilestones=[];
 // Background templates = 4 ảnh 3D thật (backgrounds.js). Fallback nếu module vắng.
 const cardTemplates=(BG&&BG.LIST&&BG.LIST.length)
@@ -4495,6 +4509,10 @@ function employeeHome(){
  const rec=receivedFor(u.email);
  const latest=rec[0];
  const sentCount=sentBy(u.email).length;
+ const birthdaySuggestions=birthdaySuggestionsFor(u.email);
+ const firstName=escapeHtml((u.name||'bạn').split(' ').slice(-1)[0]);
+ const tenureDays=Number.isFinite(Number(u.tenureDays))?Number(u.tenureDays):null;
+ const tenureCopy=tenureDays!==null?`Cảm ơn bạn đã đồng hành cùng Ahamove <strong>${tenureDays.toLocaleString('vi-VN')}</strong> ngày.`:`Cảm ơn bạn đã đồng hành cùng Ahamove trên hành trình này.`;
  // Banner chúc mừng người NHẬN khi có KUDOS đầu tiên (mỗi user, ẩn được).
  const firstRecvBanner=(rec.length>0&&!firstRecvDismissed(u.email))?`
   <div class="first-recv-banner" role="status">
@@ -4541,6 +4559,7 @@ return `<section class="page active hb-home">
  ${firstRecvBanner}
  <article class="recognition-hero hb-hero">
   <div class="moment-copy">
+   <div class="hb-personal-greeting"><b>Xin chào, ${firstName} 👋</b><span>${tenureCopy}</span>${u.dept?`<small>${escapeHtml(u.dept)}${u.section?` · ${escapeHtml(u.section)}`:''}</small>`:''}</div>
    <span class="eyebrow">KHOẢNH KHẮC ĐƯỢC GHI NHẬN · AHAMOVE</span>
    <h1>“Điều mình làm <br>đã được nhìn thấy.”</h1>
    <p>Một lời ghi nhận cụ thể giúp đóng góp của bạn được lưu lại và trở thành một câu chuyện văn hóa có thể tiếp tục lan tỏa.</p>
@@ -4548,7 +4567,7 @@ return `<section class="page active hb-home">
   </div>
  </article>
  <div class="profile-strip hb-journey-strip">
-  <div class="profile-intro"><div class="avatar-edit-wrap">${avatarMarkup('home-avatar')}<button class="avatar-edit-btn" data-avatar-edit title="Cập nhật avatar" aria-label="Cập nhật ảnh đại diện">✎</button></div><div><b>Xin chào ${escapeHtml(u.name)} ✨</b><p>Một lời ghi nhận đúng lúc có thể khiến một đóng góp trở nên thật sự đáng nhớ.</p></div></div>
+  <div class="profile-intro"><div class="avatar-edit-wrap">${avatarMarkup('home-avatar')}<button class="avatar-edit-btn" data-avatar-edit title="Cập nhật avatar" aria-label="Cập nhật ảnh đại diện">✎</button></div><div><b>${escapeHtml(u.name)} ✨</b><p>${escapeHtml(u.dept||'')}${u.section?` · ${escapeHtml(u.section)}`:''}${u.dateOfBirth?` · Sinh nhật ${escapeHtml(u.dateOfBirth.slice(8,10)+'/'+u.dateOfBirth.slice(5,7))}`:''}</p></div></div>
   <div class="hb-journey-stat"><strong>${rec.length}</strong><div><b>KUDOS bạn đã nhận</b><span>Được lưu để xem lại bất cứ lúc nào</span></div></div>
   <div class="hb-journey-stat"><strong>${sentBy(u.email).length}</strong><div><b>KUDOS bạn đã gửi</b><span>Lan tỏa điều tích cực đến đồng nghiệp</span></div></div>
  </div>
@@ -4601,6 +4620,7 @@ function publicFeedPage(){
          ${Object.entries(reactionMeta).map(([key,meta])=>`<button class="reaction-btn ${k.myReactions&&k.myReactions[key]?'active':''}" data-reaction="${key}" data-public-id="${k.id}" title="${meta[1]}"><span>${meta[0]}</span><b>${Number((k.reactions&&k.reactions[key])||0)}</b></button>`).join('')}
        </div>
        <span class="reaction-note">Reaction chỉ dùng để hưởng ứng và lan tỏa lời ghi nhận</span>
+       <button class="public-comment-link kudos-open" data-open-kudos="${k.id}" type="button">💬 ${Number(k.commentCount||0)} bình luận</button>
      </div>
    </article>`;
  }).join('');
@@ -4709,7 +4729,7 @@ return `<section class="page active kudos-compose-page">
     </div>
    </div>
 
-   <div class="field culture-field">
+   <div class="field culture-field ${state.selectedTemplate==='birthday'?'hidden':''}" id="culture-field">
     <label id="culture-picker-label">Giá trị văn hóa <span class="optional-label">· chọn từ 1 đến 3</span></label>
     <div class="culture-picker" role="group" aria-labelledby="culture-picker-label">
      <button type="button" class="culture-chip ${state.values.has('fair')?'selected':''}" data-value="fair" aria-pressed="${state.values.has('fair')}">Công bằng & Tôn trọng</button>
@@ -4799,9 +4819,10 @@ function kudosDetail(){
  }
  const isRecipient=k.recipientEmail&&k.recipientEmail.toLowerCase()===u.email.toLowerCase();
  const isSender=k.senderEmail&&k.senderEmail.toLowerCase()===u.email.toLowerCase();
+ const isPublic=k.visibility==='public'&&k.publicConsent==='approved';
 
- // Demo "login gate": deep-link mở bởi người không phải người nhận/gửi.
- if(!isRecipient&&!isSender){
+ // KUDOS công khai có thể mở bởi mọi Ahamover trong bản test; KUDOS riêng vẫn giữ gate người gửi/người nhận.
+ if(!isRecipient&&!isSender&&!isPublic){
    return `<section class="page active kudos-detail-page">
      <button class="kd-back" data-page="employee-home">← Về trang chủ</button>
      <div class="demo-gate">
@@ -4863,7 +4884,10 @@ function kudosDetail(){
    senderBlock=`<div class="kd-panel"><h3>Trạng thái</h3><p class="kd-sender-status">${s}</p></div>`;
  }
 
- const backTarget=isSender&&!isRecipient?'kudos-profile':'employee-home';
+ const comments=(k.comments||[]);
+ const commentsBlock=isPublic?`<div class="kd-panel kd-comments"><h3>Bình luận (${comments.length})</h3><p class="kd-comment-intro">Cùng để lại một lời hưởng ứng tích cực cho KUDOS công khai này.</p><div class="kd-comment-list">${comments.length?comments.map(c=>`<div class="kd-comment"><span class="kd-comment-avatar">${initials(c.authorName)}</span><div><b>${escapeHtml(c.authorName||'Ahamover')}</b><small>${escapeHtml(c.authorDept||'')}</small><p>${escapeHtml(c.text||'')}</p></div></div>`).join(''):'<div class="kd-comment-empty">Chưa có bình luận nào. Bạn có thể là người đầu tiên.</div>'}</div><div class="kd-comment-compose"><textarea id="kd-comment-text" class="textarea" maxlength="500" placeholder="Viết một bình luận tích cực..."></textarea><button class="btn primary" data-comment-send="${k.id}">Gửi bình luận</button></div></div>`:'';
+
+ const backTarget=isSender&&!isRecipient?'kudos-profile':(state.page==='public-feed'?'public-feed':'employee-home');
  return `<section class="page active kudos-detail-page">
    <button class="kd-back" data-page="${backTarget}">← ${isSender&&!isRecipient?'Về Hồ sơ':'Về trang chủ'}</button>
    <div class="page-head"><div><div class="kicker">${isRecipient?'KUDOS DÀNH CHO BẠN':'KUDOS BẠN ĐÃ GỬI'}</div><h1>${isRecipient?'Có một lời ghi nhận dành riêng cho bạn 💛':'Lời ghi nhận bạn đã gửi'}</h1><p class="page-sub">${isRecipient?'Một đồng đội đã nhìn thấy điều bạn làm và muốn gửi đến bạn lời ghi nhận này.':'Đây là lời ghi nhận bạn đã gửi (trên background đã chọn).'}</p></div></div>
@@ -4872,6 +4896,7 @@ function kudosDetail(){
    ${personalEmailControls(k)}
    ${consentBlock}
    ${senderBlock}
+   ${commentsBlock}
  </section>`;
 }
 
@@ -5169,7 +5194,7 @@ function adminQuality(){
     <div class="mod-reasons">${reasons.map(r=>`<span class="mod-reason-chip">⚑ ${escapeHtml(r)}</span>`).join('')||'<span class="mod-reason-chip">Cần xem lại</span>'}</div>
     <div class="mod-msg">${escapeHtml(k.message||'').replace(/\r?\n/g,'<br>')}</div>
     <div class="mod-actions">
-      <button class="btn secondary" data-mod-preview="${k.id}">Xem email</button>
+      <button class="btn secondary" data-mod-detail="${k.id}">Xem chi tiết KUDOS</button><button class="btn secondary" data-mod-preview="${k.id}">Xem email</button>
       <button class="btn secondary" data-mod-edit="${k.id}">Sửa</button>
       <button class="btn danger" data-mod-hide="${k.id}">Ẩn</button>
       <button class="btn primary" data-mod-approve="${k.id}">Duyệt & gửi</button>
@@ -5194,7 +5219,7 @@ function adminQuality(){
    .mod-actions .btn{padding:9px 14px;font-size:13px}
    @media(max-width:640px){.mod-stat-row{grid-template-columns:1fr 1fr}.mod-actions{justify-content:stretch}.mod-actions .btn{flex:1}}
   
-/* V28.15 — Launch hero uses mascot background; sample KUDOS card removed */
+/* V28.17 — Launch hero updated; KUDOS copy auto-scales to protect template */
 .hb-home .hb-hero{
   display:block!important;
   min-height:420px;
@@ -5223,6 +5248,14 @@ function adminQuality(){
   .hb-home .hb-hero .moment-copy{max-width:78%}
   .hb-home .hb-hero-actions{grid-template-columns:1fr!important;max-width:230px}
 }
+
+/* V28.18 — Master Data greeting + public comments */
+.hb-personal-greeting{display:flex;flex-direction:column;gap:4px;margin-bottom:18px;padding-left:14px;border-left:3px solid #FF7F32;color:#fff}
+.hb-personal-greeting b{font-size:20px;line-height:1.3;color:#fff}.hb-personal-greeting span{font-size:14px;line-height:1.55;color:#E6F0FA}.hb-personal-greeting span strong{color:#FFB172}.hb-personal-greeting small{font-size:12px;color:#BFD3E8}
+.public-comment-link{border:0;background:transparent;color:#2F6FB8;font-size:13px;font-weight:750;cursor:pointer;padding:5px 8px;border-radius:999px}.public-comment-link:hover{background:#EDF5FD}
+.kd-comments .kd-comment-intro{margin-bottom:14px}.kd-comment-list{display:grid;gap:10px}.kd-comment{display:grid;grid-template-columns:34px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid #EDF1F5}.kd-comment:last-child{border-bottom:0}.kd-comment-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#EAF2FB;color:#0E4174;font-size:11px;font-weight:800}.kd-comment b{font-size:13px;color:#123B67}.kd-comment small{display:block;font-size:11px;color:#8391A3;margin-top:1px}.kd-comment p{margin:4px 0 0;font-size:13px;line-height:1.65;color:#42546B}.kd-comment-empty{font-size:13px;color:#728198;padding:8px 0}.kd-comment-compose{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-top:14px}.kd-comment-compose .textarea{min-height:72px;max-height:140px}.mod-detail-modal{max-width:900px!important}.mod-detail-modal .kd-card-fullbg{margin:16px auto 0}
+@media(max-width:720px){.hb-personal-greeting b{font-size:17px}.hb-personal-greeting span{font-size:13px}.kd-comment-compose{grid-template-columns:1fr}.kd-comment-compose .btn{width:100%}}
+
 </style>
   ${bannerHero('ai_review')}
   <div class="page-head"><div><div class="kicker">DUYỆT NỘI DUNG</div><h1>KUDOS cần Admin xem lại</h1><p class="page-sub">Nội dung hợp lệ được tự động gửi email. Chỉ những KUDOS dính luật (từ cấm, rỗng nghĩa, trùng lặp) mới được giữ lại đây để bạn duyệt.</p></div></div>
@@ -5239,6 +5272,12 @@ function adminQuality(){
    <div class="form-actions" style="margin-top:10px;display:flex;justify-content:flex-end"><button class="btn primary" id="mod-blacklist-save">Lưu danh sách</button></div>
   </article>
  </section>`;
+}
+function openModDetail(id){
+ const k=kudosById(id);if(!k){toast('Không tìm thấy KUDOS.');return;}
+ const reasons=modReasonsTextClient((k.moderation&&k.moderation.reasons)||[]);
+ document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop"><div class="modal mod-detail-modal"><button class="modal-close mod-detail-close" aria-label="Đóng">×</button><div class="kicker">CHI TIẾT KUDOS CẦN DUYỆT</div><h2>${escapeHtml(k.senderName||'')} → ${escapeHtml(k.recipientName||'')}</h2><p class="page-sub">${escapeHtml(k.senderDept||'')}${k.senderSection?` · ${escapeHtml(k.senderSection)}`:''} → ${escapeHtml(k.recipientDept||'')}${k.recipientSection?` · ${escapeHtml(k.recipientSection)}`:''}</p>${buildKudosCard(k)}<div class="mod-reasons" style="margin-top:16px">${reasons.map(r=>`<span class="mod-reason-chip">⚑ ${escapeHtml(r)}</span>`).join('')||'<span class="mod-reason-chip">Cần xem lại</span>'}</div><button class="btn primary wide mod-detail-close">Đóng</button></div></div>`;
+ document.querySelectorAll('.mod-detail-close').forEach(b=>b.addEventListener('click',()=>document.querySelector('#modal-root').innerHTML=''));
 }
 function openModPreview(id){
  const k=kudosById(id);if(!k){toast('Không tìm thấy KUDOS.');return;}
@@ -5259,6 +5298,7 @@ function openModEdit(id){
  });
 }
 function bindAdminQuality(){
+ document.querySelectorAll('[data-mod-detail]').forEach(b=>b.addEventListener('click',()=>openModDetail(b.dataset.modDetail)));
  document.querySelectorAll('[data-mod-preview]').forEach(b=>b.addEventListener('click',()=>openModPreview(b.dataset.modPreview)));
  document.querySelectorAll('[data-mod-edit]').forEach(b=>b.addEventListener('click',()=>openModEdit(b.dataset.modEdit)));
  document.querySelectorAll('[data-mod-approve]').forEach(b=>b.addEventListener('click',async()=>{
@@ -5517,7 +5557,7 @@ function bindHandbookUI(){
  const adminPreview=document.querySelector('#admin-recognition-preview');
  if(adminPreview)adminPreview.addEventListener('click',()=>{document.querySelector('.admin-recognition-preview')?.scrollIntoView({behavior:'smooth',block:'start'});});
  document.querySelectorAll('[data-modal="rules"]').forEach(btn=>btn.addEventListener('click',()=>{
-  document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="hb-rules-title"><button class="modal-close" aria-label="Đóng">×</button><div class="kicker">GỬI KUDOS</div><h2 id="hb-rules-title">Quy tắc ghi nhận</h2><div class="rules"><div class="rule"><b>Người nhận</b><span>Tìm và chọn đúng email Ahamove của đồng nghiệp.</span></div><div class="rule"><b>Nội dung</b><span>Chia sẻ hành động cụ thể, tác động tạo ra và điều đáng ghi nhận.</span></div><div class="rule"><b>Giá trị văn hóa</b><span>Chọn từ 1 đến 3 Giá trị văn hóa phù hợp.</span></div><div class="rule"><b>Phạm vi</b><span>Mặc định riêng tư. Công khai chỉ diễn ra khi người nhận đồng ý.</span></div></div><button class="btn primary wide hb-rules-close">Đã hiểu</button></div></div>`;
+  document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="hb-rules-title"><button class="modal-close" aria-label="Đóng">×</button><div class="kicker">GỬI KUDOS</div><h2 id="hb-rules-title">Quy tắc ghi nhận</h2><div class="rules"><div class="rule"><b>Người nhận</b><span>Tìm và chọn đúng email Ahamove của đồng nghiệp.</span></div><div class="rule"><b>Nội dung</b><span>Chia sẻ hành động cụ thể, tác động tạo ra và điều đáng ghi nhận.</span></div><div class="rule"><b>Giá trị văn hóa</b><span>Chọn từ 1 đến 3 Giá trị văn hóa phù hợp. Riêng KUDOS Sinh nhật không bắt buộc.</span></div><div class="rule"><b>Phạm vi</b><span>Mặc định riêng tư. Công khai chỉ diễn ra khi người nhận đồng ý.</span></div></div><button class="btn primary wide hb-rules-close">Đã hiểu</button></div></div>`;
   document.querySelectorAll('.modal-close,.hb-rules-close').forEach(b=>b.addEventListener('click',()=>document.querySelector('#modal-root').innerHTML=''));
  }));
 }
@@ -5537,6 +5577,7 @@ function bind(){
  });
  // consent + demo-become
  document.querySelectorAll('[data-consent]').forEach(b=>b.addEventListener('click',()=>handleConsent(b.dataset.kid,b.dataset.consent)));
+ document.querySelectorAll('[data-comment-send]').forEach(b=>b.addEventListener('click',async()=>{const ta=document.querySelector('#kd-comment-text');const text=ta?ta.value.trim():'';if(text.length<2){toast('Hãy nhập bình luận trước khi gửi.');return;}b.disabled=true;try{const k=await rpc('themComment',b.dataset.commentSend,me().email,text);takeRecord(k);render();toast('Đã thêm bình luận.');}catch(e){b.disabled=false;toast(e.message);}}));
  document.querySelectorAll('[data-become]').forEach(b=>b.addEventListener('click',()=>{setCurrentUser(b.dataset.become);state.viewKudosId=b.dataset.openAfter;state.page='kudos-detail';render();window.scrollTo(0,0);}));
  // fill kudos-detail iframe(s)
  document.querySelectorAll('[data-email-frame]').forEach(fr=>{const k=kudosById(fr.getAttribute('data-email-frame'));if(k){fr.srcdoc=buildReceiveEmail(k);sizeFrameOnLoad(fr);}});
@@ -5723,6 +5764,12 @@ function runCoach(){
  const hint=document.querySelector('#ai-values');
  if(hint)hint.textContent=sug.length&&msg.value.trim()?'Gợi ý theo nội dung: '+sug.map(v=>CULTURE[v]).join(' · ')+' · Bạn luôn tự quyết định.':'Gợi ý sẽ được làm nổi nhẹ theo nội dung — bạn luôn là người tự chọn.';
 }
+function syncCultureRequirement(){
+ const field=document.querySelector('#culture-field');const birthday=state.selectedTemplate==='birthday';
+ if(birthday){state.values.clear();document.querySelectorAll('.culture-chip').forEach(c=>{c.classList.remove('selected','suggested');c.setAttribute('aria-pressed','false');});}
+ if(field)field.classList.toggle('hidden',birthday);
+ const hint=document.querySelector('#ai-values');if(hint&&birthday)hint.textContent='Sinh nhật không yêu cầu chọn Giá trị văn hóa.';
+}
 function bindSend(){
  const msg=document.querySelector('#message');
  const emailInput=document.querySelector('#recipient-email');
@@ -5743,7 +5790,7 @@ function bindSend(){
  });
  emailInput.addEventListener('blur',()=>setTimeout(()=>{if(document.activeElement!==emailInput&&!suggestions.contains(document.activeElement))suggestions.classList.add('hidden');},150));
  msg.addEventListener('input',()=>{document.querySelector('#count').textContent=msg.value.trim().length+' ký tự';updatePreview();clearTimeout(coachTimer);coachTimer=setTimeout(runCoach,160);});
- document.querySelectorAll('[data-template]').forEach(c=>c.addEventListener('click',()=>{state.selectedTemplate=c.dataset.template;document.querySelectorAll('.template-option').forEach(x=>{x.classList.toggle('selected',x===c);x.setAttribute('aria-pressed',String(x===c));});updatePreview();}));
+ document.querySelectorAll('[data-template]').forEach(c=>c.addEventListener('click',()=>{state.selectedTemplate=c.dataset.template;document.querySelectorAll('.template-option').forEach(x=>{x.classList.toggle('selected',x===c);x.setAttribute('aria-pressed',String(x===c));});syncCultureRequirement();updatePreview();}));
  document.querySelectorAll('.culture-chip').forEach(c=>c.addEventListener('click',()=>{const v=c.dataset.value;if(state.values.has(v)){state.values.delete(v);c.classList.remove('selected')}else if(state.values.size<3){state.values.add(v);c.classList.add('selected')}c.setAttribute('aria-pressed',String(state.values.has(v)));updatePreview();}));
  document.querySelectorAll('[data-visibility]').forEach(btn=>btn.addEventListener('click',()=>{state.sendVisibility=btn.dataset.visibility;document.querySelectorAll('[data-visibility]').forEach(x=>{x.classList.toggle('selected',x===btn);x.setAttribute('aria-pressed',String(x===btn));});updatePreview();}));
  const coachToggle=document.querySelector('#coach-toggle');
@@ -5762,7 +5809,7 @@ function bindSend(){
    vf?.querySelector('.visibility-option')?.focus?.();
  });
  document.querySelector('#send').addEventListener('click',send);
- updatePreview();runCoach();
+ syncCultureRequirement();updatePreview();runCoach();
 }
 let sending=false;
 async function send(){
@@ -5773,7 +5820,7 @@ async function send(){
  if(!exact||!state.selectedRecipient){toast('Hãy tìm và chọn đúng email đồng nghiệp mẫu.');return;}
  if(exact.email===me().email){toast('Bạn không thể gửi cho chính mình.');return;}
  if(text.length<15||text.length>6000){toast('Nhập từ 15 đến 6.000 ký tự cho bản test.');return;}
- if(state.values.size===0){toast('Hãy chọn ít nhất 1 Giá trị văn hóa.');return;}
+ if(state.selectedTemplate!=='birthday'&&state.values.size===0){toast('Hãy chọn ít nhất 1 Giá trị văn hóa.');return;}
  const first=sentBy(me().email).length===0;
  const payload={senderEmail:me().email,recipientEmail:exact.email,message:text,values:[...state.values],templateId:state.selectedTemplate,visibility:state.sendVisibility};
  const fingerprint=JSON.stringify(payload);
