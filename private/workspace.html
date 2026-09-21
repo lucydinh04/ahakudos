@@ -3630,7 +3630,61 @@ body{background:var(--bg)}
 .aha-card .aha-card-sub{font-size:13px;color:#7286A0;margin-top:2px}
 .aha-card .aha-card-cta{white-space:nowrap;background:transparent;border:0;color:#2F6FB8;font-weight:800;font-size:13px;cursor:pointer}
 @media(max-width:640px){.aha-banner{flex-direction:column;text-align:center;padding:18px}.aha-banner .aha-illu{width:176px;height:176px}.aha-banner .aha-cta{width:100%;justify-content:center}}
-</style></head>
+</style><style>
+/* V28.14 — recipient KUDOS full-background experience */
+.kd-card-fullbg{
+  position:relative;
+  width:min(100%,620px);
+  margin:0 auto;
+  border-radius:26px;
+  overflow:hidden;
+  background:#F7F3EB;
+  box-shadow:0 18px 48px rgba(22,58,96,.16);
+  isolation:isolate;
+}
+.kd-card-fullbg .kd-card-bg{
+  display:block;
+  width:100%;
+  height:auto;
+  min-height:560px;
+  object-fit:cover;
+}
+.kd-card-fullbg .kd-card-bg-fallback{
+  aspect-ratio:820/1457;
+  min-height:720px;
+  background:linear-gradient(155deg,#FFF7EF 0%,#E8F3FF 62%,#FFF1E8 100%);
+}
+.kd-card-fullbg .kd-card-shade{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(90deg,rgba(255,255,255,.94) 0%,rgba(255,255,255,.84) 42%,rgba(255,255,255,.52) 64%,rgba(255,255,255,.08) 88%,rgba(255,255,255,0) 100%);
+}
+.kd-card-fullbg .kd-card-content{
+  position:absolute;inset:0;z-index:2;
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+  width:min(66%,430px);
+  padding:8% 0 8% 8%;
+  color:#0E4174;
+  text-align:left;
+}
+.kd-card-label{font-size:12px;line-height:1.4;letter-spacing:.16em;font-weight:800;color:#0E4174;margin-bottom:18px;text-transform:uppercase}
+.kd-sender-line{display:flex;align-items:center;gap:10px;font-size:13.5px;line-height:1.55;color:#3F5F80;font-weight:650;margin-bottom:22px}
+.kd-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex:none;background:#0E4174;color:#fff;font-size:12px;font-weight:800;box-shadow:0 6px 14px rgba(14,65,116,.16)}
+.kd-card-fullbg .kd-card-msg{font-size:clamp(20px,2.1vw,27px);line-height:1.62;color:#0E4174;font-weight:650;white-space:pre-wrap;overflow-wrap:anywhere;text-wrap:pretty;text-shadow:0 1px 0 rgba(255,255,255,.6)}
+.kd-value-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:24px}
+.kd-value-chip{display:inline-flex;align-items:center;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.58);border:1px solid rgba(14,65,116,.14);color:#0E4174;font-size:12.5px;line-height:1.35;font-weight:700;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.kudos-preview-card .kd-card-fullbg{width:min(100%,560px)}
+@media(max-width:640px){
+ .kd-card-fullbg{border-radius:20px;width:100%}
+ .kd-card-fullbg .kd-card-content{width:78%;padding:8% 0 8% 7%}
+ .kd-card-label{font-size:10px;margin-bottom:12px}
+ .kd-sender-line{font-size:12px;gap:8px;margin-bottom:14px}
+ .kd-avatar{width:32px;height:32px;font-size:11px}
+ .kd-card-fullbg .kd-card-msg{font-size:18px;line-height:1.58}
+ .kd-value-row{margin-top:16px;gap:5px}
+ .kd-value-chip{font-size:11px;padding:6px 9px}
+}
+</style>
+</head>
 <body>
   <div id="app"><p style="text-align:center;padding:70px 24px">Đang kết nối Google Sheets…</p></div>
   <div id="toast-root" role="status" aria-live="polite"></div>
@@ -4198,24 +4252,26 @@ function buildReceiveEmail(k){
 function buildKudosCard(k){
  const bg=(typeof bgFor==='function'?bgFor(k.templateId):null)||{};
  const bgUrl=bg.url||'';
- const sticker=bg.sticker||'💛';
  const CULT=(EMAIL&&EMAIL.CULTURE)||{fair:'Công bằng & Tôn trọng',share:'Học hỏi & Chia sẻ',grow:'Gắn kết & Cùng phát triển'};
  const vals=(k.values||[]).map(v=>CULT[v]||v);
- const chips=vals.map(n=>`<span style="display:inline-block;background:#EAF2FB;color:#2F6FB8;font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;margin:6px 6px 0 0;">${escapeHtml(n)}</span>`).join('');
+ const chips=vals.map(n=>`<span class="kd-value-chip">${escapeHtml(n)}</span>`).join('');
  const msg=escapeHtml(k.message||'').replace(/\r?\n/g,'<br>');
- const bgStyle=bgUrl?`background-image:url('${bgUrl}');background-size:cover;background-position:center;`:`background:linear-gradient(135deg,#FFF3E7,#EAF2FB);`;
- return `<div class="kd-card" style="border-radius:22px;overflow:hidden;${bgStyle}padding:30px 18px;box-shadow:0 14px 40px rgba(29,70,111,.12)">
-   <div class="kd-card-panel" style="max-width:560px;margin:0 auto;background:rgba(255,255,255,.88);border-radius:18px;padding:22px 22px 24px;box-shadow:0 10px 26px rgba(23,58,94,.14)">
-     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-       <div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:#0E4174">Lời ghi nhận dành cho bạn</div>
-       <div style="font-size:26px;line-height:1">${sticker}</div>
+ const senderDept=escapeHtml(k.senderDept||'');
+ const senderLine=`${escapeHtml(k.senderName||'Đồng nghiệp')}${senderDept?` · ${senderDept}`:''} gửi bạn một lời ghi nhận`;
+ const bgLayer=bgUrl
+   ?`<img class="kd-card-bg" src="${escapeHtml(bgUrl)}" alt="Background KUDOS ${escapeHtml(bg.name||'')}" loading="eager">`
+   :`<div class="kd-card-bg kd-card-bg-fallback" aria-hidden="true"></div>`;
+ return `<div class="kd-card kd-card-fullbg">
+   ${bgLayer}
+   <div class="kd-card-shade" aria-hidden="true"></div>
+   <div class="kd-card-content">
+     <div class="kd-card-label">LỜI GHI NHẬN DÀNH CHO BẠN</div>
+     <div class="kd-sender-line">
+       <span class="kd-avatar" aria-hidden="true">${escapeHtml(initials(k.senderName))}</span>
+       <span>${senderLine}</span>
      </div>
-     <div style="display:flex;align-items:center;gap:12px;margin-top:14px">
-       <div style="width:44px;height:44px;border-radius:50%;background:#0B3567;color:#fff;font-weight:700;display:grid;place-items:center">${escapeHtml(initials(k.senderName))}</div>
-       <div><div style="font-size:15px;font-weight:700;color:#12325A">${escapeHtml(k.senderName||'Đồng nghiệp')}</div><div style="font-size:13px;color:#7286A0">${escapeHtml(k.senderDept||'')} · vừa gửi bạn một lời ghi nhận</div></div>
-     </div>
-     <div class="kd-card-msg" style="font-size:18px;line-height:1.85;color:#1B3557;font-weight:500;white-space:pre-wrap;overflow-wrap:anywhere;margin-top:16px">${msg}</div>
-     ${vals.length?`<div style="margin-top:10px">${chips}</div>`:''}
+     <div class="kd-card-msg">${msg}</div>
+     ${vals.length?`<div class="kd-value-row">${chips}</div>`:''}
    </div>
  </div>`;
 }
@@ -4805,7 +4861,7 @@ function kudosDetail(){
  const backTarget=isSender&&!isRecipient?'kudos-profile':'employee-home';
  return `<section class="page active kudos-detail-page">
    <button class="kd-back" data-page="${backTarget}">← ${isSender&&!isRecipient?'Về Hồ sơ':'Về trang chủ'}</button>
-   <div class="page-head"><div><div class="kicker">${isRecipient?'KUDOS DÀNH CHO BẠN':'KUDOS BẠN ĐÃ GỬI'}</div><h1>${isRecipient?'Một lời ghi nhận dành cho bạn':'Lời ghi nhận bạn đã gửi'}</h1><p class="page-sub">${isRecipient?'Nội dung đầy đủ hiển thị trên background bạn đã được gửi. Trạng thái email ghi riêng bên dưới.':'Đây là lời ghi nhận bạn đã gửi (trên background đã chọn).'}</p></div></div>
+   <div class="page-head"><div><div class="kicker">${isRecipient?'KUDOS DÀNH CHO BẠN':'KUDOS BẠN ĐÃ GỬI'}</div><h1>${isRecipient?'Có một lời ghi nhận dành riêng cho bạn 💛':'Lời ghi nhận bạn đã gửi'}</h1><p class="page-sub">${isRecipient?'Một đồng đội đã nhìn thấy điều bạn làm và muốn gửi đến bạn lời ghi nhận này.':'Đây là lời ghi nhận bạn đã gửi (trên background đã chọn).'}</p></div></div>
    ${buildKudosCard(k)}
    <div class="kd-panel"><div class="kd-row">${emailStatusPill}${visPill}</div>${isRecipient?'<div class="kd-save-note"><span>💾</span><div>Lời ghi nhận này được <b>tự động lưu</b> trong Hồ sơ KUDOS của bạn — không cần bấm "Lưu". Bạn có thể mở lại bất cứ lúc nào.</div></div>':''}</div>
    ${personalEmailControls(k)}
