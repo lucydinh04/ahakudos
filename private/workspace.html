@@ -3672,6 +3672,9 @@ body{background:var(--bg)}
 .kd-card-label{font-size:12px;line-height:1.4;letter-spacing:.16em;font-weight:800;color:#0E4174;margin-bottom:16px;text-transform:uppercase}
 .kd-sender-line{display:flex;align-items:center;gap:10px;font-size:13.5px;line-height:1.55;color:#3F5F80;font-weight:650;margin-bottom:20px}
 .kd-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex:none;background:#0E4174;color:#fff;font-size:12px;font-weight:800;box-shadow:0 6px 14px rgba(14,65,116,.16)}
+.kd-template-brand{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.70);border:1px solid rgba(14,65,116,.12);border-radius:999px;padding:7px 11px;margin-bottom:18px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 7px 18px rgba(14,65,116,.08)}
+.kd-template-brand-logo{display:inline-flex;align-items:center}.kd-template-brand-logo img{display:block;height:18px;width:auto;max-width:96px}.kd-template-brand-name{display:inline-flex;align-items:baseline;font-size:13px;line-height:1;color:#0E4174;letter-spacing:-.02em}.kd-template-brand-name b{font-weight:800}.kd-template-brand-name strong{font-weight:800;color:#FF7F32}
+.kd-sender-stack{display:flex;flex-direction:column;gap:3px;margin-bottom:20px}.kd-sender-caption{font-size:10px;letter-spacing:.16em;font-weight:800;color:#6B829A}.kd-sender-name{font-size:17px;line-height:1.4;color:#0E4174}.kd-sender-dept{font-size:12.5px;line-height:1.5;color:#526B84;font-weight:650}
 .kd-card-fullbg .kd-card-msg{font-size:clamp(19px,1.75vw,26px);line-height:1.58;color:#0E4174;font-weight:650;white-space:pre-wrap;overflow-wrap:anywhere;text-wrap:pretty;text-shadow:0 1px 0 rgba(255,255,255,.65)}
 .kd-card-fullbg .kd-card-msg.kd-card-msg--medium{font-size:clamp(18px,1.55vw,23px);line-height:1.62}
 .kd-card-fullbg .kd-card-msg.kd-card-msg--long{font-size:clamp(17px,1.4vw,21px);line-height:1.68}
@@ -3688,6 +3691,8 @@ body{background:var(--bg)}
  .kd-card-label{font-size:10px;margin-bottom:12px}
  .kd-sender-line{font-size:12px;gap:8px;margin-bottom:14px}
  .kd-avatar{width:32px;height:32px;font-size:11px}
+ .kd-template-brand{margin-bottom:14px;padding:6px 9px}.kd-template-brand-logo img{height:16px}.kd-template-brand-name{font-size:12px}
+ .kd-sender-stack{margin-bottom:14px}.kd-sender-name{font-size:15px}.kd-sender-dept{font-size:11.5px}
  .kd-card-fullbg .kd-card-msg{font-size:18px;line-height:1.56}
  .kd-card-fullbg .kd-card-msg.kd-card-msg--medium{font-size:17px;line-height:1.6}
  .kd-card-fullbg .kd-card-msg.kd-card-msg--long{font-size:16px;line-height:1.64}
@@ -3743,7 +3748,7 @@ body{background:var(--bg)}
   }
   function tpl(id) { return TPL[id] || TPL.warm; }
 
-  // Email = THÔNG BÁO ẩn danh: subject/preheader KHÔNG nêu tên người gửi lẫn nội dung KUDOS.
+  // Email = notification-only: subject/preheader không nêu người gửi hay nội dung KUDOS.
   // Người nhận mở trang chi tiết (đã xác thực) mới thấy ai gửi + lời ghi nhận.
   function subject(rec) {
     return '[TEST AhaKudos] Bạn vừa nhận được một KUDOS mới 💛';
@@ -3753,21 +3758,17 @@ body{background:var(--bg)}
   }
 
   // Ghi chú phạm vi hiển thị — ĐẶT NGOÀI vùng thiệp cảm xúc, nhỏ gọn, đúng trạng thái.
-  // 'pending' KHÔNG được nói là "đã công khai"; đó là trạng thái chờ người nhận đồng ý.
+  // 'pending' = đang chờ Admin duyệt phạm vi KUDOS CONFESSION.
   function visibilityNote(rec) {
     var vis = rec.visibility === 'public' ? 'public' : 'private';
     if (vis === 'private') {
-      return { icon: '🔒', text: 'Lời này được gửi <strong>riêng cho bạn</strong> — người gửi cũng có thể xem lại; không xuất hiện trên bảng công khai.' };
+      return { icon: '🔒', text: 'KUDOS này được gửi <strong>riêng</strong> và do Admin kiểm soát trước khi email được gửi.' };
     }
     var consent = rec.publicConsent || 'pending';
     if (consent === 'approved') {
-      return { icon: '◎', text: 'Bạn đã đồng ý chia sẻ lời này trên bảng ghi nhận Ahamove. Bạn có thể thu hồi bất cứ lúc nào.' };
+      return { icon: '◎', text: 'KUDOS CONFESSION đã được <strong>Admin duyệt</strong> và đang hiển thị công khai cùng danh tính người gửi.' };
     }
-    if (consent === 'revoked') {
-      return { icon: '🔒', text: 'Hiện chỉ bạn và người gửi xem lại được lời này. Bạn có thể chia sẻ công khai khi mở lời ghi nhận.' };
-    }
-    // pending
-    return { icon: '🕓', text: esc(firstName(rec.senderName)) + ' <strong>mong muốn</strong> chia sẻ lời này công khai. Hiện chỉ bạn và người gửi xem lại được — bạn có thể quyết định khi mở lời ghi nhận.' };
+    return { icon: '🕓', text: 'KUDOS đang chờ <strong>Admin duyệt</strong> trước khi xuất hiện trên KUDOS CONFESSION.' };
   }
 
   function valuesHtml(rec) {
@@ -3785,7 +3786,7 @@ body{background:var(--bg)}
      preview (forPreview:true, CTA inert) and for the real/sample email. */
   function build(rec, opts) {
     opts = opts || {};
-    // Email = THÔNG BÁO có HÌNH MINH HOẠ (mascot) + CTA. Ẩn danh: không hiện nội dung/tên người gửi.
+    // Email = notification-only có hình minh hoạ mascot + CTA; không hiển thị nội dung hoặc tên người gửi.
     var hero = opts.hero || {};
     var heroUrl = hero.url || '';
     var heroAlt = hero.alt || 'AhaKudos';
@@ -3846,11 +3847,10 @@ body{background:var(--bg)}
   }
   function adminVisibilityLabel(rec) {
     if (rec.visibility === 'public') {
-      if (rec.publicConsent === 'approved') return { c: '#2565a8', bg: '#eaf3ff', t: '◎ Công khai (người nhận đã đồng ý)' };
-      if (rec.publicConsent === 'revoked') return { c: '#5b6a7d', bg: '#f1f3f7', t: '🔒 Người nhận đang giữ riêng' };
-      return { c: '#9a5a1e', bg: '#fff4e8', t: '🕓 Đề nghị công khai — chờ người nhận đồng ý' };
+      if (rec.publicConsent === 'approved') return { c: '#2565a8', bg: '#eaf3ff', t: '◎ KUDOS CONFESSION · Admin đã duyệt' };
+      return { c: '#9a5a1e', bg: '#fff4e8', t: '🕓 KUDOS CONFESSION · chờ Admin duyệt' };
     }
-    return { c: '#5b6a7d', bg: '#f1f3f7', t: '● Chỉ người nhận biết' };
+    return { c: '#5b6a7d', bg: '#f1f3f7', t: '● Riêng tư · Admin kiểm soát' };
   }
   function buildAdminNotify(rec, opts) {
     opts = opts || {};
@@ -3921,7 +3921,8 @@ flag +
   }
 
   return { logoData: EMAIL_LOGO, build: build, buildAdminNotify: buildAdminNotify, subject: subject, adminSubject: adminSubject, preheader: preheader, visibilityNote: visibilityNote, TPL: TPL, CULTURE: CULTURE, firstName: firstName, esc: esc };
-})();window.AHAKUDOS_BG=(function makeV27Backgrounds_(){
+}
+)();window.AHAKUDOS_BG=(function makeV27Backgrounds_(){
 'use strict';
 var LIST=[{"id": "wish", "name": "Tri ân", "sticker": "🧧", "fallback": "#FFF4D8", "path": "assets/backgrounds/wish.png", "w": 1672, "h": 941}, {"id": "move", "name": "Đồng đội", "sticker": "🛵", "fallback": "#FFF0DB", "path": "assets/backgrounds/move.png", "w": 1672, "h": 941}, {"id": "birthday", "name": "Sinh nhật", "sticker": "🎂", "fallback": "#FFE3EA", "path": "assets/backgrounds/birthday.png", "w": 1672, "h": 941}, {"id": "tech", "name": "Cảm hứng", "sticker": "🤖", "fallback": "#DDEEFF", "path": "assets/backgrounds/tech.png", "w": 1672, "h": 941}];
 var DATA={
@@ -4271,8 +4272,10 @@ function buildKudosCard(k){
  const msgLen=rawMsg.replace(/\s+/g,' ').length;
  const lineCount=(rawMsg.match(/\r?\n/g)||[]).length+1;
  const msgClass=msgLen>320||lineCount>8?' kd-card-msg--xlong':msgLen>220||lineCount>6?' kd-card-msg--long':msgLen>140||lineCount>4?' kd-card-msg--medium':'';
+ const senderName=escapeHtml(k.senderName||'Người gửi');
  const senderDept=escapeHtml(k.senderDept||'');
- const senderLine=`${escapeHtml(k.senderName||'Đồng nghiệp')}${senderDept?` · ${senderDept}`:''} gửi bạn một lời ghi nhận`;
+ const senderSection=escapeHtml(k.senderSection||'');
+ const senderOrg=[senderDept,senderSection].filter(Boolean).join(' · ');
  const bgLayer=bgUrl
    ?`<img class="kd-card-bg" src="${escapeHtml(bgUrl)}" alt="Background KUDOS ${escapeHtml(bg.name||'')}" loading="eager">`
    :`<div class="kd-card-bg kd-card-bg-fallback" aria-hidden="true"></div>`;
@@ -4280,10 +4283,12 @@ function buildKudosCard(k){
    ${bgLayer}
    <div class="kd-card-shade" aria-hidden="true"></div>
    <div class="kd-card-content">
+     <div class="kd-template-brand"><span class="kd-template-brand-logo">${logo(true)}</span><span class="kd-template-brand-name"><b>Aha</b><strong>Kudos</strong></span></div>
      <div class="kd-card-label">LỜI GHI NHẬN DÀNH CHO BẠN</div>
-     <div class="kd-sender-line">
-       <span class="kd-avatar" aria-hidden="true">${escapeHtml(initials(k.senderName))}</span>
-       <span>${senderLine}</span>
+     <div class="kd-sender-stack">
+       <span class="kd-sender-caption">TỪ</span>
+       <b class="kd-sender-name">${senderName}</b>
+       ${senderOrg?`<span class="kd-sender-dept">${senderOrg}</span>`:''}
      </div>
      <div class="kd-card-msg${msgClass}">${msg}</div>
      ${vals.length?`<div class="kd-value-row">${chips}</div>`:''}
@@ -4362,6 +4367,7 @@ const state={
   sendVisibility:'private', // an toàn theo mặc định: người nhận có thể nhận & đọc riêng tư
   prefillRecipient:'',
   selectedRecipient:null,
+  manualRecipient:false,
   viewKudosId:null,
   pendingDeepLink:null, // {id} chờ "đăng nhập" đúng người nhận
   avatarData:localStorage.getItem('v28-vercel-self-ahakudos-avatar')||'',
@@ -4424,7 +4430,7 @@ const logo=(light=true)=>`<img src="${light?A.logoLight:A.logoDark}" alt="Ahamov
 function sidebar(){
  const emp=[
   ['employee-home','home','Trang chủ'],
-  ['public-feed','feed','KUDOS công khai'],
+  ['public-feed','feed','KUDOS CONFESSION'],
   ['send-kudos','send','Gửi KUDOS'],
   ['kudos-profile','profile','Hồ sơ KUDOS']
  ];
@@ -4450,7 +4456,7 @@ function topbar(){
  return `<header class="hb-header">
   <div class="hb-header-inner">
    <button class="hb-brand" data-page="${state.mode==='employee'?'employee-home':'admin-home'}" aria-label="AhaKudos — Trang chủ">
-    <span class="hb-brand-logo">${logo(true)}</span><span class="hb-brand-divider"></span><span class="hb-product">AhaKudos<span>GHI NHẬN & LAN TỎA</span></span>
+    <span class="hb-brand-logo">${logo(true)}</span><span class="hb-brand-divider"></span><span class="hb-product">AhaKudos<span>GHI NHẬN & CẢM ƠN</span></span>
    </button>
    ${sidebar()}
    <div class="hb-header-actions">
@@ -4578,7 +4584,7 @@ return `<section class="page active hb-home">
     <div class="card-head"><div><div class="kicker">GẦN ĐÂY</div><h2>KUDOS bạn đã nhận</h2></div><button class="link-btn" data-page="kudos-profile">Xem tất cả →</button></div>
     <div class="feed">${recentList}</div>
    </article>
-   <button class="hb-public-callout" data-page="public-feed"><span class="hb-callout-icon">${svg('feed')}</span><span><b>KUDOS công khai</b><small>Theo dõi những lời ghi nhận đang lan tỏa trong công ty.</small></span><i aria-hidden="true">→</i></button>
+   <button class="hb-public-callout" data-page="public-feed"><span class="hb-callout-icon">${svg('feed')}</span><span><b>KUDOS CONFESSION</b><small>Những lời ghi nhận được Admin duyệt để cùng Ahamovers nhìn thấy.</small></span><i aria-hidden="true">→</i></button>
   </div>
   <aside class="right-rail">
    ${firstKudosCard}
@@ -4609,7 +4615,7 @@ function publicFeedPage(){
          <div class="mini-avatar recipient-public-avatar">${initials(k.recipientName)}</div>
          <div class="public-person"><b>${escapeHtml(k.recipientName)}</b><span>${escapeHtml(k.recipientDept||'')}</span></div>
        </div>
-       <div class="public-time"><span class="public-badge">◎ Công khai</span><time>${escapeHtml(k.sentAtLabel||'Vừa xong')}</time></div>
+       <div class="public-time"><span class="public-badge">◎ KUDOS CONFESSION</span><time>${escapeHtml(k.sentAtLabel||'Vừa xong')}</time></div>
      </div>
      <div class="public-message-card tpl-${template.id} kudos-open" role="button" tabindex="0" data-open-kudos="${k.id}">
        <span class="public-sticker">${template.sticker}</span>
@@ -4620,32 +4626,31 @@ function publicFeedPage(){
        <div class="reaction-buttons">
          ${Object.entries(reactionMeta).map(([key,meta])=>`<button class="reaction-btn ${k.myReactions&&k.myReactions[key]?'active':''}" data-reaction="${key}" data-public-id="${k.id}" title="${meta[1]}"><span>${meta[0]}</span><b>${Number((k.reactions&&k.reactions[key])||0)}</b></button>`).join('')}
        </div>
-       <span class="reaction-note">Reaction chỉ dùng để hưởng ứng và lan tỏa lời ghi nhận</span>
-       <button class="public-comment-link kudos-open" data-open-kudos="${k.id}" type="button">💬 ${Number(k.commentCount||0)} bình luận</button>
+       <span class="reaction-note">Reaction dùng để hưởng ứng lời ghi nhận</span>
      </div>
    </article>`;
  }).join('');
  return `<section class="page active">
    <div class="page-head public-feed-head">
      <div>
-       <div class="kicker">KUDOS CÔNG KHAI</div>
+       <div class="kicker">KUDOS CONFESSION</div>
        <h1>Những điều tốt đang diễn ra tại Ahamove</h1>
-       <p class="page-sub">Chỉ những KUDOS được người nhận đồng ý chia sẻ mới xuất hiện tại đây.</p>
+       <p class="page-sub">Những KUDOS được Admin duyệt cho phạm vi KUDOS CONFESSION sẽ xuất hiện tại đây.</p>
      </div>
      <div class="realtime-status"><i></i><div><b>Realtime</b><span>Đang cập nhật</span></div></div>
    </div>
    <div class="public-feed-layout">
-     <div class="public-feed-list" id="public-feed-list">${cards||`<div class="empty"><div class="icon">✦</div><h3>Chưa có KUDOS công khai</h3><p>Những lời ghi nhận được người nhận đồng ý chia sẻ sẽ xuất hiện tại đây.</p></div>`}</div>
+     <div class="public-feed-list" id="public-feed-list">${cards||`<div class="empty"><div class="icon">✦</div><h3>Chưa có KUDOS CONFESSION</h3><p>Những lời ghi nhận được Admin duyệt cho KUDOS CONFESSION sẽ xuất hiện tại đây.</p></div>`}</div>
      <aside class="public-feed-rail">
        <article class="card public-feed-side-card">
          <div class="rail-title"><span>Lan tỏa hôm nay</span></div>
-         <div class="public-stat"><strong>${list.length}</strong><span>KUDOS công khai</span></div>
+         <div class="public-stat"><strong>${list.length}</strong><span>KUDOS CONFESSION</span></div>
          <div class="public-stat"><strong>${list.reduce((s,k)=>s+Object.values(k.reactions||{}).reduce((a,b)=>a+Number(b||0),0),0)}</strong><span>Reaction</span></div>
        </article>
        <article class="card public-feed-side-card public-feed-guideline">
          <div class="rail-title"><span>◎ Về quyền riêng tư</span></div>
-         <p>Người gửi có thể <b>đề nghị</b> chia sẻ công khai, nhưng lời ghi nhận chỉ lên bảng này khi <b>người nhận đồng ý</b>.</p>
-         <p><b>Người nhận có thể thu hồi bất cứ lúc nào.</b></p>
+         <p>KUDOS CONFESSION luôn hiển thị <b>họ tên và phòng ban người gửi</b>. Lời ghi nhận chỉ lên bảng sau khi <b>Admin duyệt</b>.</p>
+         <p><b>Admin kiểm soát việc duyệt, ẩn và phạm vi hiển thị của KUDOS.</b></p>
        </article>
        <button class="btn primary wide" data-page="send-kudos">+ Gửi một KUDOS</button>
      </aside>
@@ -4657,11 +4662,16 @@ function publicFeedPage(){
 function composeRecord(){
  // Build a live record from current compose inputs — the SAME shape the email uses.
  const u=me();
+ const manual=!!state.manualRecipient;
  const r=state.selectedRecipient;
  const rawEmail=(document.querySelector('#recipient-email')?document.querySelector('#recipient-email').value.trim():state.prefillRecipient)||'';
+ const manualName=(document.querySelector('#recipient-manual-name')?.value||'').trim();
+ const manualDept=(document.querySelector('#recipient-manual-dept')?.value||'').trim();
+ const manualEmail=(document.querySelector('#recipient-manual-email')?.value||'').trim();
  return {
-   senderName:u.name,senderDept:u.dept,senderEmail:u.email,
-   recipientName:r?r.name:'',recipientDept:r?r.dept:'',recipientEmail:r?r.email:rawEmail,
+   senderName:u.name,senderDept:u.dept,senderSection:u.section||'',senderEmail:u.email,
+   recipientManual:manual,
+   recipientName:manual?manualName:(r?r.name:''),recipientDept:manual?manualDept:(r?r.dept:''),recipientEmail:manual?manualEmail:(r?r.email:rawEmail),
    message:(document.querySelector('#message')?document.querySelector('#message').value:'')||'',
    templateId:state.selectedTemplate,values:[...state.values],
    visibility:state.sendVisibility,publicConsent:state.sendVisibility==='public'?'pending':'none',
@@ -4672,7 +4682,7 @@ function sendKudos(){
 return `<section class="page active kudos-compose-page">
  <div class="compose-hero">
   <div class="ch-copy">
-   <div class="ch-eyebrow">AHAKUDOS · GHI NHẬN & LAN TỎA</div>
+   <div class="ch-eyebrow">AHAKUDOS · GHI NHẬN & CẢM ƠN</div>
    <h1>Ghi nhận điều tuyệt vời mỗi ngày!</h1>
    <p>Một lời cảm ơn cụ thể là nhiều động lực cho hành trình phía trước của đồng nghiệp.</p>
   </div>
@@ -4682,14 +4692,26 @@ return `<section class="page active kudos-compose-page">
  <div class="form-layout kudos-compose-layout">
   <article class="card form-card kudos-compose-form">
    <div class="field recipient-search-field">
-    <label for="recipient-email">Email đồng nghiệp bạn muốn ghi nhận</label>
-    <div class="email-search-wrap">
-      <input id="recipient-email" class="input" type="email" autocomplete="off" placeholder="Nhập email Ahamove của đồng nghiệp..." value="${escapeHtml(state.prefillRecipient||'')}">
-      <span class="email-search-icon" aria-hidden="true">⌕</span>
-      <div id="recipient-suggestions" class="recipient-suggestions hidden"></div>
+    <label>Email người bạn muốn ghi nhận</label>
+    <label class="recipient-mode-toggle"><input id="recipient-no-company-email" type="checkbox" ${state.manualRecipient?'checked':''}><span>Người nhận không có mail công ty</span></label>
+    <div id="recipient-company-mode" class="recipient-company-mode ${state.manualRecipient?'hidden':''}">
+      <div class="email-search-wrap">
+        <input id="recipient-email" class="input" type="email" autocomplete="off" placeholder="Nhập email Ahamove của đồng nghiệp..." value="${escapeHtml(state.prefillRecipient||'')}">
+        <span class="email-search-icon" aria-hidden="true">⌕</span>
+        <div id="recipient-suggestions" class="recipient-suggestions hidden"></div>
+      </div>
+      <div id="selected-recipient" class="selected-recipient hidden"></div>
+      <span class="field-hint">Tìm trong Master Data bằng email Ahamove để lấy đúng họ tên và phòng ban.</span>
     </div>
-    <div id="selected-recipient" class="selected-recipient hidden"></div>
-    <span class="field-hint">Chọn người nhận mẫu để thử trải nghiệm. Email thật chỉ gửi về tài khoản công ty đã khởi tạo.</span>
+    <div id="recipient-manual-mode" class="recipient-manual-mode ${state.manualRecipient?'':'hidden'}">
+      <div class="recipient-manual-grid">
+        <div><label for="recipient-manual-name">Họ tên người nhận</label><input id="recipient-manual-name" class="input" type="text" maxlength="120" placeholder="Nhập họ tên"></div>
+        <div><label for="recipient-manual-dept">Phòng ban / Đơn vị</label><input id="recipient-manual-dept" class="input" type="text" maxlength="120" placeholder="Nhập phòng ban hoặc đơn vị"></div>
+      </div>
+      <label for="recipient-manual-email">Email liên hệ</label>
+      <input id="recipient-manual-email" class="input" type="email" autocomplete="off" placeholder="name@example.com">
+      <span class="field-hint">Có thể nhập email ngoài @ahamove.com. KUDOS vẫn có thể được gửi riêng hoặc đề xuất lên KUDOS CONFESSION; Admin là người quyết định cuối cùng.</span>
+    </div>
    </div>
    <div class="field template-field">
     <label id="background-picker-label">Chọn background cho KUDOS</label>
@@ -4756,16 +4778,16 @@ return `<section class="page active kudos-compose-page">
 
    <div class="field visibility-field" id="visibility-field">
     <label id="visibility-label">Ai có thể xem KUDOS này?</label>
-    <span class="field-hint">Mặc định là riêng tư. Nếu muốn chia sẻ công khai, người nhận sẽ được hỏi và tự quyết định.</span>
+    <span class="field-hint">Mặc định là riêng tư. Nếu chọn KUDOS CONFESSION, Admin sẽ duyệt trước khi lời ghi nhận xuất hiện trên bảng.</span>
     <div class="visibility-options" role="group" aria-labelledby="visibility-label">
      <button type="button" class="visibility-option ${state.sendVisibility==='private'?'selected':''}" data-visibility="private" aria-pressed="${state.sendVisibility==='private'}">
       <span class="visibility-icon lock" aria-hidden="true">●</span>
-      <div><b>Chỉ gửi riêng cho người nhận</b><p>Chỉ người nhận đọc được. Không xuất hiện trên KUDOS công khai.</p></div>
+      <div><b>Chỉ gửi riêng cho người nhận</b><p>Chỉ người nhận đọc được. Không xuất hiện trên KUDOS CONFESSION.</p></div>
       <i aria-hidden="true">✓</i>
      </button>
      <button type="button" class="visibility-option ${state.sendVisibility==='public'?'selected':''}" data-visibility="public" aria-pressed="${state.sendVisibility==='public'}">
       <span class="visibility-icon" aria-hidden="true">◎</span>
-      <div><b>Đề nghị chia sẻ công khai</b><p>Gửi riêng cho người nhận trước. Chỉ lên bảng công khai <b>khi người nhận đồng ý</b>.</p></div>
+      <div><b>KUDOS CONFESSION</b><p>Sau khi Admin duyệt, KUDOS sẽ hiển thị công khai với <b>họ tên và phòng ban người gửi</b>. Không có chế độ ẩn danh.</p></div>
       <i aria-hidden="true">✓</i>
      </button>
     </div>
@@ -4789,7 +4811,7 @@ function profile(){
  const sentHtml=sent.length?`<div class="feed sent-history">${sent.map(k=>{
      const cn=(k.values||[]).map(v=>CULTURE[v]||v);
      const statusText=k.visibility==='public'
-        ?(k.publicConsent==='approved'?'◎ Công khai · người nhận đã đồng ý':k.publicConsent==='revoked'?'🔒 Người nhận đang giữ riêng':'🕓 Chờ người nhận đồng ý chia sẻ')
+        ?(k.publicConsent==='approved'?'◎ KUDOS CONFESSION · Admin đã duyệt':'🕓 Chờ Admin duyệt KUDOS CONFESSION')
         :'● Chỉ người nhận biết';
      return `<div class="feed-item sent-feed-item kudos-open" role="button" tabindex="0" data-open-kudos="${k.id}">
        <div class="feed-head"><div class="mini-avatar">${initials(k.recipientName)}</div><div class="who"><b>${escapeHtml(k.recipientName)}</b><span>${escapeHtml(k.recipientEmail)}</span></div><time>${escapeHtml(k.sentAtLabel||'Đã gửi')}</time></div>
@@ -4810,7 +4832,7 @@ return `<section class="page active"><div class="page-head"><div><div class="kic
 </section>`;
 }
 
-// ---- KUDOS detail (recipient "nơi để đến" + consent) -----------------------
+// ---- KUDOS detail — Admin controls public scope -----------------------------
 function kudosDetail(){
  const k=kudosById(state.viewKudosId);
  const u=me();
@@ -4822,7 +4844,7 @@ function kudosDetail(){
  const isSender=k.senderEmail&&k.senderEmail.toLowerCase()===u.email.toLowerCase();
  const isPublic=k.visibility==='public'&&k.publicConsent==='approved';
 
- // KUDOS công khai có thể mở bởi mọi Ahamover trong bản test; KUDOS riêng vẫn giữ gate người gửi/người nhận.
+ // KUDOS CONFESSION đã được Admin duyệt có thể mở bởi mọi Ahamover; KUDOS riêng giữ gate người gửi/người nhận.
  if(!isRecipient&&!isSender&&!isPublic){
    return `<section class="page active kudos-detail-page">
      <button class="kd-back" data-page="employee-home">← Về trang chủ</button>
@@ -4843,50 +4865,21 @@ function kudosDetail(){
  const emailHtml=buildReceiveEmail(k);
  const emailStatusPill=`<span class="status-pill status-queued"><i></i>${escapeHtml(mailStatusText(k))}</span>${k.viewedAt?'<span class="status-pill status-viewed">Vai người nhận mẫu đã mở trang</span>':''}`;
  const visPill=k.visibility==='public'
-   ?(k.publicConsent==='approved'?`<span class="status-pill status-public"><i></i>Đang hiển thị công khai</span>`
-     :k.publicConsent==='revoked'?`<span class="status-pill status-revoked"><i></i>Đang giữ riêng tư</span>`
-     :`<span class="status-pill status-pending"><i></i>Chờ người nhận đồng ý</span>`)
+   ?(k.publicConsent==='approved'?`<span class="status-pill status-public"><i></i>KUDOS CONFESSION · Admin đã duyệt</span>`
+     :`<span class="status-pill status-pending"><i></i>Chờ Admin duyệt KUDOS CONFESSION</span>`)
    :`<span class="status-pill status-private"><i></i>Chỉ người nhận biết</span>`;
 
- // Consent controls (recipient only, and only when sender requested public).
  let consentBlock='';
- if(isRecipient&&k.visibility==='public'){
-   if(k.publicConsent==='pending'){
-     consentBlock=`<div class="consent-box">
-       <h3>${escapeHtml(k.senderName.split(' ').slice(-1)[0])} muốn chia sẻ lời này công khai</h3>
-       <p>Nếu bạn đồng ý, lời ghi nhận sẽ xuất hiện trên bảng KUDOS công khai để đồng nghiệp cùng hưởng ứng. Bạn hoàn toàn có thể giữ riêng — không có áp lực nào cả, và bạn có thể đổi ý sau.</p>
-       <div class="consent-actions">
-         <button class="btn primary" data-consent="approve" data-kid="${k.id}">Đồng ý chia sẻ công khai</button>
-         <button class="btn secondary" data-consent="revoke" data-kid="${k.id}">Giữ riêng cho mình</button>
-       </div>
-     </div>`;
-   } else if(k.publicConsent==='approved'){
-     consentBlock=`<div class="consent-box consent-approved">
-       <h3>Bạn đang chia sẻ lời này công khai</h3>
-       <p>Lời ghi nhận đang hiển thị trên bảng KUDOS công khai. Bạn có thể thu hồi bất cứ lúc nào — bản dành cho bạn vẫn được giữ lại.</p>
-       <div class="consent-actions"><button class="btn secondary" data-consent="revoke" data-kid="${k.id}">Thu hồi khỏi bảng công khai</button></div>
-     </div>`;
-   } else { // revoked
-     consentBlock=`<div class="consent-box consent-neutral">
-       <h3>Bạn đang giữ riêng lời ghi nhận này</h3>
-       <p>Lời này không xuất hiện ở bảng công khai. Nếu muốn, bạn có thể chia sẻ công khai.</p>
-       <div class="consent-actions"><button class="btn primary" data-consent="approve" data-kid="${k.id}">Chia sẻ công khai</button></div>
-     </div>`;
-   }
- }
  // Sender-side status (no consent controls; the choice belongs to the recipient).
  let senderBlock='';
  if(isSender&&!isRecipient){
    const s=k.visibility==='public'
-     ?(k.publicConsent==='approved'?`${escapeHtml(k.recipientName)} đã đồng ý chia sẻ công khai. Lời ghi nhận đang hiển thị trên bảng KUDOS công khai.`
-       :k.publicConsent==='revoked'?`${escapeHtml(k.recipientName)} chọn giữ riêng lời ghi nhận này. Điều đó hoàn toàn ổn — lời cảm ơn của bạn vẫn đến được với họ.`
-       :`Bạn đã đề nghị chia sẻ công khai. Đang chờ ${escapeHtml(k.recipientName)} quyết định — quyền công khai thuộc về người nhận.`)
-     :`Bạn đã gửi riêng cho ${escapeHtml(k.recipientName)}.`;
+     ?(k.publicConsent==='approved'?`Admin đã duyệt KUDOS CONFESSION. Lời ghi nhận đang hiển thị công khai với danh tính người gửi.`
+       :`Bạn đã đề xuất KUDOS CONFESSION. KUDOS đang chờ Admin duyệt trước khi hiển thị.`)
+     :`Bạn đã chọn gửi riêng cho ${escapeHtml(k.recipientName)}. KUDOS vẫn chờ Admin duyệt trước khi email được gửi.`;
    senderBlock=`<div class="kd-panel"><h3>Trạng thái</h3><p class="kd-sender-status">${s}</p></div>`;
  }
 
- const comments=(k.comments||[]);
- const commentsBlock=isPublic?`<div class="kd-panel kd-comments"><h3>Bình luận (${comments.length})</h3><p class="kd-comment-intro">Cùng để lại một lời hưởng ứng tích cực cho KUDOS công khai này.</p><div class="kd-comment-list">${comments.length?comments.map(c=>`<div class="kd-comment"><span class="kd-comment-avatar">${initials(c.authorName)}</span><div><b>${escapeHtml(c.authorName||'Ahamover')}</b><small>${escapeHtml(c.authorDept||'')}</small><p>${escapeHtml(c.text||'')}</p></div></div>`).join(''):'<div class="kd-comment-empty">Chưa có bình luận nào. Bạn có thể là người đầu tiên.</div>'}</div><div class="kd-comment-compose"><textarea id="kd-comment-text" class="textarea" maxlength="500" placeholder="Viết một bình luận tích cực..."></textarea><button class="btn primary" data-comment-send="${k.id}">Gửi bình luận</button></div></div>`:'';
 
  const backTarget=isSender&&!isRecipient?'kudos-profile':(state.page==='public-feed'?'public-feed':'employee-home');
  return `<section class="page active kudos-detail-page">
@@ -4897,7 +4890,6 @@ function kudosDetail(){
    ${personalEmailControls(k)}
    ${consentBlock}
    ${senderBlock}
-   ${commentsBlock}
  </section>`;
 }
 
@@ -5190,9 +5182,9 @@ function adminQuality(){
     <div class="mod-item-head">
       <div class="mini-avatar">${initials(k.senderName)}</div>
       <div class="mod-item-who"><b>${escapeHtml(k.senderName||'Đồng nghiệp')}</b><span>${escapeHtml(k.senderDept||'')} → ${escapeHtml(k.recipientName||'')}</span></div>
-      <span class="mod-flag">Chờ duyệt</span>
+      <span class="mod-flag">Chờ Admin duyệt</span>
     </div>
-    <div class="mod-reasons">${reasons.map(r=>`<span class="mod-reason-chip">⚑ ${escapeHtml(r)}</span>`).join('')||'<span class="mod-reason-chip">Cần xem lại</span>'}</div>
+    <div class="mod-reasons">${reasons.map(r=>`<span class="mod-reason-chip">⚑ ${escapeHtml(r)}</span>`).join('')||'<span class="mod-reason-chip">Chờ Admin duyệt</span>'}</div><div class="mod-scope-control"><span>Phạm vi:</span><button class="btn secondary ${k.visibility==='private'?'active':''}" data-mod-scope="private" data-kid="${k.id}">Riêng tư</button><button class="btn secondary ${k.visibility==='public'?'active':''}" data-mod-scope="public" data-kid="${k.id}">KUDOS CONFESSION</button></div>
     <div class="mod-msg">${escapeHtml(k.message||'').replace(/\r?\n/g,'<br>')}</div>
     <div class="mod-actions">
       <button class="btn secondary" data-mod-detail="${k.id}">Xem chi tiết KUDOS</button><button class="btn secondary" data-mod-preview="${k.id}">Xem email</button>
@@ -5202,7 +5194,7 @@ function adminQuality(){
     </div>
   </div>`;
  };
- const heldHtml=held.length?held.map(card).join(''):`<div class="empty"><div class="icon">✅</div><h3>Không có KUDOS nào chờ duyệt</h3><p>Nội dung hợp lệ được tự động gửi. Trường hợp nghi ngờ (từ cấm, rỗng nghĩa, trùng lặp) sẽ hiện ở đây.</p></div>`;
+ const heldHtml=held.length?held.map(card).join(''):`<div class="empty"><div class="icon">✅</div><h3>Không có KUDOS nào chờ duyệt</h3><p>Mọi KUDOS mới đều chờ Admin duyệt. Khi Admin duyệt, email mới được gửi và KUDOS CONFESSION mới được publish.</p></div>`;
  return `<section class="page active">
   <style>
    .mod-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
@@ -5218,6 +5210,7 @@ function adminQuality(){
    .mod-msg{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.7;color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere}
    .mod-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;justify-content:flex-end}
    .mod-actions .btn{padding:9px 14px;font-size:13px}
+   .mod-scope-control{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:10px 0}.mod-scope-control>span{font-size:12px;font-weight:800;color:var(--muted)}.mod-scope-control .btn{padding:6px 10px;font-size:12px}.mod-scope-control .btn.active{background:#EAF2FB;border-color:#9BC4EA;color:#0E4174}
    @media(max-width:640px){.mod-stat-row{grid-template-columns:1fr 1fr}.mod-actions{justify-content:stretch}.mod-actions .btn{flex:1}}
   
 /* V28.17 — Launch hero updated; KUDOS copy auto-scales to protect template */
@@ -5267,16 +5260,19 @@ function adminQuality(){
  .hb-home .hb-hero{background-position:60% center!important}
 }
 
-/* V28.18 — Master Data greeting + public comments */
+
+/* V28.22 — recipient email mode */
+.recipient-mode-toggle{display:inline-flex!important;align-items:center;gap:9px;margin:8px 0 12px;font-size:13px!important;color:#365675!important;font-weight:700!important;cursor:pointer}.recipient-mode-toggle input{width:17px;height:17px;accent-color:#FF7F32}.recipient-manual-mode{display:grid;gap:10px;padding:14px;border:1px solid #DCE7F2;border-radius:16px;background:#F8FBFF}.recipient-manual-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.recipient-manual-mode label{font-size:12.5px!important;margin-bottom:4px!important}.visibility-option.disabled,.visibility-option:disabled{opacity:.48;cursor:not-allowed}.recipient-company-mode.hidden,.recipient-manual-mode.hidden{display:none!important}
+@media(max-width:640px){.recipient-manual-grid{grid-template-columns:1fr}}
+/* V28.22 — Master Data greeting + identity-first public Kudos */
 .hb-personal-greeting{display:flex;flex-direction:column;gap:4px;margin-bottom:18px;padding-left:14px;border-left:3px solid #FF7F32;color:#fff}
 .hb-personal-greeting b{font-size:20px;line-height:1.3;color:#fff}.hb-personal-greeting span{font-size:14px;line-height:1.55;color:#E6F0FA}.hb-personal-greeting span strong{color:#FFB172}.hb-personal-greeting small{font-size:12px;color:#BFD3E8}
-.public-comment-link{border:0;background:transparent;color:#2F6FB8;font-size:13px;font-weight:750;cursor:pointer;padding:5px 8px;border-radius:999px}.public-comment-link:hover{background:#EDF5FD}
-.kd-comments .kd-comment-intro{margin-bottom:14px}.kd-comment-list{display:grid;gap:10px}.kd-comment{display:grid;grid-template-columns:34px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid #EDF1F5}.kd-comment:last-child{border-bottom:0}.kd-comment-avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#EAF2FB;color:#0E4174;font-size:11px;font-weight:800}.kd-comment b{font-size:13px;color:#123B67}.kd-comment small{display:block;font-size:11px;color:#8391A3;margin-top:1px}.kd-comment p{margin:4px 0 0;font-size:13px;line-height:1.65;color:#42546B}.kd-comment-empty{font-size:13px;color:#728198;padding:8px 0}.kd-comment-compose{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;margin-top:14px}.kd-comment-compose .textarea{min-height:72px;max-height:140px}.mod-detail-modal{max-width:900px!important}.mod-detail-modal .kd-card-fullbg{margin:16px auto 0}
+.mod-detail-modal{max-width:900px!important}.mod-detail-modal .kd-card-fullbg{margin:16px auto 0}
 @media(max-width:720px){.hb-personal-greeting b{font-size:17px}.hb-personal-greeting span{font-size:13px}.kd-comment-compose{grid-template-columns:1fr}.kd-comment-compose .btn{width:100%}}
 
 </style>
   ${bannerHero('ai_review')}
-  <div class="page-head"><div><div class="kicker">DUYỆT NỘI DUNG</div><h1>KUDOS cần Admin xem lại</h1><p class="page-sub">Nội dung hợp lệ được tự động gửi email. Chỉ những KUDOS dính luật (từ cấm, rỗng nghĩa, trùng lặp) mới được giữ lại đây để bạn duyệt.</p></div></div>
+  <div class="page-head"><div><div class="kicker">ADMIN CONTROL</div><h1>Admin duyệt toàn bộ KUDOS</h1><p class="page-sub">Mọi KUDOS đều được giữ tại đây trước khi gửi email. Admin có thể xem chi tiết, chỉnh nội dung, chọn Riêng tư hoặc KUDOS CONFESSION, rồi mới Duyệt & gửi.</p></div></div>
   <div class="mod-stat-row">
    <div class="mod-stat"><span>Chờ duyệt</span><strong>${held.length}</strong></div>
    <div class="mod-stat"><span>Đã duyệt</span><strong>${approved.length}</strong></div>
@@ -5319,6 +5315,9 @@ function bindAdminQuality(){
  document.querySelectorAll('[data-mod-detail]').forEach(b=>b.addEventListener('click',()=>openModDetail(b.dataset.modDetail)));
  document.querySelectorAll('[data-mod-preview]').forEach(b=>b.addEventListener('click',()=>openModPreview(b.dataset.modPreview)));
  document.querySelectorAll('[data-mod-edit]').forEach(b=>b.addEventListener('click',()=>openModEdit(b.dataset.modEdit)));
+ document.querySelectorAll('[data-mod-scope]').forEach(b=>b.addEventListener('click',async()=>{
+  b.disabled=true;try{const res=await rpc('datPhamViKudos',b.dataset.kid,b.dataset.modScope);acceptResult(res);toast(res.notice||'Đã cập nhật phạm vi.');render();}catch(e){b.disabled=false;toast(e.message);}
+ }));
  document.querySelectorAll('[data-mod-approve]').forEach(b=>b.addEventListener('click',async()=>{
   if(!window.confirm('Duyệt KUDOS này? Nếu email đang bật, hệ thống sẽ gửi thông báo cho người nhận.'))return;
   b.disabled=true;try{const res=await rpc('duyetKudos',b.dataset.modApprove);acceptResult(res);toast(res.notice||'Đã duyệt.');render();}catch(e){b.disabled=false;toast(e.message);}
@@ -5358,12 +5357,23 @@ function adminRecognition(){
      <article class="card admin-recognition-form">
        <div class="admin-section-title"><span>1</span><div><b>Chọn nhân sự</b><p>Tìm bằng email Ahamove để đảm bảo gửi đúng người.</p></div></div>
        <div class="field recipient-search-field">
-         <div class="email-search-wrap">
-           <input id="admin-recipient-email" class="input" type="email" autocomplete="off" placeholder="Nhập email Ahamove của nhân sự...">
-           <span class="email-search-icon">⌕</span>
-           <div id="admin-recipient-suggestions" class="recipient-suggestions hidden"></div>
+         <label class="recipient-mode-toggle"><input id="admin-no-company-email" type="checkbox"><span>Người nhận không có mail công ty</span></label>
+         <div id="admin-company-mode">
+           <div class="email-search-wrap">
+             <input id="admin-recipient-email" class="input" type="email" autocomplete="off" placeholder="Nhập email Ahamove của nhân sự...">
+             <span class="email-search-icon">⌕</span>
+             <div id="admin-recipient-suggestions" class="recipient-suggestions hidden"></div>
+           </div>
+           <div id="admin-selected-recipient" class="selected-recipient hidden"></div>
          </div>
-         <div id="admin-selected-recipient" class="selected-recipient hidden"></div>
+         <div id="admin-manual-mode" class="recipient-manual-mode hidden">
+           <div class="recipient-manual-grid">
+             <div><label for="admin-manual-name">Họ tên người nhận</label><input id="admin-manual-name" class="input" type="text" maxlength="120" placeholder="Nhập họ tên"></div>
+             <div><label for="admin-manual-dept">Phòng ban / Đơn vị</label><input id="admin-manual-dept" class="input" type="text" maxlength="120" placeholder="Nhập phòng ban hoặc đơn vị"></div>
+           </div>
+           <label for="admin-manual-email">Email liên hệ</label><input id="admin-manual-email" class="input" type="email" placeholder="name@example.com">
+           <span class="field-hint">Email ngoài @ahamove.com được phép nhập tự do. KUDOS này sẽ được giữ riêng tư.</span>
+         </div>
        </div>
        <div class="admin-section-title"><span>2</span><div><b>Chọn nội dung ghi nhận</b><p>Chọn loại phù hợp với cột mốc hoặc đóng góp thực tế.</p></div></div>
        <div class="recognition-type-grid">
@@ -5374,7 +5384,7 @@ function adminRecognition(){
        <div class="field"><label>Nội dung</label><textarea id="admin-recognition-message" class="textarea" placeholder="Chia sẻ cột mốc, đóng góp hoặc điều Ahamove muốn ghi nhận ở nhân sự..."></textarea></div>
        <div class="field admin-visibility-field"><label>Ai có thể xem AhaKudos này?</label>
          <div class="visibility-options">
-           <button type="button" class="visibility-option selected" data-admin-visibility="public"><span class="visibility-icon">◎</span><div><b>Công khai Ahamove</b><p>Hiển thị trên KUDOS công khai để Ahamovers có thể xem và reaction.</p></div><i>✓</i></button>
+           <button type="button" class="visibility-option selected" data-admin-visibility="public"><span class="visibility-icon">◎</span><div><b>KUDOS CONFESSION</b><p>Hiển thị họ tên + phòng ban người gửi sau khi Admin duyệt; không có chế độ ẩn danh.</p></div><i>✓</i></button>
            <button type="button" class="visibility-option" data-admin-visibility="private"><span class="visibility-icon lock">●</span><div><b>Chỉ người nhận biết</b><p>Không xuất hiện trên feed công khai; vẫn lưu trong Hồ sơ KUDOS của nhân sự.</p></div><i>✓</i></button>
          </div>
        </div>
@@ -5395,7 +5405,7 @@ function adminRecognition(){
          <div class="kicker">AHAKUDOS · GHI NHẬN TỪ AHAMOVE</div>
          <h3 id="admin-preview-title">Cảm ơn bạn vì một hành trình đáng ghi nhận</h3>
          <p id="admin-preview-text">Nội dung AhaKudos sẽ xuất hiện tại đây.</p>
-         <div class="preview-visibility" id="admin-preview-visibility">◎ Công khai Ahamove</div>
+         <div class="preview-visibility" id="admin-preview-visibility">◎ KUDOS CONFESSION</div>
        </div>
        <div class="admin-email-preview-note"><span>✉</span><div><b>Email notification</b><p>Sau khi gửi thành công, người nhận sẽ nhận email với đúng nội dung và mẫu thiệp này.</p></div></div>
      </aside>
@@ -5409,7 +5419,7 @@ function adminNotify(){
    const k=kudosById(o.kudosId);
    const snippet=k?escapeHtml((k.message||'').slice(0,90))+((k.message||'').length>90?'…':''):'(KUDOS không còn trong dữ liệu demo)';
    const route=k?`${escapeHtml(k.senderName)} → ${escapeHtml(k.recipientName)}`:'';
-   const vis=k?(k.visibility==='public'?(k.publicConsent==='approved'?'◎ Công khai':k.publicConsent==='revoked'?'🔒 Giữ riêng':'🕓 Chờ đồng ý'):'● Riêng tư'):'';
+   const vis=k?(k.visibility==='public'?(k.publicConsent==='approved'?'◎ KUDOS CONFESSION':'🕓 Chờ Admin duyệt'):'● Riêng tư'):'';
    return `<div class="notif-row ${o.seen?'':'unseen'}" data-notif="${o.id}" role="button" tabindex="0">
      <span class="notif-dot" aria-hidden="true"></span>
      <div class="notif-main">
@@ -5527,7 +5537,7 @@ function showEmployeeHomeIntroBanner(){
      <div class="home-intro-header"><div class="home-intro-brandmark">${logo(true)}</div><div class="kicker">CHÀO MỪNG ĐẾN VỚI AHAKUDOS</div><p>AhaKudos là nơi bạn gửi lời ghi nhận đến đồng nghiệp, theo dõi những lời cảm ơn đang lan tỏa trong công ty và lưu lại hành trình ghi nhận của chính mình.</p></div>
      <div class="home-intro-card-grid">
        <div class="intro-showcase-card card-send"><div class="intro-showcase-icon" aria-hidden="true">💛</div><h3>Gửi KUDOS</h3><p>Viết lời ghi nhận cho một hành động cụ thể mà bạn trân trọng ở đồng nghiệp.</p><button class="intro-showcase-btn" data-home-intro-action="send">Gửi ngay</button></div>
-       <div class="intro-showcase-card card-feed"><div class="intro-showcase-icon" aria-hidden="true">🚀</div><h3>KUDOS công khai</h3><p>Theo dõi những lời ghi nhận được đồng nghiệp đồng ý chia sẻ.</p><button class="intro-showcase-btn" data-home-intro-action="feed">Khám phá</button></div>
+       <div class="intro-showcase-card card-feed"><div class="intro-showcase-icon" aria-hidden="true">🚀</div><h3>KUDOS CONFESSION</h3><p>Khám phá những lời ghi nhận đã được Admin duyệt để hiển thị công khai.</p><button class="intro-showcase-btn" data-home-intro-action="feed">Khám phá</button></div>
        <div class="intro-showcase-card card-profile"><div class="intro-showcase-icon" aria-hidden="true">🏆</div><h3>Hồ sơ KUDOS</h3><p>Xem lại những KUDOS bạn đã gửi, đã nhận và giữ lại để đọc về sau.</p><button class="intro-showcase-btn" data-home-intro-action="profile">Xem thêm</button></div>
        <div class="intro-showcase-card card-milestone"><div class="intro-showcase-icon" aria-hidden="true">🎁</div><h3>Lời chúc đặc biệt</h3><p>Gửi lời chúc cho sinh nhật và những dấu mốc đặc biệt của đồng nghiệp.</p><button class="intro-showcase-btn" data-home-intro-action="explore">Đã rõ</button></div>
      </div>
@@ -5575,7 +5585,7 @@ function bindHandbookUI(){
  const adminPreview=document.querySelector('#admin-recognition-preview');
  if(adminPreview)adminPreview.addEventListener('click',()=>{document.querySelector('.admin-recognition-preview')?.scrollIntoView({behavior:'smooth',block:'start'});});
  document.querySelectorAll('[data-modal="rules"]').forEach(btn=>btn.addEventListener('click',()=>{
-  document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="hb-rules-title"><button class="modal-close" aria-label="Đóng">×</button><div class="kicker">GỬI KUDOS</div><h2 id="hb-rules-title">Quy tắc ghi nhận</h2><div class="rules"><div class="rule"><b>Người nhận</b><span>Tìm và chọn đúng email Ahamove của đồng nghiệp.</span></div><div class="rule"><b>Nội dung</b><span>Chia sẻ hành động cụ thể, tác động tạo ra và điều đáng ghi nhận.</span></div><div class="rule"><b>Giá trị văn hóa</b><span>Chọn từ 1 đến 3 Giá trị văn hóa phù hợp. Riêng KUDOS Sinh nhật không bắt buộc.</span></div><div class="rule"><b>Phạm vi</b><span>Mặc định riêng tư. Công khai chỉ diễn ra khi người nhận đồng ý.</span></div></div><button class="btn primary wide hb-rules-close">Đã hiểu</button></div></div>`;
+  document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="hb-rules-title"><button class="modal-close" aria-label="Đóng">×</button><div class="kicker">GỬI KUDOS</div><h2 id="hb-rules-title">Quy tắc ghi nhận</h2><div class="rules"><div class="rule"><b>Người nhận</b><span>Tìm email Ahamove trong Master Data; nếu không có mail công ty, tick lựa chọn và nhập thông tin người nhận thủ công.</span></div><div class="rule"><b>Nội dung</b><span>Chia sẻ hành động cụ thể, tác động tạo ra và điều đáng ghi nhận.</span></div><div class="rule"><b>Giá trị văn hóa</b><span>Chọn từ 1 đến 3 Giá trị văn hóa phù hợp. Riêng KUDOS Sinh nhật không bắt buộc.</span></div><div class="rule"><b>Phạm vi</b><span>Mặc định riêng tư. KUDOS CONFESSION chỉ hiển thị sau khi Admin duyệt.</span></div></div><button class="btn primary wide hb-rules-close">Đã hiểu</button></div></div>`;
   document.querySelectorAll('.modal-close,.hb-rules-close').forEach(b=>b.addEventListener('click',()=>document.querySelector('#modal-root').innerHTML=''));
  }));
 }
@@ -5593,9 +5603,7 @@ function bind(){
    el.addEventListener('click',open);
    if(el.getAttribute('role')==='button')el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open(e);}});
  });
- // consent + demo-become
- document.querySelectorAll('[data-consent]').forEach(b=>b.addEventListener('click',()=>handleConsent(b.dataset.kid,b.dataset.consent)));
- document.querySelectorAll('[data-comment-send]').forEach(b=>b.addEventListener('click',async()=>{const ta=document.querySelector('#kd-comment-text');const text=ta?ta.value.trim():'';if(text.length<2){toast('Hãy nhập bình luận trước khi gửi.');return;}b.disabled=true;try{const k=await rpc('themComment',b.dataset.commentSend,me().email,text);takeRecord(k);render();toast('Đã thêm bình luận.');}catch(e){b.disabled=false;toast(e.message);}}));
+ // Admin controls public scope; no recipient consent binding.
  document.querySelectorAll('[data-become]').forEach(b=>b.addEventListener('click',()=>{setCurrentUser(b.dataset.become);state.viewKudosId=b.dataset.openAfter;state.page='kudos-detail';render();window.scrollTo(0,0);}));
  // fill kudos-detail iframe(s)
  document.querySelectorAll('[data-email-frame]').forEach(fr=>{const k=kudosById(fr.getAttribute('data-email-frame'));if(k){fr.srcdoc=buildReceiveEmail(k);sizeFrameOnLoad(fr);}});
@@ -5620,10 +5628,7 @@ function bind(){
 }
 function goToPage(page){state.page=page;if(page!=='kudos-detail')state.viewKudosId=null;render();window.scrollTo(0,0);}
 function openKudos(id){state.viewKudosId=id;state.page='kudos-detail';try{history.replaceState(null,'','#/k/'+id);}catch(e){}render();window.scrollTo(0,0);}
-async function handleConsent(id,action){
- try{const k=await rpc('doiDongY',id,me().email,action);takeRecord(k);render();toast(action==='approve'?'Đã lưu đồng ý chia sẻ vào Sheet.':'Đã lưu quyết định giữ riêng vào Sheet.');}
- catch(e){window.alert(e.message);}
-}
+async function handleConsent(){toast('Admin là bên quyết định phạm vi hiển thị của KUDOS.');}
 function sizeFrameOnLoad(fr){
  const fit=()=>{try{const d=fr.contentDocument||fr.contentWindow.document;const h=d.body.scrollHeight;if(h)fr.style.height=(h+2)+'px';}catch(e){}};
  fr.addEventListener('load',fit);setTimeout(fit,120);setTimeout(fit,500);
@@ -5702,28 +5707,35 @@ function bindAdminMilestones(){
 }
 function bindAdminRecognition(){
  const emailInput=document.querySelector('#admin-recipient-email');const suggestions=document.querySelector('#admin-recipient-suggestions');const selectedBox=document.querySelector('#admin-selected-recipient');const message=document.querySelector('#admin-recognition-message');const title=document.querySelector('#admin-recognition-title');
- let selectedEmployee=null;let selectedTemplate='wish';let selectedType='acting';let selectedVisibility='public';
- function renderEmployee(emp){selectedEmployee=emp;if(!emp){selectedBox.classList.add('hidden');selectedBox.innerHTML='';document.querySelector('#admin-recipient-preview').innerHTML='<div class="mini-avatar">@</div><div><b>Chưa chọn người nhận</b><span>Nhập email nhân sự để tìm kiếm</span></div>';return;}selectedBox.innerHTML=`<div class="mini-avatar">${initials(emp.name)}</div><div><b>${emp.name}</b><span>${emp.email}</span><em>${emp.dept}</em></div><span class="recipient-ok">✓ Đã chọn</span>`;selectedBox.classList.remove('hidden');document.querySelector('#admin-recipient-preview').innerHTML=`<div class="mini-avatar">${initials(emp.name)}</div><div><b>${emp.name}</b><span>${emp.email}</span><em>${emp.dept}</em></div>`;}
- function updatePreview(){document.querySelector('#admin-preview-title').textContent=title.value.trim()||'AhaKudos dành cho bạn';document.querySelector('#admin-preview-text').textContent=message.value.trim()||'Nội dung AhaKudos sẽ xuất hiện tại đây.';const card=document.querySelector('#admin-preview-card');cardTemplates.forEach(t=>card.classList.remove('tpl-'+t.id));card.classList.add('tpl-'+selectedTemplate);document.querySelector('#admin-card-sticker').textContent=templateMeta(selectedTemplate).sticker;const visibility=document.querySelector('#admin-preview-visibility');if(visibility){visibility.textContent=selectedVisibility==='public'?'◎ Công khai Ahamove':'● Chỉ người nhận biết';visibility.classList.toggle('private',selectedVisibility==='private');}}
- emailInput.addEventListener('input',()=>{selectedEmployee=null;renderEmployee(null);const q=emailInput.value.trim().toLowerCase();if(!q){suggestions.classList.add('hidden');suggestions.innerHTML='';return}const matches=employees.filter(e=>e.email.toLowerCase().includes(q)).slice(0,5);suggestions.innerHTML=matches.length?matches.map(e=>`<button type="button" class="recipient-suggestion" data-admin-email="${e.email}"><div class="mini-avatar">${initials(e.name)}</div><div><b>${e.name}</b><span>${e.email}</span><em>${e.dept}</em></div></button>`).join(''):'<div class="recipient-no-result">Không tìm thấy email phù hợp.</div>';suggestions.classList.remove('hidden');suggestions.querySelectorAll('[data-admin-email]').forEach(btn=>btn.addEventListener('click',()=>{const emp=employees.find(e=>e.email===btn.dataset.adminEmail);emailInput.value=emp.email;suggestions.classList.add('hidden');renderEmployee(emp);}));});
+ const noCompany=document.querySelector('#admin-no-company-email');const companyMode=document.querySelector('#admin-company-mode');const manualMode=document.querySelector('#admin-manual-mode');const manualName=document.querySelector('#admin-manual-name');const manualDept=document.querySelector('#admin-manual-dept');const manualEmail=document.querySelector('#admin-manual-email');
+ let selectedEmployee=null;let selectedTemplate='wish';let selectedType='acting';let selectedVisibility='public';let manualRecipient=false;
+ function renderEmployee(emp){selectedEmployee=emp;if(!emp){selectedBox.classList.add('hidden');selectedBox.innerHTML='';document.querySelector('#admin-recipient-preview').innerHTML='<div class="mini-avatar">@</div><div><b>Chưa chọn người nhận</b><span>Nhập email nhân sự để tìm kiếm</span></div>';return;}selectedBox.innerHTML=`<div class="mini-avatar">${initials(emp.name)}</div><div><b>${escapeHtml(emp.name)}</b><span>${escapeHtml(emp.email)}</span><em>${escapeHtml(emp.dept||'')}</em></div><span class="recipient-ok">✓ Đã chọn</span>`;selectedBox.classList.remove('hidden');document.querySelector('#admin-recipient-preview').innerHTML=`<div class="mini-avatar">${initials(emp.name)}</div><div><b>${escapeHtml(emp.name)}</b><span>${escapeHtml(emp.email)}</span><em>${escapeHtml(emp.dept||'')}</em></div>`;}
+ function visibilityUi(){document.querySelectorAll('[data-admin-visibility]').forEach(x=>{x.disabled=false;x.classList.remove('disabled');x.classList.toggle('selected',x.dataset.adminVisibility===selectedVisibility);});}
+ function syncManualPreview(){if(!manualRecipient)return;const emp={name:manualName.value.trim(),dept:manualDept.value.trim(),email:manualEmail.value.trim(),manual:true};if(emp.name||emp.email)renderEmployee(emp);else renderEmployee(null);updatePreview();}
+ function applyMode(on){manualRecipient=!!on;companyMode.classList.toggle('hidden',manualRecipient);manualMode.classList.toggle('hidden',!manualRecipient);if(manualRecipient){emailInput.value='';suggestions.classList.add('hidden');renderEmployee(null);}visibilityUi();syncManualPreview();updatePreview();}
+ function updatePreview(){document.querySelector('#admin-preview-title').textContent=title.value.trim()||'AhaKudos dành cho bạn';document.querySelector('#admin-preview-text').textContent=message.value.trim()||'Nội dung AhaKudos sẽ xuất hiện tại đây.';const card=document.querySelector('#admin-preview-card');cardTemplates.forEach(t=>card.classList.remove('tpl-'+t.id));card.classList.add('tpl-'+selectedTemplate);document.querySelector('#admin-card-sticker').textContent=templateMeta(selectedTemplate).sticker;const visibility=document.querySelector('#admin-preview-visibility');if(visibility){visibility.textContent=selectedVisibility==='public'?'◎ KUDOS CONFESSION':'● Chỉ người nhận biết';visibility.classList.toggle('private',selectedVisibility==='private');}}
+ noCompany?.addEventListener('change',()=>applyMode(noCompany.checked));
+ [manualName,manualDept,manualEmail].forEach(el=>el?.addEventListener('input',syncManualPreview));
+ emailInput.addEventListener('input',()=>{if(manualRecipient)return;selectedEmployee=null;renderEmployee(null);const q=emailInput.value.trim().toLowerCase();if(!q){suggestions.classList.add('hidden');suggestions.innerHTML='';return}const matches=employees.filter(e=>e.email.toLowerCase().includes(q)).slice(0,5);suggestions.innerHTML=matches.length?matches.map(e=>`<button type="button" class="recipient-suggestion" data-admin-email="${e.email}"><div class="mini-avatar">${initials(e.name)}</div><div><b>${e.name}</b><span>${e.email}</span><em>${e.dept}</em></div></button>`).join(''):'<div class="recipient-no-result">Không tìm thấy email phù hợp. Có thể tick “không có mail công ty”.</div>';suggestions.classList.remove('hidden');suggestions.querySelectorAll('[data-admin-email]').forEach(btn=>btn.addEventListener('click',()=>{const emp=employees.find(e=>e.email===btn.dataset.adminEmail);emailInput.value=emp.email;suggestions.classList.add('hidden');renderEmployee(emp);}));});
  emailInput.addEventListener('blur',()=>setTimeout(()=>suggestions.classList.add('hidden'),150));
  document.querySelectorAll('[data-recognition-type]').forEach(btn=>btn.addEventListener('click',()=>{selectedType=btn.dataset.recognitionType;document.querySelectorAll('[data-recognition-type]').forEach(x=>x.classList.toggle('selected',x===btn));const defaults={acting:'Cảm ơn bạn đã chủ động đảm nhận thêm một vai trò',promotion:'Chúc mừng một bước phát triển mới',trainer:'Cảm ơn bạn đã đồng hành và phát triển người khác',project:'Ghi nhận một dấu mốc đáng nhớ của dự án',campaign:'Cảm ơn đóng góp của bạn cho hoạt động chung',other:'Một điều đáng được Ahamove ghi nhận'};title.value=defaults[selectedType]||defaults.other;updatePreview();}));
  document.querySelectorAll('[data-admin-template]').forEach(btn=>btn.addEventListener('click',()=>{selectedTemplate=btn.dataset.adminTemplate;document.querySelectorAll('[data-admin-template]').forEach(x=>{x.classList.toggle('selected',x===btn);x.setAttribute('aria-pressed',String(x===btn));});updatePreview();}));
- document.querySelectorAll('[data-admin-visibility]').forEach(btn=>btn.addEventListener('click',()=>{selectedVisibility=btn.dataset.adminVisibility;document.querySelectorAll('[data-admin-visibility]').forEach(x=>x.classList.toggle('selected',x===btn));updatePreview();}));
+ document.querySelectorAll('[data-admin-visibility]').forEach(btn=>btn.addEventListener('click',()=>{selectedVisibility=btn.dataset.adminVisibility;visibilityUi();updatePreview();}));
  title.addEventListener('input',updatePreview);message.addEventListener('input',updatePreview);
  document.querySelector('#admin-recognition-preview').addEventListener('click',()=>{updatePreview();toast('Đã cập nhật bản xem trước.')});
  document.querySelector('#admin-recognition-send').addEventListener('click',async()=>{
-  if(!selectedEmployee||message.value.trim().length<20){toast('Chọn người nhận mẫu và viết lời ghi nhận trước.');return;}
+  if(manualRecipient){const name=manualName.value.trim(),dept=manualDept.value.trim(),email=manualEmail.value.trim().toLowerCase();if(name.length<2||dept.length<2||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){toast('Điền đủ họ tên, phòng ban/đơn vị và email liên hệ hợp lệ.');return;}selectedEmployee={name,dept,email,manual:true};}
+  if(!selectedEmployee||message.value.trim().length<20){toast('Chọn người nhận và viết lời ghi nhận trước.');return;}
   const btn=document.querySelector('#admin-recognition-send');btn.disabled=true;
-  const payload={type:'admin',recipientEmail:selectedEmployee.email,message:message.value.trim(),values:[],templateId:selectedTemplate,visibility:selectedVisibility};
+  const payload={type:'admin',recipientEmail:selectedEmployee.email,recipientManual:!!selectedEmployee.manual,recipientName:selectedEmployee.name,recipientDept:selectedEmployee.dept,message:message.value.trim(),values:[],templateId:selectedTemplate,visibility:selectedVisibility};
   const fp=JSON.stringify(payload);if(!window.v27AdminPending||window.v27AdminPending.fp!==fp)window.v27AdminPending={fp,id:uid()};payload.requestId=window.v27AdminPending.id;
-  try{const result=await rpc('taoKudos',payload);acceptResult(result);window.v27AdminPending=null;enqueueAdminNotify(result.record,{toast:false});showAdminRecognitionSuccess(selectedEmployee,title.value.trim(),selectedVisibility);toast(result.notice);}
+  try{const result=await rpc('taoKudos',payload);acceptResult(result);window.v27AdminPending=null;enqueueAdminNotify(result.record,{toast:false});showAdminRecognitionSuccess(selectedEmployee,title.value.trim(),payload.visibility);toast(result.notice);}
   catch(e){window.alert(e.message);}finally{btn.disabled=false;}
  });
- updatePreview();
+ applyMode(false);updatePreview();
 }
 function showAdminRecognitionSuccess(employee,title,visibility='public'){
- document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop"><div class="modal admin-recognition-success"><div class="success-sticker"><span>✨</span><i>✦</i><i>★</i><i>●</i></div><div class="kicker">AHAKUDOS ĐÃ ĐƯỢC LƯU</div><h2>${escapeHtml(title||'Lời ghi nhận đã được lưu')}</h2><p>AhaKudos đã được lưu và sẽ xuất hiện trong Hồ sơ KUDOS của <b>${escapeHtml(employee.name)}</b>.</p><div class="sent-visibility-detail ${visibility==='public'?'public':'private'}">${visibility==='public'?'◎ Đề nghị công khai · Chờ người nhận mẫu đồng ý':'● Chỉ người nhận biết · Không hiển thị trên KUDOS công khai'}</div><div class="email-delivery-note"><span>✉</span><div><b>Email đang được xếp hàng gửi (mô phỏng)</b><p>Email thật chỉ về chủ bản test; xem EMAIL_QUEUE để biết trạng thái. Không gửi đến <strong>${escapeHtml(employee.email)}</strong>.</p></div></div><button class="btn primary wide admin-recognition-done">Hoàn tất</button></div></div>`;
+ document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop"><div class="modal admin-recognition-success"><div class="success-sticker"><span>✨</span><i>✦</i><i>★</i><i>●</i></div><div class="kicker">AHAKUDOS ĐÃ ĐƯỢC LƯU</div><h2>${escapeHtml(title||'Lời ghi nhận đã được lưu')}</h2><p>AhaKudos đã được lưu và sẽ xuất hiện trong Hồ sơ KUDOS của <b>${escapeHtml(employee.name)}</b>.</p><div class="sent-visibility-detail ${visibility==='public'?'public':'private'}">${visibility==='public'?'◎ KUDOS CONFESSION · Chờ Admin duyệt':'● Chỉ người nhận biết · Không hiển thị trên KUDOS CONFESSION'}</div><div class="email-delivery-note"><span>✉</span><div><b>Email đang được xếp hàng gửi (mô phỏng)</b><p>Email thật chỉ về chủ bản test; xem EMAIL_QUEUE để biết trạng thái. Không gửi đến <strong>${escapeHtml(employee.email)}</strong>.</p></div></div><button class="btn primary wide admin-recognition-done">Hoàn tất</button></div></div>`;
  document.querySelector('.admin-recognition-done').addEventListener('click',()=>{document.querySelector('#modal-root').innerHTML='';state.page='admin-home';render()});
 }
 
@@ -5792,40 +5804,50 @@ function bindSend(){
  const msg=document.querySelector('#message');
  const emailInput=document.querySelector('#recipient-email');
  const suggestions=document.querySelector('#recipient-suggestions');
+ const noCompany=document.querySelector('#recipient-no-company-email');
+ const companyMode=document.querySelector('#recipient-company-mode');
+ const manualMode=document.querySelector('#recipient-manual-mode');
+ const manualInputs=['#recipient-manual-name','#recipient-manual-dept','#recipient-manual-email'].map(x=>document.querySelector(x));
  let coachTimer=null;
- function syncPrefill(){const exact=employees.find(e=>e.email.toLowerCase()===emailInput.value.trim().toLowerCase()&&e.email!==me().email);if(exact){state.selectedRecipient=exact;renderSelectedRecipient(exact);}}
- syncPrefill();
- emailInput.addEventListener('input',()=>{
+ function setVisibilityUi(){document.querySelectorAll('[data-visibility]').forEach(x=>{x.disabled=false;x.removeAttribute('aria-disabled');x.classList.remove('disabled');x.classList.toggle('selected',x.dataset.visibility===state.sendVisibility);x.setAttribute('aria-pressed',String(x.dataset.visibility===state.sendVisibility));});}
+ function applyRecipientMode(on){
+   state.manualRecipient=!!on;
+   companyMode?.classList.toggle('hidden',state.manualRecipient);
+   manualMode?.classList.toggle('hidden',!state.manualRecipient);
+   if(state.manualRecipient){
+     state.selectedRecipient=null;state.prefillRecipient='';
+     if(emailInput)emailInput.value='';
+     suggestions?.classList.add('hidden');renderSelectedRecipient(null);
+     }
+   setVisibilityUi();updatePreview();runCoach();
+ }
+ function syncPrefill(){if(state.manualRecipient||!emailInput)return;const exact=employees.find(e=>e.email.toLowerCase()===emailInput.value.trim().toLowerCase()&&e.email!==me().email);if(exact){state.selectedRecipient=exact;renderSelectedRecipient(exact);}}
+ syncPrefill();applyRecipientMode(!!noCompany?.checked);
+ noCompany?.addEventListener('change',()=>applyRecipientMode(noCompany.checked));
+ manualInputs.forEach(el=>el?.addEventListener('input',()=>{updatePreview();runCoach();}));
+ emailInput?.addEventListener('input',()=>{
+   if(state.manualRecipient)return;
    state.selectedRecipient=null;renderSelectedRecipient(null);
    const q=emailInput.value.trim().toLowerCase();
    if(!q){suggestions.classList.add('hidden');suggestions.innerHTML='';updatePreview();return;}
    const matches=employees.filter(e=>e.email.toLowerCase().includes(q)&&e.email!==me().email).slice(0,5);
-   suggestions.innerHTML=matches.length?matches.map(e=>`<button type="button" class="recipient-suggestion" data-email="${e.email}"><div class="mini-avatar">${initials(e.name)}</div><div><b>${e.name}</b><span>${e.email}</span><em>${e.dept}</em></div></button>`).join(''):`<div class="recipient-no-result">Không tìm thấy email phù hợp.</div>`;
+   suggestions.innerHTML=matches.length?matches.map(e=>`<button type="button" class="recipient-suggestion" data-email="${e.email}"><div class="mini-avatar">${initials(e.name)}</div><div><b>${e.name}</b><span>${e.email}</span><em>${e.dept}</em></div></button>`).join(''):`<div class="recipient-no-result">Không tìm thấy email phù hợp. Nếu người nhận không có mail công ty, tick lựa chọn phía trên.</div>`;
    suggestions.classList.remove('hidden');
    suggestions.querySelectorAll('[data-email]').forEach(btn=>btn.addEventListener('click',()=>{const employee=employees.find(e=>e.email===btn.dataset.email);state.selectedRecipient=employee;emailInput.value=employee.email;suggestions.classList.add('hidden');renderSelectedRecipient(employee);updatePreview();runCoach();}));
    const exact=employees.find(e=>e.email.toLowerCase()===q&&e.email!==me().email);if(exact){state.selectedRecipient=exact;renderSelectedRecipient(exact);}
    updatePreview();runCoach();
  });
- emailInput.addEventListener('blur',()=>setTimeout(()=>{if(document.activeElement!==emailInput&&!suggestions.contains(document.activeElement))suggestions.classList.add('hidden');},150));
+ emailInput?.addEventListener('blur',()=>setTimeout(()=>{if(document.activeElement!==emailInput&&!suggestions?.contains(document.activeElement))suggestions?.classList.add('hidden');},150));
  msg.addEventListener('input',()=>{document.querySelector('#count').textContent=msg.value.trim().length+' ký tự';updatePreview();clearTimeout(coachTimer);coachTimer=setTimeout(runCoach,160);});
  document.querySelectorAll('[data-template]').forEach(c=>c.addEventListener('click',()=>{state.selectedTemplate=c.dataset.template;document.querySelectorAll('.template-option').forEach(x=>{x.classList.toggle('selected',x===c);x.setAttribute('aria-pressed',String(x===c));});syncCultureRequirement();updatePreview();}));
  document.querySelectorAll('.culture-chip').forEach(c=>c.addEventListener('click',()=>{const v=c.dataset.value;if(state.values.has(v)){state.values.delete(v);c.classList.remove('selected')}else if(state.values.size<3){state.values.add(v);c.classList.add('selected')}c.setAttribute('aria-pressed',String(state.values.has(v)));updatePreview();}));
- document.querySelectorAll('[data-visibility]').forEach(btn=>btn.addEventListener('click',()=>{state.sendVisibility=btn.dataset.visibility;document.querySelectorAll('[data-visibility]').forEach(x=>{x.classList.toggle('selected',x===btn);x.setAttribute('aria-pressed',String(x===btn));});updatePreview();}));
+ document.querySelectorAll('[data-visibility]').forEach(btn=>btn.addEventListener('click',()=>{state.sendVisibility=btn.dataset.visibility;setVisibilityUi();updatePreview();}));
  const coachToggle=document.querySelector('#coach-toggle');
  coachToggle.addEventListener('click',()=>{const ex=coachToggle.getAttribute('aria-expanded')!=='true';coachToggle.setAttribute('aria-expanded',String(ex));document.querySelector('#coach-more').classList.toggle('hidden',!ex);coachToggle.textContent=ex?'Thu gọn':'Xem thêm';});
- // Background carousel nav (desktop arrows)
  const gallery=document.querySelector('.kudos-background-gallery');
- document.querySelectorAll('[data-bg-nav]').forEach(btn=>btn.addEventListener('click',()=>{
-   if(!gallery)return;const step=(gallery.querySelector('.template-option')?.offsetWidth||160)+14;
-   gallery.scrollBy({left:Number(btn.dataset.bgNav)*step*2,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
- }));
- // "Tiếp tục: Chọn phạm vi hiển thị" — only scrolls to the visibility step, does NOT send.
+ document.querySelectorAll('[data-bg-nav]').forEach(btn=>btn.addEventListener('click',()=>{if(!gallery)return;const step=(gallery.querySelector('.template-option')?.offsetWidth||160)+14;gallery.scrollBy({left:Number(btn.dataset.bgNav)*step*2,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}));
  const cont=document.querySelector('#continue-visibility');
- if(cont)cont.addEventListener('click',()=>{
-   const vf=document.querySelector('#visibility-field');
-   vf?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
-   vf?.querySelector('.visibility-option')?.focus?.();
- });
+ if(cont)cont.addEventListener('click',()=>{const vf=document.querySelector('#visibility-field');vf?.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});vf?.querySelector('.visibility-option:not(:disabled)')?.focus?.();});
  document.querySelector('#send').addEventListener('click',send);
  syncCultureRequirement();updatePreview();runCoach();
 }
@@ -5833,14 +5855,27 @@ let sending=false;
 async function send(){
  if(sending)return;
  const btn=document.querySelector('#send'),text=document.querySelector('#message').value.trim();
- const email=document.querySelector('#recipient-email').value.trim().toLowerCase();
- const exact=employees.find(e=>e.email.toLowerCase()===email);
- if(!exact||!state.selectedRecipient){toast('Hãy tìm và chọn đúng email đồng nghiệp mẫu.');return;}
- if(exact.email===me().email){toast('Bạn không thể gửi cho chính mình.');return;}
+ let recipient=null;
+ if(state.manualRecipient){
+   const name=(document.querySelector('#recipient-manual-name')?.value||'').trim();
+   const dept=(document.querySelector('#recipient-manual-dept')?.value||'').trim();
+   const email=(document.querySelector('#recipient-manual-email')?.value||'').trim().toLowerCase();
+   if(name.length<2){toast('Nhập họ tên người nhận.');return;}
+   if(dept.length<2){toast('Nhập Phòng ban / Đơn vị người nhận.');return;}
+   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){toast('Nhập email liên hệ hợp lệ.');return;}
+   if(email===me().email.toLowerCase()){toast('Bạn không thể gửi cho chính mình.');return;}
+   recipient={name,dept,email,manual:true};
+ }else{
+   const email=(document.querySelector('#recipient-email')?.value||'').trim().toLowerCase();
+   const exact=employees.find(e=>e.email.toLowerCase()===email);
+   if(!exact||!state.selectedRecipient){toast('Hãy tìm và chọn đúng email đồng nghiệp trong Master Data.');return;}
+   if(exact.email===me().email){toast('Bạn không thể gửi cho chính mình.');return;}
+   recipient=exact;
+ }
  if(text.length<15||text.length>6000){toast('Nhập từ 15 đến 6.000 ký tự cho bản test.');return;}
  if(state.selectedTemplate!=='birthday'&&state.values.size===0){toast('Hãy chọn ít nhất 1 Giá trị văn hóa.');return;}
  const first=sentBy(me().email).length===0;
- const payload={senderEmail:me().email,recipientEmail:exact.email,message:text,values:[...state.values],templateId:state.selectedTemplate,visibility:state.sendVisibility};
+ const payload={senderEmail:me().email,recipientEmail:recipient.email,recipientManual:!!recipient.manual,recipientName:recipient.name,recipientDept:recipient.dept,message:text,values:[...state.values],templateId:state.selectedTemplate,visibility:state.sendVisibility};
  const fingerprint=JSON.stringify(payload);
  if(!window.v27PendingRequest||window.v27PendingRequest.fingerprint!==fingerprint)window.v27PendingRequest={fingerprint,requestId:uid()};
  payload.requestId=window.v27PendingRequest.requestId;
@@ -5848,7 +5883,7 @@ async function send(){
  try{
   const result=await rpc('taoKudos',payload);acceptResult(result);window.v27PendingRequest=null;
   enqueueAdminNotify(result.record,{toast:false});
-  state.prefillRecipient='';state.selectedRecipient=null;state.values.clear();state.sendVisibility='private';
+  state.prefillRecipient='';state.selectedRecipient=null;state.manualRecipient=false;state.values.clear();state.sendVisibility='private';
   state.page='kudos-detail';state.viewKudosId=result.record.id;
   try{history.replaceState(null,'','#/k/'+result.record.id);}catch(e){}
   render();window.scrollTo(0,0);showSuccessBanner(result.record,first);
@@ -5860,7 +5895,7 @@ function escapeHtml(str=''){return String(str).replace(/[&<>"']/g,m=>({'&':'&amp
 function showSuccessBanner(record,isFirst){
  const root=document.querySelector('#toast-root');root.querySelector('.kudos-success-banner')?.remove();
  const b=document.createElement('div');b.className='kudos-success-banner'+(isFirst?' first-kudos-banner':'');b.setAttribute('role','status');
- const vis=record.visibility==='public'?'Đề nghị công khai — chờ người nhận đồng ý.':'Lời ghi nhận riêng tư, đã lưu để xem lại.';
+ const vis=record.visibility==='public'?'KUDOS CONFESSION · đang chờ Admin duyệt.':'KUDOS riêng tư · đang chờ Admin duyệt trước khi gửi email.';
  b.innerHTML=`<div class="success-banner-icon">${isFirst?'🎉':'✓'}</div><div class="success-banner-copy"><strong>${isFirst?'Chúc mừng! Bạn vừa gửi KUDOS đầu tiên':'Đã lưu lời ghi nhận vào Google Sheets'}</strong><span>${escapeHtml(mailStatusText(record))} · Email thật chỉ gửi về chủ bản test.</span><em>${vis}</em></div><button class="success-banner-close" aria-label="Đóng">×</button>`;
  root.appendChild(b);requestAnimationFrame(()=>b.classList.add('show'));const close=()=>b.remove();b.querySelector('button').onclick=close;setTimeout(close,6500);
 }
