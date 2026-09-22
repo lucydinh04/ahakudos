@@ -1,8 +1,6 @@
-# UPDATE V28.37
-- Homepage empty state: when user has not received any KUDOS yet, replace the default empty feed card with a 3-step onboarding card.
-- Added 3 step icons from provided references:
-  1) Chọn người bạn muốn ghi nhận
-  2) Nội dung ghi nhận bạn muốn chia sẻ
-  3) Chọn giá trị & gửi KUDOS
-- CTA kept: Gửi Kudos đầu tiên →
-- Existing CỘNG ĐỒNG KUDOS callout remains below the onboarding card.
+# V28.37 — Homepage empty-state onboarding
+
+- Khi user chưa có KUDOS đã nhận (`rec.length === 0`), block KUDOS gần đây trên homepage được thay bằng 3 bước gửi KUDOS.
+- Dùng đúng icon người nhận → nội dung → gửi KUDOS từ file người dùng cung cấp.
+- Cộng đồng KUDOS vẫn hiển thị phía dưới.
+- Khi đã có KUDOS nhận, homepage trở về card KUDOS gần đây như cũ.
