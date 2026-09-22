@@ -4,66 +4,19 @@
   "buildCommand": "npm run build",
   "outputDirectory": "public",
   "functions": {
-    "api/page.js": {
-      "includeFiles": "private/**",
-      "maxDuration": 60
-    },
-    "api/bridge.js": {
-      "maxDuration": 60
-    },
-    "api/auth.js": {
-      "maxDuration": 60
-    }
+    "api/page.js": {"includeFiles": "private/**", "maxDuration": 60},
+    "api/bridge.js": {"maxDuration": 60}
   },
   "rewrites": [
-    {
-      "source": "/",
-      "destination": "/api/page"
-    }
+    {"source": "/", "destination": "/api/page"},
+    {"source": "/kudos", "destination": "/api/page"}
   ],
   "headers": [
-    {
-      "source": "/backgrounds/home-launch-hero-v2830.png",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, max-age=0"
-        },
-        {
-          "key": "X-AhaKudos-Asset",
-          "value": "V28.30-HERO"
-        }
-      ]
-    },
-    {
-      "source": "/backgrounds/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "no-referrer"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        }
-      ]
-    }
+    {"source": "/backgrounds/(.*)", "headers": [{"key":"Cache-Control","value":"public, max-age=0, must-revalidate"}]},
+    {"source": "/(.*)", "headers": [
+      {"key":"X-Robots-Tag","value":"noindex, nofollow, noarchive"},
+      {"key":"Referrer-Policy","value":"no-referrer"},
+      {"key":"X-Content-Type-Options","value":"nosniff"}
+    ]}
   ]
 }
