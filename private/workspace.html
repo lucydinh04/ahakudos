@@ -5033,7 +5033,15 @@ function profile(){
        <div class="sent-item-footer"><div>${cn.length?`<div class="sent-values-label">Giá trị văn hoá được ghi nhận</div><div class="value-tags">${cn.map(n=>`<span>${escapeHtml(n)}</span>`).join('')}</div>`:''}<span class="sent-visibility ${k.visibility==='public'?'public':'private'}">${statusText}</span></div><button class="link-btn" data-open-kudos="${k.id}">Xem chi tiết</button></div>
      </div>`;
    }).join('')}</div>`
-   :bannerHero('first_kudos');
+   :`<div class="received-empty-state">
+      <img class="received-empty-mascot" src="/illustrations/empty-sent-mascot.png" alt="Mascot Ahamove tặng quà để bắt đầu gửi Kudos" onerror="this.src='/illustrations/mascot-cutout.png'">
+      <div class="received-empty-copy">
+        <span class="received-empty-kicker">Đã gửi</span>
+        <h3>Chưa có Kudos – Gửi lời khen đầu tiên</h3>
+        <p>Bắt đầu bằng một lời cảm ơn dành cho đồng nghiệp bạn muốn ghi nhận.</p>
+        <button class="btn primary" data-page="send-kudos">Gửi KUDOS đầu tiên →</button>
+      </div>
+    </div>`;
 return `<section class="page active"><div class="page-head"><div><div class="kicker">HÀNH TRÌNH GHI NHẬN</div><h1>Hồ sơ KUDOS</h1><p class="page-sub">Xem lại những KUDOS bạn đã nhận và đã gửi — tất cả được lưu để bạn mở lại bất cứ lúc nào.</p></div></div>
  <div class="profile-grid">
   <article class="card profile-card"><div class="profile-avatar-edit">${avatarMarkup('profile-big-avatar')}<button class="avatar-edit-btn profile-avatar-btn" data-avatar-edit title="Cập nhật avatar">✎</button></div><h2>${escapeHtml(u.name)}</h2><p>${escapeHtml(u.dept)} · Ahamove</p><button class="profile-avatar-link" data-avatar-edit>Cập nhật ảnh đại diện</button><div class="profile-stats profile-stats-two"><div class="pstat"><b>${rec.length}</b><span>Đã nhận</span></div><div class="pstat"><b>${sent.length}</b><span>Đã gửi</span></div></div></article>
