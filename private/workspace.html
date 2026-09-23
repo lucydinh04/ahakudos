@@ -2006,7 +2006,7 @@ svg{flex-shrink:0}
 .home-info-quote{margin:18px 0;padding:18px 20px;border-left:4px solid #ff7f32;border-radius:16px;background:linear-gradient(90deg,#fff5ec,#fffdf9);font-size:18px!important;line-height:1.7!important;color:#173f6d!important;font-weight:800}
 .home-goal-grid,.home-source-grid,.home-how-grid{display:grid;gap:16px;margin-top:22px}
 .home-goal-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-.home-source-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.home-source-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 .home-how-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
 .home-info-card{position:relative;padding:20px;border-radius:22px;border:1px solid #efe2d5;background:linear-gradient(180deg,#fffdfa,#fff8f1)}
 .home-info-card .card-icon{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;margin-bottom:14px;background:#fff0e4;color:#c65313;font-size:20px;font-weight:900}
@@ -2161,7 +2161,7 @@ svg{flex-shrink:0}
 .hb-home .home-audience-item i{width:62px;height:62px;font-size:28px;background:#f1f6ff;color:#3f82ff;box-shadow:none}
 .hb-home .home-audience-item b{font-size:14px;line-height:1.55}
 .hb-home .home-audience-item span{font-size:13px;line-height:1.65}
-.hb-home .home-source-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.hb-home .home-source-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .hb-home .home-source-card{padding:18px 18px 20px;border-radius:18px;box-shadow:0 10px 22px rgba(14,65,116,.04)}
 .hb-home .home-source-card i{width:50px;height:50px;border-radius:14px;background:#fff4ea}
 .hb-home .home-source-card h3{font-size:18px;color:#18457d}
@@ -4961,7 +4961,6 @@ return `<section class="page active hb-home">
     <b>Khi một đồng nghiệp làm điều gì đó có ý nghĩa, đóng góp ấy xứng đáng được nhìn thấy và trân trọng.</b>
    </div>
    <p class="home-story-foot">Đó có thể là khi một đồng nghiệp chủ động hỗ trợ bạn, giải quyết một vấn đề khó, chia sẻ kiến thức, đồng hành cùng team hoặc tạo ra một tác động tích cực.</p>
-   <p class="home-story-foot">Thông qua AHAKUDOS, những hành động này không chỉ dừng lại ở một lời cảm ơn trong chat hay cuộc họp, mà được lưu lại và trở thành những câu chuyện văn hóa có thể tiếp tục được lan tỏa.</p>
   </article>
 
   <article id="home-goals" class="home-showcase-card home-goal-panel">
@@ -4983,25 +4982,6 @@ return `<section class="page active hb-home">
    <div class="home-panel-note">AHAKUDOS là một chương trình ghi nhận văn hóa và <strong>không thay thế hệ thống đánh giá hiệu suất</strong>.</div>
   </article>
 
-  <article id="home-audience" class="home-showcase-card home-audience-panel">
-   <div class="home-section-header">
-    <div class="home-section-icon">👥</div>
-    <div class="home-section-meta">
-      <span class="home-section-kicker">ĐỐI TƯỢNG</span>
-      <h2>Dành cho toàn thể nhân viên Ahamove</h2>
-      <p>Các Ahamovers có thể tham gia AHAKUDOS theo nhiều cách khác nhau trong cùng một hành trình ghi nhận.</p>
-    </div>
-   </div>
-   <div class="home-icon-grid home-audience-grid">
-    <div class="home-audience-item"><i>✈️</i><b>Gửi KUDOS</b><span>Gửi lời ghi nhận đến đồng nghiệp.</span></div>
-    <div class="home-audience-item"><i>💛</i><b>Nhận KUDOS</b><span>Nhận lời cảm ơn từ đồng nghiệp.</span></div>
-    <div class="home-audience-item"><i>🧾</i><b>Xem lại KUDOS đã nhận</b><span>Lưu lại những lời ghi nhận dành cho bạn.</span></div>
-    <div class="home-audience-item"><i>📊</i><b>Xem lại KUDOS đã gửi</b><span>Theo dõi những lời ghi nhận bạn đã lan tỏa.</span></div>
-    <div class="home-audience-item"><i>👤</i><b>Theo dõi hành trình cá nhân</b><span>Nhìn lại chuyển động ghi nhận của riêng mình.</span></div>
-    <div class="home-audience-item"><i>📖</i><b>Xem câu chuyện KUDOS</b><span>Khám phá những câu chuyện được chia sẻ trong hệ thống.</span></div>
-   </div>
-  </article>
-
   <article id="home-sources" class="home-showcase-card home-source-panel">
    <div class="home-section-header">
     <div class="home-section-icon">🎁</div>
@@ -5014,7 +4994,6 @@ return `<section class="page active hb-home">
    <div class="home-icon-grid home-source-grid">
     <div class="home-source-card"><i>👥</i><h3>Từ đồng nghiệp</h3><p>Khi một đồng nghiệp nhìn thấy một hành động hoặc đóng góp tích cực của bạn, họ có thể chủ động gửi KUDOS để ghi nhận điều đó.</p></div>
     <div class="home-source-card"><i>🎂</i><h3>Từ những cột mốc đáng nhớ</h3><p>AHAKUDOS cũng sẽ gửi lời chúc và ghi nhận vào một số dịp đặc biệt như <strong>Sinh nhật</strong> hoặc <strong>Kỷ niệm ngày vào công ty / Thâm niên</strong>. Đây là những KUDOS mang ý nghĩa <strong>chúc mừng, khích lệ và ghi dấu hành trình</strong>, vì vậy <strong>không phát sinh thêm điểm AhaKudos</strong>.</p></div>
-    <div class="home-source-card"><i>⭐</i><h3>Từ những đóng góp cho hoạt động chung của công ty</h3><p>Bên cạnh công việc thường ngày, nếu bạn dành thêm thời gian và đóng góp cho các hoạt động chung của công ty, những đóng góp này cũng có thể được ghi nhận bằng điểm AhaKudos tùy theo mức độ tham gia.</p></div>
    </div>
   </article>
 
