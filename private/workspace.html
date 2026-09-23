@@ -2128,6 +2128,60 @@ svg{flex-shrink:0}
 @media(max-width:1180px){.home-goal-icons{grid-template-columns:repeat(3,minmax(0,1fr))}.home-audience-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.home-how-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.home-bottom-cta{grid-template-columns:200px 1fr}.home-bottom-cta .home-bottom-btn{grid-column:2;justify-self:flex-start}}
 @media(max-width:760px){.home-anchor-nav{gap:8px;overflow:auto;padding-bottom:4px}.home-anchor-chip{white-space:nowrap}.home-story-panel,.home-showcase-card{padding:24px 20px;border-radius:24px}.home-story-panel h2{font-size:28px}.home-story-quote{padding:18px 16px;text-align:left}.home-story-quote-mark{font-size:38px}.home-section-header{gap:12px}.home-section-icon{width:48px;height:48px;border-radius:16px}.home-section-meta h2{font-size:24px}.home-goal-icons,.home-audience-grid,.home-source-grid,.home-how-strip{grid-template-columns:1fr}.home-bottom-cta{grid-template-columns:1fr;padding:22px 20px;text-align:left}.home-bottom-cta img{max-width:180px}.home-bottom-btn{width:100%}}
 
+
+/* V28.45 — homepage closer to approved visual */
+.hb-home .profile-strip{margin-bottom:28px}
+.hb-home .home-about-kudos{gap:30px;margin-top:6px}
+.hb-home .home-story-panel{padding:34px 38px 30px;border:none;box-shadow:none;background:transparent;text-align:center}
+.hb-home .home-story-panel:before,.hb-home .home-story-panel:after{display:none}
+.hb-home .home-story-mark{justify-content:center;color:#ff7a2f;margin-bottom:8px}
+.hb-home .home-story-panel h2{font-size:32px;color:#15417a;position:relative;display:inline-block;padding:0 34px}
+.hb-home .home-story-panel h2:before,.hb-home .home-story-panel h2:after{content:'';position:absolute;top:50%;width:22px;height:22px;border-top:4px solid #ff7a2f;border-radius:10px;transform:translateY(-50%) rotate(28deg)}
+.hb-home .home-story-panel h2:before{left:0;border-left:4px solid #ff7a2f}
+.hb-home .home-story-panel h2:after{right:0;border-right:4px solid #ff7a2f;transform:translateY(-50%) rotate(-28deg)}
+.hb-home .home-story-lead,.hb-home .home-story-foot{max-width:1100px;font-size:15px;line-height:1.9;color:#42607d}
+.hb-home .home-story-quote{max-width:780px;background:#fff3e6;border-radius:22px;padding:18px 24px;margin:18px auto}
+.hb-home .home-story-quote b{font-size:17px;line-height:1.6;color:#16427a;text-align:left}
+.hb-home .home-story-quote-mark{color:#ff7a2f}
+.hb-home .home-showcase-card{padding:28px 28px 24px;border-radius:28px;box-shadow:none}
+.hb-home .home-goal-panel{background:linear-gradient(180deg,#f3f8ff 0%,#edf5ff 100%);border:none}
+.hb-home .home-audience-panel,.hb-home .home-source-panel,.hb-home .home-how-panel{border:1px solid #f0e6d7;background:#fff}
+.hb-home .home-section-header{align-items:center;margin-bottom:14px}
+.hb-home .home-section-icon{width:52px;height:52px;font-size:26px;border-radius:16px;background:#fff4ea;color:#ff7a2f;box-shadow:none}
+.hb-home .home-section-meta h2{font-size:26px;color:#15417a}
+.hb-home .home-section-meta p{font-size:15px;line-height:1.8;color:#546a83}
+.hb-home .home-goal-icons{grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.hb-home .home-goal-item{background:transparent;border:none;padding:10px 6px}
+.hb-home .home-goal-item i{width:78px;height:78px;font-size:34px;background:#fff;box-shadow:0 10px 22px rgba(14,65,116,.08)}
+.hb-home .home-goal-item b{font-size:14px;line-height:1.6}
+.hb-home .home-goal-item span{font-size:13px;line-height:1.7}
+.hb-home .home-panel-note{margin-top:12px;background:#e9f2ff;border:none;border-radius:18px;text-align:left}
+.hb-home .home-audience-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+.hb-home .home-audience-item{padding:18px 14px;border-radius:18px;box-shadow:0 10px 22px rgba(14,65,116,.04)}
+.hb-home .home-audience-item i{width:62px;height:62px;font-size:28px;background:#f1f6ff;color:#3f82ff;box-shadow:none}
+.hb-home .home-audience-item b{font-size:14px;line-height:1.55}
+.hb-home .home-audience-item span{font-size:13px;line-height:1.65}
+.hb-home .home-source-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.hb-home .home-source-card{padding:18px 18px 20px;border-radius:18px;box-shadow:0 10px 22px rgba(14,65,116,.04)}
+.hb-home .home-source-card i{width:50px;height:50px;border-radius:14px;background:#fff4ea}
+.hb-home .home-source-card h3{font-size:18px;color:#18457d}
+.hb-home .home-source-card p{font-size:14px;line-height:1.75}
+.hb-home .home-how-panel{background:linear-gradient(180deg,#fff8ef 0%,#fffdf9 100%)}
+.hb-home .home-how-strip{grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.hb-home .home-how-step-card{border:1px solid #eddcc7;border-radius:18px;padding:16px 14px 18px;position:relative}
+.hb-home .home-how-step-card:not(:last-child):after{content:'→';position:absolute;right:-12px;top:34px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#3a73c7;font-weight:900;box-shadow:0 8px 18px rgba(14,65,116,.08)}
+.hb-home .home-how-step-card .step-no{margin-bottom:12px;background:#ff7a2f;font-size:16px}
+.hb-home .home-how-step-card h3{font-size:16px;line-height:1.45;color:#16427a}
+.hb-home .home-how-step-card p,.hb-home .home-how-step-card li{font-size:13px;line-height:1.75;color:#596f88}
+.hb-home .home-bottom-cta{margin-top:4px;border:none;border-radius:28px;background:linear-gradient(180deg,#fff5ea 0%,#fff9f3 100%);grid-template-columns:220px 1fr auto;box-shadow:none}
+.hb-home .home-bottom-cta img{max-width:190px}
+.hb-home .home-bottom-cta h2{font-size:28px;color:#ff7417}
+.hb-home .home-bottom-cta h2 span{display:block;color:#16427a}
+.hb-home .home-bottom-cta p{font-size:15px}
+.hb-home .home-bottom-btn{white-space:nowrap}
+@media(max-width:1180px){.hb-home .home-audience-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hb-home .home-goal-icons{grid-template-columns:repeat(3,minmax(0,1fr))}.hb-home .home-how-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.hb-home .home-how-step-card:not(:last-child):after{display:none}.hb-home .home-bottom-cta{grid-template-columns:180px 1fr}.hb-home .home-bottom-btn{grid-column:2;justify-self:flex-start}}
+@media(max-width:760px){.hb-home .home-story-panel{padding:12px 0 4px}.hb-home .home-story-panel h2{font-size:28px;padding:0 26px}.hb-home .home-showcase-card{padding:22px 18px}.hb-home .home-section-meta h2{font-size:24px}.hb-home .home-audience-grid,.hb-home .home-goal-icons,.hb-home .home-source-grid,.hb-home .home-how-strip{grid-template-columns:1fr}.hb-home .home-bottom-cta{grid-template-columns:1fr;padding:20px 18px}.hb-home .home-bottom-cta img{max-width:160px}.hb-home .home-bottom-btn{width:100%}}
+
 /* Compose: clear sections, full-width cards, genuinely adjacent preview. */
 .hb-compose-steps{background:#fff;border:1px solid var(--line);border-radius:999px;min-height:66px;display:flex;align-items:center;padding:13px 23px;gap:22px;margin-bottom:24px;box-shadow:var(--shadow)}
 .hb-step-intro{font-size:13px;letter-spacing:.7px;font-weight:750;color:var(--muted);white-space:nowrap;padding-right:20px;border-right:1px solid var(--line)}
@@ -4792,13 +4846,7 @@ function employeeHome(){
  const sentCount=sentBy(u.email).length;
  const birthdaySuggestions=birthdaySuggestionsFor(u.email);
  // Banner chúc mừng người NHẬN khi có KUDOS đầu tiên (mỗi user, ẩn được).
- const firstRecvBanner=(rec.length>0&&!firstRecvDismissed(u.email))?`
-  <div class="first-recv-banner" role="status">
-   <div class="frb-icon" aria-hidden="true">🎉</div>
-   <div class="frb-copy"><b>Chúc mừng ${escapeHtml(u.name.split(' ').slice(-1)[0])}! Bạn vừa nhận được KUDOS đầu tiên tại Ahamove.</b><span>Một đồng nghiệp đã ghi nhận điều bạn làm. Mở ra đọc và giữ lại cho riêng bạn nhé.</span></div>
-   <button class="btn primary frb-open" data-firstrecv-open="${latest.id}">Xem ngay →</button>
-   <button class="frb-close" data-firstrecv-dismiss="${escapeHtml(u.email)}" aria-label="Đóng lời chúc">×</button>
-  </div>`:'';
+ const firstRecvBanner='';
  // Card action KUDOS đầu tiên (đưa LÊN TRÊN thông tin sinh nhật).
  const firstKudosCard=sentCount>0?`
   <article class="card rail-card first-kudos-done">
@@ -4903,28 +4951,6 @@ return `<section class="page active hb-home">
   <div class="hb-journey-stat"><strong>${rec.length}</strong><div><b>KUDOS bạn đã nhận</b><span>Được lưu để xem lại bất cứ lúc nào</span></div></div>
   <div class="hb-journey-stat"><strong>${sentBy(u.email).length}</strong><div><b>KUDOS bạn đã gửi</b><span>Lan tỏa điều tích cực đến đồng nghiệp</span></div></div>
  </div>
- <div class="home-grid">
-  <div class="main-column">
-   ${homePrimaryCard}
-   ${sentCount===0?`<button class="hb-public-callout" data-page="public-feed"><span class="hb-callout-icon">${svg('feed')}</span><span><b>CỘNG ĐỒNG KUDOS</b><small>Những lời ghi nhận được Admin duyệt để cùng Ahamovers nhìn thấy.</small></span><i aria-hidden="true">→</i></button>`:''}
-  </div>
-  <aside class="right-rail">
-   ${sentCount===0?firstGiftCard:firstKudosCard}
-   <article class="card rail-card birthday-card">
-    <div class="rail-title"><span><span class="hb-inline-icon" aria-hidden="true">🎂</span> Sinh nhật đồng nghiệp sắp tới</span></div>
-    <p class="rail-intro">Một lời chúc đúng ngày cũng là một cách để đồng nghiệp cảm thấy được nhớ đến.</p>
-    <div class="birthday-list">${birthdaySuggestions.map(b=>`<div class="birthday-person"><div class="mini-avatar birthday-avatar">${b.initials}</div><div class="birthday-info"><b>${b.name}</b><span>${b.dept}</span><em>${b.when} · ${b.date}</em></div><button class="birthday-send" data-birthday="${b.email}" title="Gửi KUDOS sinh nhật cho ${b.name}">Gửi lời chúc <span aria-hidden="true">↗</span></button></div>`).join('')}</div>
-    <div class="hb-data-note"><span></span> Dữ liệu nhân sự</div>
-   </article>
-  </aside>
- </div>
- <nav class="home-anchor-nav" aria-label="Điều hướng nhanh">
-  <a class="home-anchor-chip" href="#home-about">AhaKudos là gì?</a>
-  <a class="home-anchor-chip" href="#home-goals">Mục tiêu</a>
-  <a class="home-anchor-chip" href="#home-audience">Đối tượng</a>
-  <a class="home-anchor-chip" href="#home-sources">Nguồn KUDOS</a>
-  <a class="home-anchor-chip" href="#home-how">Cách gửi KUDOS</a>
- </nav>
  <section class="home-about-kudos" aria-label="Thông tin về AhaKudos">
   <article id="home-about" class="home-story-panel">
    <div class="home-story-mark"><i>✦</i><span>ĐỊNH NGHĨA</span><i>✦</i></div>
@@ -5016,7 +5042,7 @@ return `<section class="page active hb-home">
     <h2>Một lời ghi nhận <span>có thể tạo nên một ngày tuyệt vời!</span></h2>
     <p>Cùng lan tỏa những điều tích cực tại AhaKudos và bắt đầu từ một lời cảm ơn dành cho đồng nghiệp của bạn.</p>
    </div>
-   <button class="btn primary home-bottom-btn" data-page="send-kudos">Gửi Kudos ngay →</button>
+   <button class="btn primary home-bottom-btn" data-page="send-kudos">Gửi KUDOS ngay →</button>
   </article>
  </section>
 </section>`;
