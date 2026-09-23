@@ -6,8 +6,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#123b67">
-  <title>AhaKudos V28.32 — 16:9 Community Background</title>
-  <meta name="ahakudos-build" content="V28.27-HERO-CACHEBUST">
+  <title>AhaKudos V28.55 — Connection Fix</title>
+  <meta name="ahakudos-build" content="V28.55-CONNECTION-FIX">
   <meta name="description" content="AhaKudos V27 — thử bằng tài khoản công ty, chỉ người tạo, email khóa về chính bạn.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -4970,7 +4970,7 @@ function employeeHome(){
     </div>
     <div class="home-community-list">${homeCommunityCards||`<div class="empty"><div class="icon">✦</div><h3>Cộng đồng đang chờ lời ghi nhận đầu tiên</h3><p>Khi Admin duyệt KUDOS, những lời ghi nhận sẽ xuất hiện tại đây.</p></div>`}</div>
    </article>`
-const sentCount=sentBy(u.email).length, recvCount=rec.length, noJourneyYet=sentCount===0&&recvCount===0;
+const recvCount=rec.length, noJourneyYet=sentCount===0&&recvCount===0;
  const recvJourneyCard=noJourneyYet
   ? `<div class="hb-journey-stat hb-journey-stat-empty"><strong>✦</strong><div><b>Bắt đầu hành trình KUDOS</b><span>Chưa có KUDOS nào được gửi hoặc nhận. Hãy bắt đầu bằng lời ghi nhận đầu tiên.</span></div></div>`
   : `<div class="hb-journey-stat"><strong>${recvCount}</strong><div><b>${recvCount===0?'Chưa có KUDOS nào nhận được':'KUDOS bạn đã nhận'}</b><span>${recvCount===0?'Khi đồng nghiệp gửi lời ghi nhận, bạn sẽ thấy tại đây.':'Được lưu để xem lại bất cứ lúc nào'}</span></div></div>`;
