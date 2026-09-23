@@ -2067,6 +2067,67 @@ svg{flex-shrink:0}
 .completion-label{font-size:13px;color:#ad4a19}
 .completion-copy h3{font-size:23px;color:var(--ink)}
 .completion-copy p{font-size:14px;line-height:1.85;color:#605b54}
+
+/* V28.44 — Homepage layout refresh aligned with handbook-style content */
+.home-anchor-nav{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 4px}
+.home-anchor-chip{display:inline-flex;align-items:center;justify-content:center;padding:10px 16px;border-radius:999px;border:1px solid #ebd7c5;background:#fff7ef;color:#a64a17;font-size:13px;font-weight:800;text-decoration:none;box-shadow:0 8px 18px rgba(14,65,116,.05)}
+.home-anchor-chip:hover{background:#fff0e3;border-color:#f6c6a4}
+.home-about-kudos{display:grid;gap:22px;margin-top:10px}
+.home-story-panel,.home-showcase-card,.home-bottom-cta{position:relative;border-radius:30px;box-shadow:0 18px 42px rgba(14,65,116,.06)}
+.home-story-panel{background:#fff;border:1px solid #efe1d3;padding:32px 34px;text-align:center;overflow:hidden}
+.home-story-panel:before,.home-story-panel:after{content:'';position:absolute;width:78px;height:78px;border-radius:50%;background:rgba(255,127,50,.06)}
+.home-story-panel:before{left:-24px;top:-20px}.home-story-panel:after{right:-18px;bottom:-24px}
+.home-story-mark{display:inline-flex;align-items:center;gap:10px;margin-bottom:10px;font-size:14px;font-weight:900;letter-spacing:.08em;color:#ff7a2f;text-transform:uppercase}
+.home-story-mark i{font-style:normal;font-size:20px;line-height:1}
+.home-story-panel h2{margin:0;color:#143a69;font-size:34px;line-height:1.16;letter-spacing:-.03em}
+.home-story-lead{max-width:980px;margin:18px auto 0;font-size:15px;line-height:1.9;color:#53677f}
+.home-story-quote{max-width:760px;margin:22px auto;padding:20px 24px;border-radius:22px;background:linear-gradient(180deg,#fff6ed 0%,#fffdf8 100%);display:flex;gap:14px;align-items:flex-start;justify-content:center;text-align:left}
+.home-story-quote-mark{flex:0 0 auto;font-size:46px;line-height:1;color:#ff7a2f;font-weight:900}
+.home-story-quote b{display:block;font-size:16px;line-height:1.7;color:#173f6d}
+.home-story-foot{max-width:980px;margin:0 auto;font-size:15px;line-height:1.9;color:#53677f}
+.home-showcase-card{background:#fff;border:1px solid #e7edf5;padding:28px 30px}
+.home-goal-panel{background:linear-gradient(180deg,#f4f8ff 0%,#eef5ff 100%);border-color:#d9e7f6}
+.home-how-panel{background:linear-gradient(180deg,#fff9f2 0%,#fffdf9 100%);border-color:#efe2d2}
+.home-section-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.home-section-icon{flex:0 0 auto;width:54px;height:54px;border-radius:18px;display:grid;place-items:center;background:#fff;color:#ff7417;box-shadow:inset 0 0 0 1px rgba(255,127,50,.16);font-size:24px}
+.home-goal-panel .home-section-icon,.home-audience-panel .home-section-icon{background:rgba(255,255,255,.72)}
+.home-section-meta{flex:1}
+.home-section-kicker{display:block;font-size:12px;font-weight:900;letter-spacing:.16em;color:#ff7417;text-transform:uppercase;margin-bottom:6px}
+.home-section-meta h2{margin:0;color:#143a69;font-size:28px;line-height:1.2}
+.home-section-meta p{margin:8px 0 0;color:#5a6f88;font-size:15px;line-height:1.8}
+.home-icon-grid{display:grid;gap:14px}
+.home-goal-icons{grid-template-columns:repeat(5,minmax(0,1fr));margin-top:18px}
+.home-goal-item,.home-audience-item{background:rgba(255,255,255,.78);border:1px solid rgba(14,65,116,.08);border-radius:22px;padding:18px 16px;text-align:center}
+.home-goal-item i,.home-audience-item i{display:grid;place-items:center;width:72px;height:72px;margin:0 auto 14px;border-radius:50%;background:#fff;color:#ff7417;font-style:normal;font-size:32px;box-shadow:0 8px 18px rgba(14,65,116,.06)}
+.home-goal-item b,.home-audience-item b{display:block;font-size:15px;line-height:1.55;color:#173f6d}
+.home-goal-item span,.home-audience-item span{display:block;margin-top:6px;font-size:13px;line-height:1.7;color:#60748c}
+.home-panel-note{margin-top:18px;padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.8);color:#30527c;font-size:14px;line-height:1.7;font-weight:700;border:1px solid rgba(47,128,216,.08)}
+.home-audience-panel{background:#fff;border-color:#e6edf5}
+.home-audience-grid{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:18px}
+.home-source-panel{background:#fff}
+.home-source-grid{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:18px}
+.home-source-card{padding:20px;border-radius:22px;border:1px solid #e7edf4;background:#fff}
+.home-source-card i{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:#fff0e4;color:#ff7417;font-style:normal;font-size:22px;margin-bottom:12px}
+.home-source-card h3{margin:0 0 8px;color:#173f6d;font-size:18px;line-height:1.45}
+.home-source-card p{margin:0;color:#5a6f88;font-size:14px;line-height:1.8}
+.home-how-intro{margin-top:6px!important;font-style:normal!important}
+.home-how-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;align-items:stretch;margin-top:18px}
+.home-how-step-card{position:relative;padding:18px 16px;border-radius:22px;border:1px solid #eadfce;background:#fff;min-height:100%;display:flex;flex-direction:column}
+.home-how-step-card .step-no{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;margin-bottom:14px;background:#ff7a2f;color:#fff;font-size:17px;font-weight:900}
+.home-how-step-card h3{margin:0 0 8px;color:#173f6d;font-size:16px;line-height:1.5}
+.home-how-step-card p,.home-how-step-card li{color:#5a6f88;font-size:13px;line-height:1.75}
+.home-how-step-card p{margin:0}
+.home-how-step-card ul{margin:8px 0 0;padding-left:18px}
+.home-how-step-card ul li+li{margin-top:4px}
+.home-bottom-cta{display:grid;grid-template-columns:250px 1fr auto;align-items:center;gap:20px;padding:20px 24px;background:linear-gradient(180deg,#fff3e6 0%,#fff9f3 100%);border:1px solid #f3d8bf;overflow:hidden}
+.home-bottom-cta img{width:100%;max-width:220px;display:block;margin:auto}
+.home-bottom-cta h2{margin:0;color:#ff7417;font-size:34px;line-height:1.15;letter-spacing:-.03em}
+.home-bottom-cta h2 span{display:block;color:#143a69}
+.home-bottom-cta p{margin:10px 0 0;color:#5a6f88;font-size:16px;line-height:1.8;max-width:540px}
+.home-bottom-btn{min-width:190px;padding:13px 18px;font-size:15px}
+@media(max-width:1180px){.home-goal-icons{grid-template-columns:repeat(3,minmax(0,1fr))}.home-audience-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.home-how-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.home-bottom-cta{grid-template-columns:200px 1fr}.home-bottom-cta .home-bottom-btn{grid-column:2;justify-self:flex-start}}
+@media(max-width:760px){.home-anchor-nav{gap:8px;overflow:auto;padding-bottom:4px}.home-anchor-chip{white-space:nowrap}.home-story-panel,.home-showcase-card{padding:24px 20px;border-radius:24px}.home-story-panel h2{font-size:28px}.home-story-quote{padding:18px 16px;text-align:left}.home-story-quote-mark{font-size:38px}.home-section-header{gap:12px}.home-section-icon{width:48px;height:48px;border-radius:16px}.home-section-meta h2{font-size:24px}.home-goal-icons,.home-audience-grid,.home-source-grid,.home-how-strip{grid-template-columns:1fr}.home-bottom-cta{grid-template-columns:1fr;padding:22px 20px;text-align:left}.home-bottom-cta img{max-width:180px}.home-bottom-btn{width:100%}}
+
 /* Compose: clear sections, full-width cards, genuinely adjacent preview. */
 .hb-compose-steps{background:#fff;border:1px solid var(--line);border-radius:999px;min-height:66px;display:flex;align-items:center;padding:13px 23px;gap:22px;margin-bottom:24px;box-shadow:var(--shadow)}
 .hb-step-intro{font-size:13px;letter-spacing:.7px;font-weight:750;color:var(--muted);white-space:nowrap;padding-right:20px;border-right:1px solid var(--line)}
@@ -4857,66 +4918,105 @@ return `<section class="page active hb-home">
    </article>
   </aside>
  </div>
+ <nav class="home-anchor-nav" aria-label="Điều hướng nhanh">
+  <a class="home-anchor-chip" href="#home-about">AhaKudos là gì?</a>
+  <a class="home-anchor-chip" href="#home-goals">Mục tiêu</a>
+  <a class="home-anchor-chip" href="#home-audience">Đối tượng</a>
+  <a class="home-anchor-chip" href="#home-sources">Nguồn KUDOS</a>
+  <a class="home-anchor-chip" href="#home-how">Cách gửi KUDOS</a>
+ </nav>
  <section class="home-about-kudos" aria-label="Thông tin về AhaKudos">
-  <article class="home-info-section">
-   <span class="section-kicker">ĐỊNH NGHĨA</span>
-   <h2>AHAKUDOS là gì?</h2>
-   <p><strong>AHAKUDOS</strong> là nền tảng ghi nhận nội bộ của Ahamove, được xây dựng để giúp nhân viên dễ dàng gửi lời cảm ơn, ghi nhận những hành động tích cực và lan tỏa các giá trị văn hóa trong công việc hằng ngày.</p>
-   <p>KUDOS bắt đầu từ một điều rất đơn giản:</p>
-   <p class="home-info-quote">Khi một đồng nghiệp làm điều gì đó có ý nghĩa, đóng góp ấy xứng đáng được nhìn thấy và trân trọng.</p>
-   <p>Đó có thể là khi một đồng nghiệp chủ động hỗ trợ bạn, giải quyết một vấn đề khó, chia sẻ kiến thức, đồng hành cùng team hoặc tạo ra một tác động tích cực.</p>
-   <p>Thông qua AHAKUDOS, những hành động này không chỉ dừng lại ở một lời cảm ơn trong chat hay cuộc họp, mà được lưu lại và trở thành những câu chuyện văn hóa có thể tiếp tục được lan tỏa.</p>
+  <article id="home-about" class="home-story-panel">
+   <div class="home-story-mark"><i>✦</i><span>ĐỊNH NGHĨA</span><i>✦</i></div>
+   <h2>AhaKudos là gì?</h2>
+   <p class="home-story-lead"><strong>AHAKUDOS</strong> là nền tảng ghi nhận nội bộ của Ahamove, được xây dựng để giúp nhân viên dễ dàng gửi lời cảm ơn, ghi nhận những hành động tích cực và lan tỏa các giá trị văn hóa trong công việc hằng ngày.</p>
+   <div class="home-story-quote">
+    <span class="home-story-quote-mark">“</span>
+    <b>Khi một đồng nghiệp làm điều gì đó có ý nghĩa, đóng góp ấy xứng đáng được nhìn thấy và trân trọng.</b>
+   </div>
+   <p class="home-story-foot">Đó có thể là khi một đồng nghiệp chủ động hỗ trợ bạn, giải quyết một vấn đề khó, chia sẻ kiến thức, đồng hành cùng team hoặc tạo ra một tác động tích cực.</p>
+   <p class="home-story-foot">Thông qua AHAKUDOS, những hành động này không chỉ dừng lại ở một lời cảm ơn trong chat hay cuộc họp, mà được lưu lại và trở thành những câu chuyện văn hóa có thể tiếp tục được lan tỏa.</p>
   </article>
 
-  <article class="home-info-section">
-   <span class="section-kicker">MỤC TIÊU</span>
-   <h2>AHAKUDOS được phát triển nhằm</h2>
-   <ul class="home-goal-list">
-    <li>Khuyến khích thói quen ghi nhận và cảm ơn giữa các đồng nghiệp.</li>
-    <li>Giúp những đóng góp tích cực được nhìn thấy và ghi nhận đúng lúc.</li>
-    <li>Lan tỏa hành vi văn hóa tích cực bằng câu chuyện thật.</li>
-    <li>Tăng sự kết nối giữa các Ahamovers trong quá trình làm việc.</li>
-    <li>Từng bước mở rộng sự ghi nhận từ cá nhân → đội nhóm → phòng ban → toàn công ty.</li>
-   </ul>
-   <p class="home-performance-note">AHAKUDOS là một chương trình ghi nhận văn hóa và <strong>không thay thế hệ thống đánh giá hiệu suất</strong>.</p>
+  <article id="home-goals" class="home-showcase-card home-goal-panel">
+   <div class="home-section-header">
+    <div class="home-section-icon">🎯</div>
+    <div class="home-section-meta">
+      <span class="home-section-kicker">MỤC TIÊU</span>
+      <h2>AHAKUDOS được phát triển nhằm</h2>
+      <p>Tạo ra một hành trình ghi nhận rõ ràng, tích cực và có thể lan tỏa trong toàn công ty.</p>
+    </div>
+   </div>
+   <div class="home-icon-grid home-goal-icons">
+    <div class="home-goal-item"><i>🧡</i><b>Khuyến khích thói quen ghi nhận và cảm ơn</b><span>Giữa các đồng nghiệp trong công việc hằng ngày.</span></div>
+    <div class="home-goal-item"><i>👁️</i><b>Giúp những đóng góp tích cực được nhìn thấy</b><span>Và được ghi nhận đúng lúc, đúng người.</span></div>
+    <div class="home-goal-item"><i>📣</i><b>Lan tỏa hành vi văn hóa tích cực</b><span>Bằng những câu chuyện thật được lưu lại.</span></div>
+    <div class="home-goal-item"><i>🤝</i><b>Tăng sự kết nối giữa các Ahamovers</b><span>Trong quá trình làm việc và đồng hành.</span></div>
+    <div class="home-goal-item"><i>📈</i><b>Mở rộng sự ghi nhận theo từng lớp</b><span>Từ cá nhân → đội nhóm → phòng ban → toàn công ty.</span></div>
+   </div>
+   <div class="home-panel-note">AHAKUDOS là một chương trình ghi nhận văn hóa và <strong>không thay thế hệ thống đánh giá hiệu suất</strong>.</div>
   </article>
 
-  <article class="home-info-section">
-   <span class="section-kicker">ĐỐI TƯỢNG</span>
-   <h2>Dành cho toàn thể nhân viên Ahamove</h2>
-   <p><strong>AHAKUDOS</strong> là chương trình dành cho toàn thể nhân viên Ahamove.</p>
-   <div class="home-audience-actions">
-    <span>Gửi KUDOS cho đồng nghiệp.</span>
-    <span>Nhận KUDOS từ đồng nghiệp.</span>
-    <span>Xem lại những KUDOS mình đã nhận.</span>
-    <span>Xem lại những KUDOS mình đã gửi.</span>
-    <span>Theo dõi hành trình ghi nhận cá nhân.</span>
-    <span>Xem những câu chuyện KUDOS được chia sẻ trong hệ thống.</span>
+  <article id="home-audience" class="home-showcase-card home-audience-panel">
+   <div class="home-section-header">
+    <div class="home-section-icon">👥</div>
+    <div class="home-section-meta">
+      <span class="home-section-kicker">ĐỐI TƯỢNG</span>
+      <h2>Dành cho toàn thể nhân viên Ahamove</h2>
+      <p>Các Ahamovers có thể tham gia AHAKUDOS theo nhiều cách khác nhau trong cùng một hành trình ghi nhận.</p>
+    </div>
+   </div>
+   <div class="home-icon-grid home-audience-grid">
+    <div class="home-audience-item"><i>✈️</i><b>Gửi KUDOS</b><span>Gửi lời ghi nhận đến đồng nghiệp.</span></div>
+    <div class="home-audience-item"><i>💛</i><b>Nhận KUDOS</b><span>Nhận lời cảm ơn từ đồng nghiệp.</span></div>
+    <div class="home-audience-item"><i>🧾</i><b>Xem lại KUDOS đã nhận</b><span>Lưu lại những lời ghi nhận dành cho bạn.</span></div>
+    <div class="home-audience-item"><i>📊</i><b>Xem lại KUDOS đã gửi</b><span>Theo dõi những lời ghi nhận bạn đã lan tỏa.</span></div>
+    <div class="home-audience-item"><i>👤</i><b>Theo dõi hành trình cá nhân</b><span>Nhìn lại chuyển động ghi nhận của riêng mình.</span></div>
+    <div class="home-audience-item"><i>📖</i><b>Xem câu chuyện KUDOS</b><span>Khám phá những câu chuyện được chia sẻ trong hệ thống.</span></div>
    </div>
   </article>
 
-  <article class="home-info-section">
-   <span class="section-kicker">BẠN CÓ THỂ NHẬN KUDOS TỪ ĐÂU?</span>
-   <h2>Những khoảnh khắc có thể trở thành một lời ghi nhận</h2>
-   <p>Trong hành trình AHAKUDOS, lời ghi nhận có thể đến từ nhiều khoảnh khắc khác nhau:</p>
-   <div class="home-source-grid">
-    <div class="home-info-card"><div class="card-icon">01</div><h3>Từ đồng nghiệp</h3><p>Khi một đồng nghiệp nhìn thấy một hành động hoặc đóng góp tích cực của bạn, họ có thể chủ động gửi KUDOS để ghi nhận điều đó.</p></div>
-    <div class="home-info-card"><div class="card-icon">02</div><h3>Từ những cột mốc đáng nhớ</h3><p>AHAKUDOS cũng sẽ gửi lời chúc và ghi nhận vào một số dịp đặc biệt như <strong>Sinh nhật</strong> hoặc <strong>Kỷ niệm ngày vào công ty / Thâm niên</strong>. Đây là những KUDOS mang ý nghĩa <strong>chúc mừng, khích lệ và ghi dấu hành trình</strong>, vì vậy <strong>không phát sinh thêm điểm AhaKudos</strong>.</p></div>
-    <div class="home-info-card"><div class="card-icon">03</div><h3>Từ những đóng góp cho hoạt động chung của công ty</h3><p>Bên cạnh công việc thường ngày, nếu bạn dành thêm thời gian và đóng góp cho các hoạt động chung của công ty, những đóng góp này cũng có thể được ghi nhận bằng điểm AhaKudos tùy theo mức độ tham gia.</p></div>
+  <article id="home-sources" class="home-showcase-card home-source-panel">
+   <div class="home-section-header">
+    <div class="home-section-icon">🎁</div>
+    <div class="home-section-meta">
+      <span class="home-section-kicker">BẠN CÓ THỂ NHẬN KUDOS TỪ ĐÂU?</span>
+      <h2>Những khoảnh khắc có thể trở thành một lời ghi nhận</h2>
+      <p>Trong hành trình AHAKUDOS, lời ghi nhận có thể đến từ nhiều khoảnh khắc khác nhau.</p>
+    </div>
+   </div>
+   <div class="home-icon-grid home-source-grid">
+    <div class="home-source-card"><i>👥</i><h3>Từ đồng nghiệp</h3><p>Khi một đồng nghiệp nhìn thấy một hành động hoặc đóng góp tích cực của bạn, họ có thể chủ động gửi KUDOS để ghi nhận điều đó.</p></div>
+    <div class="home-source-card"><i>🎂</i><h3>Từ những cột mốc đáng nhớ</h3><p>AHAKUDOS cũng sẽ gửi lời chúc và ghi nhận vào một số dịp đặc biệt như <strong>Sinh nhật</strong> hoặc <strong>Kỷ niệm ngày vào công ty / Thâm niên</strong>. Đây là những KUDOS mang ý nghĩa <strong>chúc mừng, khích lệ và ghi dấu hành trình</strong>, vì vậy <strong>không phát sinh thêm điểm AhaKudos</strong>.</p></div>
+    <div class="home-source-card"><i>⭐</i><h3>Từ những đóng góp cho hoạt động chung của công ty</h3><p>Bên cạnh công việc thường ngày, nếu bạn dành thêm thời gian và đóng góp cho các hoạt động chung của công ty, những đóng góp này cũng có thể được ghi nhận bằng điểm AhaKudos tùy theo mức độ tham gia.</p></div>
    </div>
   </article>
 
-  <article class="home-info-section">
-   <span class="section-kicker">GỬI MỘT KUDOS NHƯ THẾ NÀO?</span>
-   <h2>5 bước để gửi một lời ghi nhận</h2>
-   <p class="home-how-intro">Hãy chia sẻ hành động, tác động và điều khiến bạn muốn ghi nhận đồng nghiệp. Sau đó, bạn có thể chọn tối đa 3 Giá trị văn hóa — từ gợi ý của AI hoặc tự chọn theo cách bạn cảm nhận.</p>
-   <div class="home-how-grid">
-    <div class="home-how-step"><div class="step-no">1</div><h3>Chọn đồng nghiệp bạn muốn ghi nhận</h3><p>Tìm theo tên hoặc email Ahamove và chọn đúng người bạn muốn gửi KUDOS.</p></div>
-    <div class="home-how-step"><div class="step-no">2</div><h3>Viết điều bạn muốn ghi nhận</h3><p>Không cần viết quá dài. Chỉ cần chia sẻ rõ:</p><ul><li><strong>Hành động nào bạn muốn ghi nhận</strong></li><li><strong>Hành động đó đã tạo ra tác động gì</strong></li><li><strong>Điều gì khiến bạn thấy hành động đó đáng được trân trọng</strong></li></ul></div>
-    <div class="home-how-step"><div class="step-no">3</div><h3>Chọn Giá trị văn hóa phù hợp</h3><p>Dựa trên nội dung KUDOS, <strong>AI sẽ gợi ý những Giá trị văn hóa phù hợp</strong>.</p><ul><li>chọn theo gợi ý của AI;</li><li>tự chọn theo cách mình cảm nhận;</li><li>hoặc điều chỉnh lại trước khi gửi.</li></ul><p>Mỗi KUDOS có thể gắn với <strong>tối đa 3 Giá trị văn hóa của Ahamove</strong>.</p></div>
-    <div class="home-how-step"><div class="step-no">4</div><h3>Xem lại trước khi gửi</h3><p>Kiểm tra lại người nhận, nội dung KUDOS và các Giá trị văn hóa đã chọn.</p><p>Nếu cần, bạn vẫn có thể chỉnh sửa trước khi gửi.</p></div>
-    <div class="home-how-step"><div class="step-no">5</div><h3>Gửi KUDOS</h3><p>Khi mọi thứ đã ổn, chọn <strong>Gửi KUDOS</strong>.</p><p>Lời ghi nhận sẽ được gửi đến đồng nghiệp và lưu lại trong hành trình KUDOS.</p></div>
+  <article id="home-how" class="home-showcase-card home-how-panel">
+   <div class="home-section-header">
+    <div class="home-section-icon">📨</div>
+    <div class="home-section-meta">
+      <span class="home-section-kicker">GỬI MỘT KUDOS NHƯ THẾ NÀO?</span>
+      <h2>5 bước để gửi một lời ghi nhận</h2>
+      <p class="home-how-intro">Hãy chia sẻ hành động, tác động và điều khiến bạn muốn ghi nhận đồng nghiệp. Sau đó, bạn có thể chọn tối đa 3 Giá trị văn hóa — từ gợi ý của AI hoặc tự chọn theo cách bạn cảm nhận.</p>
+    </div>
    </div>
+   <div class="home-how-strip">
+    <div class="home-how-step-card"><div class="step-no">1</div><h3>Chọn đồng nghiệp bạn muốn ghi nhận</h3><p>Tìm theo tên hoặc email Ahamove và chọn đúng người bạn muốn gửi KUDOS.</p></div>
+    <div class="home-how-step-card"><div class="step-no">2</div><h3>Viết điều bạn muốn ghi nhận</h3><p>Không cần viết quá dài. Chỉ cần chia sẻ rõ:</p><ul><li><strong>Hành động nào bạn muốn ghi nhận</strong></li><li><strong>Hành động đó đã tạo ra tác động gì</strong></li><li><strong>Điều gì khiến bạn thấy hành động đó đáng được trân trọng</strong></li></ul></div>
+    <div class="home-how-step-card"><div class="step-no">3</div><h3>Chọn Giá trị văn hóa phù hợp</h3><p>Dựa trên nội dung KUDOS, <strong>AI sẽ gợi ý những Giá trị văn hóa phù hợp</strong>.</p><ul><li>chọn theo gợi ý của AI;</li><li>tự chọn theo cách mình cảm nhận;</li><li>hoặc điều chỉnh lại trước khi gửi.</li></ul><p>Mỗi KUDOS có thể gắn với <strong>tối đa 3 Giá trị văn hóa của Ahamove</strong>.</p></div>
+    <div class="home-how-step-card"><div class="step-no">4</div><h3>Xem lại trước khi gửi</h3><p>Kiểm tra lại người nhận, nội dung KUDOS và các Giá trị văn hóa đã chọn.</p><p>Nếu cần, bạn vẫn có thể chỉnh sửa trước khi gửi.</p></div>
+    <div class="home-how-step-card"><div class="step-no">5</div><h3>Gửi KUDOS</h3><p>Khi mọi thứ đã ổn, chọn <strong>Gửi KUDOS</strong>.</p><p>Lời ghi nhận sẽ được gửi đến đồng nghiệp và lưu lại trong hành trình KUDOS.</p></div>
+   </div>
+  </article>
+
+  <article class="home-bottom-cta">
+   <img src="/illustrations/mascot-cutout.png" alt="Mascot AhaKudos">
+   <div>
+    <h2>Một lời ghi nhận <span>có thể tạo nên một ngày tuyệt vời!</span></h2>
+    <p>Cùng lan tỏa những điều tích cực tại AhaKudos và bắt đầu từ một lời cảm ơn dành cho đồng nghiệp của bạn.</p>
+   </div>
+   <button class="btn primary home-bottom-btn" data-page="send-kudos">Gửi Kudos ngay →</button>
   </article>
  </section>
 </section>`;
