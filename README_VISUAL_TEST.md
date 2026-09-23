@@ -12,3 +12,7 @@ Có thanh **VISUAL TEST** ở góc phải dưới để đổi vai nhanh.
 - Không dùng bản này cho production.
 - Dữ liệu gửi mới không được lưu bền vững sau refresh/redeploy.
 - Khi mapping AhaHandbook thật, quay lại package production V29.x.
+
+
+## V29.3 — Nội dung Trang chủ
+Đã xác nhận section Trang chủ có đầy đủ: Định nghĩa, Mục tiêu, Đối tượng, Nguồn KUDOS và hướng dẫn Gửi một KUDOS theo 5 bước.
