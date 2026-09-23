@@ -1,43 +1,47 @@
-const PEOPLE=[
-  {email:'quocanh.demo@ahamove.com',name:'Vương Quốc Anh',dept:'Central Operations',section:'Operations Excellence',dateOfBirth:'1994-10-03',joinDate:'2023-04-10',tenureDays:1261,status:'ACTIVE',notes:'Visual demo user — empty journey'},
-  {email:'ngocphuong.demo@ahamove.com',name:'Ngọc Phương',dept:'HR',section:'People Experience',dateOfBirth:'1996-11-15',joinDate:'2024-02-01',tenureDays:964,status:'ACTIVE',notes:'Visual demo user — populated journey'}
-];
-const records=[
-  {id:'demo-approved-001',requestId:'demo-001',senderName:'Vương Quốc Anh',senderDept:'Central Operations',senderSection:'Operations Excellence',senderEmail:'quocanh.demo@ahamove.com',recipientName:'Ngọc Phương',recipientDept:'HR',recipientSection:'People Experience',recipientEmail:'ngocphuong.demo@ahamove.com',recipientManual:false,message:'Cảm ơn Phương đã chủ động tổng hợp feedback và giúp team chốt nội dung đúng deadline. Nhờ vậy mọi người phối hợp nhanh hơn và hạn chế được các vòng chỉnh sửa.',values:['share','grow'],templateId:'move',backgroundId:'move',visibility:'public',publicConsent:'approved',createdAt:'2026-09-21T09:30:00+07:00',sentAtLabel:'21/09, 09:30',emailStatus:'SUBMITTED',viewedAt:'2026-09-21T09:45:00+07:00',source:'EMPLOYEE',moderation:{status:'APPROVED',reasons:[],automatedRiskStatus:'APPROVED',decidedBy:'admin@ahamove.com',decidedAt:'2026-09-21T09:35:00+07:00'},reactions:{heart:3,clap:1,cheer:2,spark:1},myReactions:{},_reactionActors:{}},
-  {id:'demo-approved-002',requestId:'demo-002',senderName:'Ngọc Phương',senderDept:'HR',senderSection:'People Experience',senderEmail:'ngocphuong.demo@ahamove.com',recipientName:'Ngọc Phương',recipientDept:'HR',recipientSection:'People Experience',recipientEmail:'ngocphuong.demo@ahamove.com',recipientManual:false,message:'Cảm ơn bạn đã chia sẻ lại cách xử lý dữ liệu và dành thời gian hướng dẫn team khi mọi người còn vướng.',values:['share'],templateId:'tech',backgroundId:'tech',visibility:'public',publicConsent:'approved',createdAt:'2026-09-20T15:10:00+07:00',sentAtLabel:'20/09, 15:10',emailStatus:'SUBMITTED',viewedAt:'2026-09-20T15:30:00+07:00',source:'EMPLOYEE',moderation:{status:'APPROVED',reasons:[],automatedRiskStatus:'APPROVED',decidedBy:'admin@ahamove.com',decidedAt:'2026-09-20T15:15:00+07:00'},reactions:{heart:4,clap:2,cheer:1,spark:2},myReactions:{},_reactionActors:{}}
-];
-function baseUrl(req){return 'https://visual-test.local';}
-function banners(){const base='';const state={
- leaderboard_top_week:{id:'leaderboard_top_week',type:'celebrate',headline:'Top Kudos tuần này',subheadline:'Cùng xem ai đang lan toả nhiều lời ghi nhận nhất tuần.',ctaLabel:'Xem bảng xếp hạng',ctaRoute:'leaderboard',image:'/illustrations/top.png'},
- compose_hero:{id:'compose_hero',type:'action',headline:'Viết Kudos – Gửi lời khen',subheadline:'Một lời ghi nhận nhỏ, một ngày vui hơn cho đồng nghiệp.',ctaLabel:'Viết Kudos ngay',ctaRoute:'compose',image:'/illustrations/compose.png'},
- first_kudos:{id:'first_kudos',type:'empty',headline:'Chưa có Kudos – Gửi lời khen đầu tiên',subheadline:'Bắt đầu bằng một lời cảm ơn dành cho đồng nghiệp bạn muốn ghi nhận.',ctaLabel:'Gửi Kudos đầu tiên',ctaRoute:'compose',image:'/illustrations/empty.png'},
- empty_received:{id:'empty_received',type:'empty',headline:'Chưa có Kudos nào',subheadline:'Khi đồng nghiệp gửi lời ghi nhận, bạn sẽ thấy ở đây.',ctaLabel:'Gửi Kudos ngay',ctaRoute:'compose',image:'/illustrations/empty.png'},
- send_success:{id:'send_success',type:'success',headline:'Đã gửi Kudos!',subheadline:'Lời ghi nhận của bạn đang trên đường đến đồng nghiệp.',ctaLabel:'Về trang chủ',ctaRoute:'home',image:'/illustrations/send-success.png'},
- ai_review:{id:'ai_review',type:'system',headline:'AI kiểm tra lời nhắn',subheadline:'Những lời ghi nhận cần xem lại được giữ ở đây trước khi gửi.',ctaLabel:'',ctaRoute:'',image:'/illustrations/ai-review.png'},
- new_kudos_received:{id:'new_kudos_received',type:'receive',headline:'Bạn nhận được 1 Kudos mới!',subheadline:'Có một lời ghi nhận đang chờ bạn trong AhaKudos.',ctaLabel:'Mở lời ghi nhận này',ctaRoute:'kudos-detail',image:'/illustrations/received-new.png'},
- received_emotional:{id:'received_emotional',type:'receive',headline:'Cảm động quá!',subheadline:'Bạn vừa nhận được một lời khen từ đồng nghiệp.',ctaLabel:'Xem Kudos',ctaRoute:'kudos-detail',image:'/illustrations/received-emotional.png'},
- loading:{id:'loading',type:'system',headline:'Chờ một chút nhé',subheadline:'AhaKudos đang cập nhật thông tin…',ctaLabel:'',ctaRoute:'',image:'/illustrations/loading.png'},
- milestone_complete:{id:'milestone_complete',type:'celebrate',headline:'Bạn đã hoàn thành cột mốc!',subheadline:'Một dấu mốc đáng tự hào trong hành trình của bạn.',ctaLabel:'Xem chi tiết',ctaRoute:'kudos-detail',image:'/illustrations/milestone.png'},
- celebration:{id:'celebration',type:'celebrate',headline:'Chúc mừng bạn!',subheadline:'Một thành tích đáng được ghi nhận và lan toả.',ctaLabel:'Mở AhaKudos',ctaRoute:'home',image:'/illustrations/celebration.png'},
- birthday:{id:'birthday',type:'celebrate',headline:'Chúc mừng sinh nhật',subheadline:'AhaKudos chúc bạn một ngày thật rực rỡ!',ctaLabel:'Mở AhaKudos',ctaRoute:'home',image:'/illustrations/birthday.png'}
-};return state;}
-function state(actor){return {people:PEOPLE,masterData:PEOPLE,currentUserEmail:actor,isAdmin:false,records:records,moderation:{blacklist:['test spam']},banners:banners(),events:[],activeEventIds:[],app:{version:'V29-VISUAL-TEST',mailEnabled:false,automationEnabled:false,attemptsToday:0,dailyLimit:0,employeeDailyKudosLimit:5,webUrl:''}};}
-function person(email){return PEOPLE.find(p=>p.email===email)||PEOPLE[0];}
+import { createHmac, randomBytes } from 'node:crypto';
+import { appOrigin, checkPost, bodyObject, requireSession, noCache, fail, HttpError } from '../lib/security.js';
+const METHODS={layTrangThai:0,taoKudos:1,doiDongY:3,ghiDaMo:2,doiReaction:3,batEmail:1,guiEmailVeToi:2,henEmailThu:3,dungThu:0,duyetKudos:1,anKudos:2,suaKudosDuyet:2,datTuCam:1,luuEvent:1,xoaEvent:1,datEventKichHoat:2};
+export function gasUrl(){
+ const raw=(process.env.GAS_EXEC_URL||'').trim();
+ const pattern=/^https:\/\/script\.google\.com\/(?:macros\/s\/|a\/macros\/[A-Za-z0-9.-]+\/s\/|a\/[A-Za-z0-9.-]+\/macros\/s\/)[A-Za-z0-9_-]+\/exec$/;
+ if(!pattern.test(raw))throw new HttpError(503,'GAS_EXEC_URL phải là Web app URL của Apps Script, kết thúc bằng /exec.');
+ return raw;
+}
+export function signedEnvelope(method,args){
+ const secret=process.env.GAS_BRIDGE_SECRET||'';
+ if(!/^[a-f0-9]{64}$/.test(secret))throw new HttpError(503,'Thiếu GAS_BRIDGE_SECRET hợp lệ trong Vercel.');
+ if(secret===process.env.TEST_ACCESS_KEY)throw new HttpError(503,'Hai khóa phải khác nhau. Tạo lại hai khóa riêng trong file hướng dẫn.');
+ const payload=JSON.stringify({v:28,ts:Date.now(),nonce:randomBytes(16).toString('hex'),origin:appOrigin(),method,args});
+ const signature=createHmac('sha256',secret).update('AHAKUDOS/V28\n'+payload).digest('hex');
+ return {payload,signature};
+}
+export async function callGoogle(method,args){
+ // Follow only documented ContentService redirects; never forward signature/body to arbitrary hosts.
+ const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),50000);
+ try{
+  let response=await fetch(gasUrl(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(signedEnvelope(method,args)),redirect:'manual',signal:controller.signal});
+  if([301,302,303].includes(response.status)){
+   const where=new URL(response.headers.get('location')||'');
+   if(where.protocol!=='https:'||where.hostname!=='script.googleusercontent.com'||where.username||where.password)throw new HttpError(502,'Google yêu cầu đăng nhập hoặc trả chuyển hướng khác dự kiến. Kiểm tra quyền backend với IT, không tự tắt bảo mật.');
+   response=await fetch(where,{method:'GET',redirect:'error',signal:controller.signal});
+  }
+  if(!response.ok)throw new HttpError(502,'Google chưa phản hồi hợp lệ. Kiểm tra Apps Script deployment, quyền truy cập và nhật ký Executions.');
+  const text=await response.text();
+  if(text.length>2500000)throw new HttpError(502,'Phản hồi Google vượt giới hạn của bản test.');
+  let result;try{result=JSON.parse(text);}catch(e){throw new HttpError(502,'Google trả trang đăng nhập/lỗi thay vì JSON. Kiểm tra /exec và policy Web app với IT.');}
+  if(!result||typeof result.ok!=='boolean')throw new HttpError(502,'Phản hồi Google không đúng định dạng V28.');
+  if(!result.ok)throw new HttpError(400,String(result.error||'Google từ chối thao tác.').slice(0,700));
+  return result.data;
+ }catch(e){if(e.name==='AbortError')throw new HttpError(504,'Google phản hồi quá lâu. Kết quả có thể đã được lưu; kiểm tra Sheet trước khi gửi lại.');if(e instanceof HttpError)throw e;throw new HttpError(502,'Chưa kết nối được Google. Kiểm tra cấu hình, deployment và trạng thái của dịch vụ.');}
+ finally{clearTimeout(timeout);}
+}
 export default async function handler(req,res){
-  res.setHeader('Cache-Control','no-store');
-  if(req.method!=='POST')return res.status(405).json({ok:false,error:'POST only'});
-  const b=req.body||{};const actor=String(b.actorEmail||PEOPLE[0].email).toLowerCase();
-  const method=b.method;const args=Array.isArray(b.args)?b.args:[];
-  if(method==='layTrangThai')return res.status(200).json({ok:true,data:state(actor)});
-  if(method==='taoKudos'){
-    const d=args[0]||{};const a=person(actor);const r=PEOPLE.find(p=>p.email===String(d.recipientEmail||'').toLowerCase())||PEOPLE[1];
-    const rec={id:'visual-'+Date.now(),requestId:d.requestId||'visual',senderName:a.name,senderDept:a.dept,senderSection:a.section,senderEmail:a.email,recipientName:r.name,recipientDept:r.dept,recipientSection:r.section,recipientEmail:r.email,recipientManual:false,message:String(d.message||'Cảm ơn bạn!'),values:Array.isArray(d.values)?d.values:[],templateId:d.templateId||'wish',backgroundId:d.templateId||'wish',visibility:'public',publicConsent:'pending',createdAt:new Date().toISOString(),sentAtLabel:'Vừa xong',emailStatus:'NOT_SENT',viewedAt:null,source:'EMPLOYEE',moderation:{status:'PENDING',reasons:[],automatedRiskStatus:'APPROVED',decidedBy:'',decidedAt:''},reactions:{heart:0,clap:0,cheer:0,spark:0},myReactions:{},_reactionActors:{}};
-    return res.status(200).json({ok:true,data:{record:rec,app:state(actor).app,notice:'Visual test: KUDOS chỉ tồn tại trong phiên hiện tại.'}});
-  }
-  if(['ghiDaMo','doiReaction','duyetKudos','anKudos','suaKudosDuyet','datPhamViKudos'].includes(method)){
-    const id=String(args[0]||'');const rec=records.find(x=>x.id===id)||records[0];return res.status(200).json({ok:true,data:{record:rec,app:state(actor).app}});
-  }
-  if(method==='datTuCam')return res.status(200).json({ok:true,data:{moderation:{blacklist:Array.isArray(args[0])?args[0]:[]},app:state(actor).app}});
-  if(['luuEvent','xoaEvent','datEventKichHoat'].includes(method))return res.status(200).json({ok:true,data:{events:[],app:state(actor).app}});
-  return res.status(400).json({ok:false,error:'Visual test chưa mô phỏng thao tác này.'});
+ noCache(res);
+ try{
+  checkPost(req);requireSession(req);
+  const b=bodyObject(req);
+  if(!Object.prototype.hasOwnProperty.call(METHODS,b.method)||!Array.isArray(b.args)||b.args.length!==METHODS[b.method])throw new HttpError(400,'Thao tác không được cho phép.');
+  const data=await callGoogle(b.method,b.args);
+  return res.status(200).json({ok:true,data});
+ }catch(e){return fail(res,e);}
 }

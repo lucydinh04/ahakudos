@@ -1,1 +1,12 @@
-{"name":"ahakudos-visual-test-2-users","version":"29.3.0","private":true,"type":"module","engines":{"node":"22.x"},"scripts":{"build":"node tools/check-build.mjs"}}
+{
+  "name": "ahakudos-vercel-google-selftest",
+  "version": "28.32.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "build": "node tools/check-build.mjs"
+  }
+}
