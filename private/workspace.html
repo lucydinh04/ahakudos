@@ -2186,20 +2186,20 @@ svg{flex-shrink:0}
 /* V28.47 — AhaHandbook-inspired homepage layout */
 .home-handbook-layout{display:grid;gap:22px;margin-top:26px}
 .home-handbook-progress{display:grid;grid-template-columns:150px minmax(0,1fr) 30px minmax(0,1fr) 30px minmax(0,1fr) 30px minmax(0,1fr);gap:10px;align-items:center;background:#fff;border:1px solid #e6dfd7;border-radius:26px;padding:14px 18px;box-shadow:0 10px 28px rgba(14,65,116,.05)}
-.home-progress-count{display:grid;gap:8px}.home-progress-count b{font-size:14px;color:#193b69}.home-progress-count span{height:4px;width:78px;border-radius:999px;background:#ff7a2f}
+.home-progress-count{display:grid;gap:8px}.home-progress-count b{font-size:14px;color:#193b69}.home-progress-count span{position:relative;height:4px;width:78px;border-radius:999px;background:#e7edf5;overflow:hidden}.home-progress-count span:after{content:"";position:absolute;inset:0 auto 0 0;width:var(--progress,25%);border-radius:999px;background:#ff7a2f}
 .home-handbook-progress>a{display:flex;align-items:center;gap:10px;text-decoration:none;color:#53677f;border:1px solid #dfe6ef;border-radius:999px;padding:10px 13px;background:#fff;min-width:0}
 .home-handbook-progress>a strong{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#edf4fb;color:#174878;font-size:12px;flex:0 0 auto}
 .home-handbook-progress>a span{font-size:13px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .home-handbook-progress>a.active{border-color:#ff9a5d;background:#fff7ef;color:#b95117}.home-handbook-progress>a.active strong{background:#ff7a2f;color:#fff}
 .home-handbook-progress>i{height:2px;background:repeating-linear-gradient(90deg,#d4deea 0 7px,transparent 7px 12px)}
 .home-handbook-grid{display:grid;grid-template-columns:minmax(340px,.88fr) minmax(0,1.42fr);gap:22px;align-items:stretch}
-.home-handbook-feature{position:relative;overflow:hidden;min-height:660px;border-radius:30px;background:linear-gradient(180deg,#fff1df 0%,#ffecd2 100%);border:1px solid #f0d9bd;padding:28px 28px 320px;box-shadow:0 16px 38px rgba(14,65,116,.05)}
+.home-handbook-feature{position:relative;overflow:hidden;min-height:700px;border-radius:30px;background:linear-gradient(180deg,#fff1df 0%,#ffecd2 100%);border:1px solid #f0d9bd;padding:28px 28px 360px;box-shadow:0 16px 38px rgba(14,65,116,.05)}
 .home-handbook-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;border:1px solid #ff9c5f;background:#fff7ef;color:#c45b1a;font-size:12px;font-weight:900;letter-spacing:.1em}
-.home-handbook-copy h2{margin:24px 0 12px;font-size:34px;line-height:1.16;color:#13283f;letter-spacing:-.03em}.home-handbook-copy p{margin:0 0 15px;font-size:15px;line-height:1.85;color:#53677f}.home-handbook-copy strong{color:#173f6d}
+.home-handbook-copy{position:relative;z-index:1}.home-handbook-copy h2{margin:24px 0 12px;font-size:34px;line-height:1.16;color:#13283f;letter-spacing:-.03em}.home-handbook-copy p{margin:0 0 15px;font-size:15px;line-height:1.85;color:#53677f}.home-handbook-copy strong{color:#173f6d}
 .home-handbook-quote{margin:16px 0;padding:16px 18px;border-radius:18px;background:rgba(255,255,255,.7);color:#173f6d;font-weight:800;font-size:16px;line-height:1.65}
-.home-handbook-mascot{position:absolute;left:22px;right:22px;bottom:16px;margin:auto;width:min(76%,300px);max-height:240px;object-fit:contain;filter:drop-shadow(0 16px 26px rgba(14,65,116,.08));pointer-events:none}
-.home-handbook-side{display:grid;grid-template-rows:auto auto;align-content:start;gap:22px}
-.home-handbook-card{position:relative;overflow:hidden;display:grid;grid-template-columns:64px 1fr;gap:18px;padding:26px 28px;border-radius:28px;background:#fff;border:1px solid #dfe7ef;box-shadow:0 14px 32px rgba(14,65,116,.05)}
+.home-handbook-mascot{position:absolute;left:22px;right:22px;bottom:14px;margin:auto;width:min(84%,360px);max-height:300px;object-fit:contain;filter:drop-shadow(0 16px 26px rgba(14,65,116,.08));pointer-events:none;z-index:0}
+.home-handbook-side{display:grid;grid-template-rows:repeat(2,minmax(0,1fr));align-content:start;gap:22px}
+.home-handbook-card{position:relative;overflow:hidden;display:grid;grid-template-columns:64px 1fr;gap:18px;padding:26px 28px;border-radius:28px;background:#fff;border:1px solid #dfe7ef;box-shadow:0 14px 32px rgba(14,65,116,.05);height:100%;align-self:stretch}
 .home-handbook-card:after{content:'';position:absolute;right:-40px;bottom:-80px;width:220px;height:220px;border-radius:50%;background:rgba(255,127,50,.045);pointer-events:none}
 .home-handbook-goals{border-color:#d8e5f3}.home-handbook-sources{border:2px solid #ff8d4b}
 .home-handbook-card-icon{width:58px;height:58px;display:grid;place-items:center;border-radius:50%;background:#fff2e4;color:#ff7417;font-size:25px;box-shadow:inset 0 0 0 1px rgba(255,127,50,.12)}
@@ -2213,8 +2213,8 @@ svg{flex-shrink:0}
 .home-handbook-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:22px;align-items:stretch}.home-handbook-step{position:relative;padding:22px 18px 18px;border-radius:22px;background:#fff;border:1px solid #ecdcca;min-height:100%;text-align:center;box-shadow:0 8px 18px rgba(14,65,116,.04)}.home-handbook-step:not(:last-child):after{content:'→';position:absolute;right:-18px;top:42%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#2f6fb8;font-weight:900;box-shadow:0 7px 16px rgba(14,65,116,.08);z-index:2}.home-handbook-step>b{position:absolute;top:12px;left:12px;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:#ff7a2f;color:#fff;font-size:13px;margin:0;box-shadow:0 10px 16px rgba(255,122,47,.24)}.home-handbook-step-icon{width:110px;height:110px;margin:6px auto 14px;border-radius:28px;display:grid;place-items:center;background:#fff6ee}.home-handbook-step-icon img{max-width:100%;max-height:100%;object-fit:contain;display:block}.home-handbook-step h3{margin:0 0 8px;color:#173f6d;font-size:18px;line-height:1.38;text-wrap:balance}.home-handbook-step p{margin:0;color:#5b6f85;font-size:14px;line-height:1.72;text-wrap:pretty}.home-handbook-journey-link{display:none!important}
 .home-handbook-journey-link{margin-top:18px;border:0;background:transparent;color:#ff7417;font-size:14px;font-weight:900;padding:0;cursor:pointer}
 .home-handbook-bottom{display:grid;grid-template-columns:48px 1fr auto;gap:14px;align-items:center;padding:16px 18px;border-top:1px solid #dce5ed;color:#5b6f85}.home-handbook-bottom-icon{font-size:28px}.home-handbook-bottom b{display:block;color:#173f6d;font-size:15px}.home-handbook-bottom span{display:block;margin-top:4px;font-size:13px;line-height:1.55}
-@media(max-width:1180px){.home-handbook-progress{grid-template-columns:120px 1fr 1fr 1fr 1fr}.home-handbook-progress>i{display:none}.home-handbook-grid{grid-template-columns:1fr}.home-handbook-feature{min-height:580px;padding-bottom:280px}.home-handbook-mascot{width:min(68%,280px);max-height:220px}.home-handbook-side{grid-template-columns:1fr 1fr;grid-template-rows:none}.home-handbook-card{grid-template-columns:52px 1fr;padding:22px}.home-handbook-goal-list{grid-template-columns:1fr}.home-handbook-source-row{grid-template-columns:1fr}.home-handbook-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.home-handbook-step:not(:last-child):after{display:none}}
-@media(max-width:760px){.home-handbook-progress{display:flex;overflow:auto;padding:12px}.home-progress-count{min-width:110px}.home-handbook-progress>a{min-width:165px}.home-handbook-side{grid-template-columns:1fr}.home-handbook-feature{min-height:500px;padding:24px 20px 250px}.home-handbook-mascot{width:min(78%,260px);max-height:200px;bottom:10px}.home-handbook-copy h2{font-size:29px}.home-handbook-card{grid-template-columns:1fr;padding:20px}.home-handbook-card-icon{width:50px;height:50px}.home-handbook-card-copy h2,.home-handbook-journey h2{font-size:24px}.home-handbook-source-row{grid-template-columns:1fr}.home-handbook-journey{padding:22px 18px}.home-handbook-journey-head{grid-template-columns:1fr}.home-handbook-steps{grid-template-columns:1fr}.home-handbook-bottom{grid-template-columns:1fr;text-align:left}.home-handbook-bottom .btn{width:100%}}
+@media(max-width:1180px){.home-handbook-progress{grid-template-columns:120px 1fr 1fr 1fr 1fr}.home-handbook-progress>i{display:none}.home-handbook-grid{grid-template-columns:1fr}.home-handbook-feature{min-height:620px;padding-bottom:310px}.home-handbook-mascot{width:min(74%,320px);max-height:250px}.home-handbook-side{grid-template-columns:1fr 1fr;grid-template-rows:none}.home-handbook-card{grid-template-columns:52px 1fr;padding:22px}.home-handbook-goal-list{grid-template-columns:1fr}.home-handbook-source-row{grid-template-columns:1fr}.home-handbook-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.home-handbook-step:not(:last-child):after{display:none}}
+@media(max-width:760px){.home-handbook-progress{display:flex;overflow:auto;padding:12px}.home-progress-count{min-width:110px}.home-handbook-progress>a{min-width:165px}.home-handbook-side{grid-template-columns:1fr}.home-handbook-feature{min-height:540px;padding:24px 20px 260px}.home-handbook-mascot{width:min(84%,280px);max-height:220px;bottom:10px}.home-handbook-copy h2{font-size:29px}.home-handbook-card{grid-template-columns:1fr;padding:20px}.home-handbook-card-icon{width:50px;height:50px}.home-handbook-card-copy h2,.home-handbook-journey h2{font-size:24px}.home-handbook-source-row{grid-template-columns:1fr}.home-handbook-journey{padding:22px 18px}.home-handbook-journey-head{grid-template-columns:1fr}.home-handbook-steps{grid-template-columns:1fr}.home-handbook-bottom{grid-template-columns:1fr;text-align:left}.home-handbook-bottom .btn{width:100%}}
 
 /* Compose: clear sections, full-width cards, genuinely adjacent preview. */
 .hb-compose-steps{background:#fff;border:1px solid var(--line);border-radius:999px;min-height:66px;display:flex;align-items:center;padding:13px 23px;gap:22px;margin-bottom:24px;box-shadow:var(--shadow)}
@@ -4987,14 +4987,14 @@ return `<section class="page active hb-home">
  </div>
  <section class="home-about-kudos home-handbook-layout" aria-label="Thông tin về AhaKudos">
   <div class="home-handbook-progress" aria-label="Các phần chính của AhaKudos">
-   <div class="home-progress-count"><b>4/4 chặng</b><span></span></div>
-   <a href="#home-about"><strong>01</strong><span>AhaKudos là gì?</span></a>
+   <div class="home-progress-count"><b>1/4 chặng</b><span style="--progress:25%"></span></div>
+   <a href="#home-about" class="active"><strong>01</strong><span>AhaKudos là gì?</span></a>
    <i></i>
    <a href="#home-goals"><strong>02</strong><span>Mục tiêu</span></a>
    <i></i>
    <a href="#home-sources"><strong>03</strong><span>Nguồn KUDOS</span></a>
    <i></i>
-   <a href="#home-how" class="active"><strong>04</strong><span>Gửi KUDOS</span></a>
+   <a href="#home-how"><strong>04</strong><span>Gửi KUDOS</span></a>
   </div>
 
   <div class="home-handbook-grid">
@@ -5020,7 +5020,6 @@ return `<section class="page active hb-home">
        <span>Giúp những đóng góp tích cực được nhìn thấy và ghi nhận đúng lúc.</span>
        <span>Lan tỏa hành vi văn hóa tích cực bằng những câu chuyện thật.</span>
        <span>Tăng sự kết nối giữa các Ahamovers trong quá trình làm việc.</span>
-       <span>Mở rộng sự ghi nhận từ cá nhân → đội nhóm → phòng ban → toàn công ty.</span>
       </div>
       <div class="home-handbook-note">AHAKUDOS là chương trình ghi nhận văn hóa và <strong>không thay thế hệ thống đánh giá hiệu suất</strong>.</div>
      </div>
@@ -6346,18 +6345,40 @@ function openAvatarEditor(){
 }
 function toast(text){const t=document.createElement('div');t.className='toast';t.textContent=text;document.querySelector('#toast-root').appendChild(t);setTimeout(()=>t.remove(),2200)}
 
+function initHomeHandbookProgress(){
+ const root=document.querySelector('.home-handbook-progress');
+ if(!root||root.dataset.bound==='1')return;
+ root.dataset.bound='1';
+ const links=[...root.querySelectorAll('a[href^="#home-"]')];
+ const count=root.querySelector('.home-progress-count b');
+ const bar=root.querySelector('.home-progress-count span');
+ const update=(index)=>{
+   links.forEach((a,i)=>a.classList.toggle('active',i===index));
+   if(count)count.textContent=`${index+1}/4 chặng`;
+   if(bar)bar.style.setProperty('--progress',`${(index+1)/4*100}%`);
+ };
+ links.forEach((a,i)=>a.addEventListener('click',()=>update(i)));
+ const byHash=()=>{
+   const idx=links.findIndex(a=>a.getAttribute('href')===location.hash);
+   update(idx>=0?idx:0);
+ };
+ window.addEventListener('hashchange',byHash);
+ byHash();
+}
+
 // ---- Deep link (#/k/<id>) --------------------------------------------------
 function handleDeepLink(){
  const m=(location.hash||'').match(/#\/k\/([A-Za-z0-9_-]+)/)||(!window.v27DeepLinkUsed&&BOOT.initialId?[null,BOOT.initialId]:null);window.v27DeepLinkUsed=true;
  if(m){state.mode='employee';state.page='kudos-detail';state.viewKudosId=m[1];return true;}
  return false;
 }
-window.addEventListener('hashchange',()=>{if(handleDeepLink())render();});
+window.addEventListener('hashchange',()=>{if(handleDeepLink())render();initHomeHandbookProgress();});
 
 // ---- Boot ------------------------------------------------------------------
 applyMyReactions();
 handleDeepLink();
 render();
+initHomeHandbookProgress();
 })();
 
 </script>
