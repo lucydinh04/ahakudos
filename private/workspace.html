@@ -1976,7 +1976,7 @@ svg{flex-shrink:0}
 .hb-journey-stat strong{font-size:35px;font-weight:700;color:var(--navy);line-height:1.2}
 .hb-journey-stat:last-child strong{color:#b64b1a}
 .hb-journey-stat b{font-size:14px;font-weight:600;line-height:1.65;display:block;color:#414f61}
-.hb-journey-stat span{font-size:13px;line-height:1.55;display:block;margin-top:3px;color:var(--muted)}
+.hb-journey-stat span{font-size:13px;line-height:1.55;display:block;margin-top:3px;color:var(--muted)}.hb-journey-stat-empty strong{font-size:28px;color:#ff7f32}.hb-journey-stat-warm strong{color:#b64b1a}.hb-journey-stat-empty b,.hb-journey-stat-warm b{color:#414f61}
 .home-grid{grid-template-columns:minmax(0,1.5fr) minmax(340px,1fr);gap:24px;align-items:start}
 .main-column,.right-rail{display:grid;grid-template-columns:1fr;gap:22px;align-content:start}
 .feed{gap:16px}
@@ -4970,7 +4970,14 @@ function employeeHome(){
     </div>
     <div class="home-community-list">${homeCommunityCards||`<div class="empty"><div class="icon">✦</div><h3>Cộng đồng đang chờ lời ghi nhận đầu tiên</h3><p>Khi Admin duyệt KUDOS, những lời ghi nhận sẽ xuất hiện tại đây.</p></div>`}</div>
    </article>`
-return `<section class="page active hb-home">
+const sentCount=sentBy(u.email).length, recvCount=rec.length, noJourneyYet=sentCount===0&&recvCount===0;
+ const recvJourneyCard=noJourneyYet
+  ? `<div class="hb-journey-stat hb-journey-stat-empty"><strong>✦</strong><div><b>Bắt đầu hành trình KUDOS</b><span>Chưa có KUDOS nào được gửi hoặc nhận. Hãy bắt đầu bằng lời ghi nhận đầu tiên.</span></div></div>`
+  : `<div class="hb-journey-stat"><strong>${recvCount}</strong><div><b>${recvCount===0?'Chưa có KUDOS nào nhận được':'KUDOS bạn đã nhận'}</b><span>${recvCount===0?'Khi đồng nghiệp gửi lời ghi nhận, bạn sẽ thấy tại đây.':'Được lưu để xem lại bất cứ lúc nào'}</span></div></div>`;
+ const sentJourneyCard=sentCount===0
+  ? `<div class="hb-journey-stat hb-journey-stat-warm"><strong>→</strong><div><b>Gửi KUDOS đầu tiên</b><span>Lan tỏa lời ghi nhận đầu tiên của bạn tới đồng nghiệp ngay hôm nay.</span></div></div>`
+  : `<div class="hb-journey-stat hb-journey-stat-warm"><strong>${sentCount}</strong><div><b>Chúc mừng bạn!</b><span>Bạn đã gửi KUDOS đầu tiên. Hãy chờ đón một món quà nhỏ đặc biệt nhé.</span></div></div>`;
+ return `<section class="page active hb-home">
  ${firstRecvBanner}
  <article class="recognition-hero hb-hero">
   <div class="moment-copy">
@@ -4982,8 +4989,8 @@ return `<section class="page active hb-home">
  </article>
  <div class="profile-strip hb-journey-strip">
   <div class="profile-intro"><div class="avatar-edit-wrap">${avatarMarkup('home-avatar')}<button class="avatar-edit-btn" data-avatar-edit title="Cập nhật avatar" aria-label="Cập nhật ảnh đại diện">✎</button></div><div><b>${escapeHtml(u.name)} ✨</b><p>${escapeHtml(u.dept||'')}${u.section?` · ${escapeHtml(u.section)}`:''}${u.dateOfBirth?` · Sinh nhật ${escapeHtml(u.dateOfBirth.slice(8,10)+'/'+u.dateOfBirth.slice(5,7))}`:''}</p></div></div>
-  <div class="hb-journey-stat"><strong>${rec.length}</strong><div><b>KUDOS bạn đã nhận</b><span>Được lưu để xem lại bất cứ lúc nào</span></div></div>
-  <div class="hb-journey-stat"><strong>${sentBy(u.email).length}</strong><div><b>KUDOS bạn đã gửi</b><span>Lan tỏa điều tích cực đến đồng nghiệp</span></div></div>
+  ${recvJourneyCard}
+  ${sentJourneyCard}
  </div>
  <section class="home-about-kudos home-handbook-layout" aria-label="Thông tin về AhaKudos">
   <div class="home-handbook-progress" aria-label="Các phần chính của AhaKudos">
