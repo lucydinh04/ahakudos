@@ -2203,14 +2203,14 @@ svg{flex-shrink:0}
 .home-handbook-card:after{content:'';position:absolute;right:-40px;bottom:-80px;width:220px;height:220px;border-radius:50%;background:rgba(255,127,50,.045);pointer-events:none}
 .home-handbook-goals{border-color:#d8e5f3}.home-handbook-sources{border:2px solid #ff8d4b}
 .home-handbook-card-icon{width:58px;height:58px;display:grid;place-items:center;border-radius:50%;background:#fff2e4;color:#ff7417;font-size:25px;box-shadow:inset 0 0 0 1px rgba(255,127,50,.12)}
-.home-handbook-card-copy{min-width:0;position:relative;z-index:1}.home-handbook-card-kicker{display:block;margin-bottom:5px;font-size:12px;font-weight:900;letter-spacing:.13em;color:#ff7417;text-transform:uppercase}.home-handbook-card-copy h2,.home-handbook-journey h2{margin:0;color:#13283f;font-size:28px;line-height:1.2;letter-spacing:-.02em}.home-handbook-card-copy>p{margin:8px 0 0;color:#5c6f84;font-size:14px;line-height:1.7}
-.home-handbook-goal-list{display:grid;grid-template-columns:1fr 1fr;gap:9px 12px;margin-top:16px}.home-handbook-goal-list span{position:relative;padding:10px 11px 10px 28px;border-radius:14px;background:#f8fbff;color:#4c637a;font-size:13px;line-height:1.55}.home-handbook-goal-list span:before{content:'✦';position:absolute;left:10px;top:10px;color:#ff7417;font-size:12px}
-.home-handbook-note{margin-top:14px;padding:12px 14px;border-radius:14px;background:#eef6ff;color:#315776;font-size:13px;line-height:1.65;font-weight:700}
+.home-handbook-card-copy{min-width:0;position:relative;z-index:1}.home-handbook-goals .home-handbook-card-copy{display:flex;flex-direction:column;align-items:flex-start}.home-handbook-card-kicker{display:block;margin-bottom:5px;font-size:12px;font-weight:900;letter-spacing:.13em;color:#ff7417;text-transform:uppercase}.home-handbook-card-copy h2,.home-handbook-journey h2{margin:0;color:#13283f;font-size:28px;line-height:1.2;letter-spacing:-.02em;text-wrap:balance}.home-handbook-card-copy>p{margin:8px 0 0;color:#5c6f84;font-size:14px;line-height:1.7;text-wrap:pretty}
+.home-handbook-copy h2,.home-handbook-copy p,.home-handbook-quote,.home-handbook-card-kicker,.home-handbook-source-row b,.home-handbook-source-row p,.home-handbook-step h3,.home-handbook-step p,.home-handbook-bottom b,.home-handbook-bottom span,.home-handbook-note{text-wrap:pretty}.home-handbook-goal-list{display:grid;grid-template-columns:1fr 1fr;gap:9px 12px;margin-top:16px;width:100%;justify-items:start;align-content:start}.home-handbook-goal-list span{position:relative;width:100%;padding:10px 11px 10px 28px;border-radius:14px;background:#f8fbff;color:#4c637a;font-size:13px;line-height:1.55;text-wrap:pretty}.home-handbook-goal-list span:before{content:'✦';position:absolute;left:10px;top:10px;color:#ff7417;font-size:12px}
+.home-handbook-note{margin-top:14px;padding:12px 14px;border-radius:14px;background:#eef6ff;color:#315776;font-size:13px;line-height:1.65;font-weight:700;width:100%}
 .home-handbook-source-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}.home-handbook-source-row>div{padding:14px;border-radius:16px;background:#fff9f3;border:1px solid #f0e0d0}.home-handbook-source-row i{display:block;font-style:normal;font-size:25px;margin-bottom:7px}.home-handbook-source-row b{display:block;color:#173f6d;font-size:14px}.home-handbook-source-row p{margin:6px 0 0;color:#5d7086;font-size:13px;line-height:1.65}
 .home-handbook-journey{position:relative;overflow:hidden;border-radius:30px;background:linear-gradient(180deg,#fff8ef 0%,#fffdf9 100%);border:2px solid #ff9a5d;padding:28px 30px;box-shadow:0 16px 36px rgba(14,65,116,.05)}
-.home-handbook-journey-head{display:grid;grid-template-columns:64px 1fr;gap:18px;align-items:start}.home-handbook-journey-head p{margin:8px 0 0;color:#5c6f84;font-size:14px;line-height:1.75}
-.home-handbook-step-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:20px 0 14px}.home-handbook-step-tabs span{padding:9px 10px;border-radius:999px;background:#fff0df;color:#b95a1d;font-size:12px;font-weight:800;text-align:center}
-.home-handbook-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}.home-handbook-step{position:relative;padding:18px 15px;border-radius:18px;background:#fff;border:1px solid #ecdcca;min-height:100%}.home-handbook-step:not(:last-child):after{content:'→';position:absolute;right:-13px;top:26px;width:25px;height:25px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#2f6fb8;font-weight:900;box-shadow:0 7px 16px rgba(14,65,116,.08);z-index:2}.home-handbook-step>b{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#ff7a2f;color:#fff;font-size:13px;margin-bottom:12px}.home-handbook-step h3{margin:0 0 8px;color:#173f6d;font-size:15px;line-height:1.45}.home-handbook-step p{margin:0;color:#5b6f85;font-size:13px;line-height:1.7}
+.home-handbook-journey-head{display:grid;grid-template-columns:64px 1fr;gap:18px;align-items:start}.home-handbook-journey-head p{margin:8px 0 0;color:#5c6f84;font-size:14px;line-height:1.75;text-wrap:pretty}
+.home-handbook-step-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:22px 0 16px}.home-handbook-step-tabs span{padding:14px 12px;border-radius:18px;background:#f7eadc;color:#b95a1d;font-size:13px;font-weight:800;text-align:center;text-wrap:balance;box-shadow:inset 0 0 0 1px rgba(185,90,29,.05)}
+.home-handbook-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}.home-handbook-step{position:relative;padding:18px 15px;border-radius:18px;background:#fff;border:1px solid #ecdcca;min-height:100%}.home-handbook-step:not(:last-child):after{content:'→';position:absolute;right:-13px;top:26px;width:25px;height:25px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#2f6fb8;font-weight:900;box-shadow:0 7px 16px rgba(14,65,116,.08);z-index:2}.home-handbook-step>b{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#ff7a2f;color:#fff;font-size:13px;margin-bottom:12px}.home-handbook-step h3{margin:0 0 8px;color:#173f6d;font-size:15px;line-height:1.45}.home-handbook-step p{margin:0;color:#5b6f85;font-size:13px;line-height:1.7}.home-handbook-journey-link{display:none!important}
 .home-handbook-journey-link{margin-top:18px;border:0;background:transparent;color:#ff7417;font-size:14px;font-weight:900;padding:0;cursor:pointer}
 .home-handbook-bottom{display:grid;grid-template-columns:48px 1fr auto;gap:14px;align-items:center;padding:16px 18px;border-top:1px solid #dce5ed;color:#5b6f85}.home-handbook-bottom-icon{font-size:28px}.home-handbook-bottom b{display:block;color:#173f6d;font-size:15px}.home-handbook-bottom span{display:block;margin-top:4px;font-size:13px;line-height:1.55}
 @media(max-width:1180px){.home-handbook-progress{grid-template-columns:120px 1fr 1fr 1fr 1fr}.home-handbook-progress>i{display:none}.home-handbook-grid{grid-template-columns:1fr}.home-handbook-feature{min-height:520px}.home-handbook-side{grid-template-columns:1fr 1fr;grid-template-rows:none}.home-handbook-card{grid-template-columns:52px 1fr;padding:22px}.home-handbook-goal-list{grid-template-columns:1fr}.home-handbook-source-row{grid-template-columns:1fr}.home-handbook-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.home-handbook-step-tabs{display:none}.home-handbook-step:not(:last-child):after{display:none}}
@@ -5016,9 +5016,9 @@ return `<section class="page active hb-home">
       <span class="home-handbook-card-kicker">MỤC TIÊU</span>
       <h2>AHAKUDOS được phát triển nhằm</h2>
       <div class="home-handbook-goal-list">
-       <span>Khuyến khích thói quen ghi nhận và cảm ơn giữa các đồng nghiệp.</span>
+       <span>Khuyến khích thói quen ghi nhận và cảm ơn trong công việc hằng ngày.</span>
        <span>Giúp những đóng góp tích cực được nhìn thấy và ghi nhận đúng lúc.</span>
-       <span>Lan tỏa hành vi văn hóa tích cực bằng câu chuyện thật.</span>
+       <span>Lan tỏa hành vi văn hóa tích cực bằng những câu chuyện thật.</span>
        <span>Tăng sự kết nối giữa các Ahamovers trong quá trình làm việc.</span>
        <span>Mở rộng sự ghi nhận từ cá nhân → đội nhóm → phòng ban → toàn công ty.</span>
       </div>
@@ -5030,7 +5030,7 @@ return `<section class="page active hb-home">
      <div class="home-handbook-card-icon">🎁</div>
      <div class="home-handbook-card-copy">
       <span class="home-handbook-card-kicker">BẠN CÓ THỂ NHẬN KUDOS TỪ ĐÂU?</span>
-      <h2>Những khoảnh khắc đáng được ghi nhận</h2>
+      <h2>Những khoảnh khắc có thể nhận KUDOS</h2>
       <div class="home-handbook-source-row">
        <div><i>👥</i><b>Từ đồng nghiệp</b><p>Khi một đồng nghiệp nhìn thấy một hành động hoặc đóng góp tích cực của bạn, họ có thể chủ động gửi KUDOS để ghi nhận điều đó.</p></div>
        <div><i>🎂</i><b>Từ những cột mốc đáng nhớ</b><p>AHAKUDOS cũng sẽ gửi lời chúc và ghi nhận vào một số dịp đặc biệt như <strong>Sinh nhật</strong> hoặc <strong>Kỷ niệm ngày vào công ty / Thâm niên</strong>.</p></div>
@@ -5045,7 +5045,7 @@ return `<section class="page active hb-home">
     <div class="home-handbook-card-icon">✈️</div>
     <div>
      <span class="home-handbook-card-kicker">GỬI MỘT KUDOS NHƯ THẾ NÀO?</span>
-     <h2>Hành trình gửi KUDOS trong 5 bước</h2>
+     <h2>Gửi KUDOS trong 5 bước</h2>
      <p>Hãy chia sẻ hành động, tác động và điều khiến bạn muốn ghi nhận đồng nghiệp. Sau đó, bạn có thể chọn tối đa 3 Giá trị văn hóa — từ gợi ý của AI hoặc tự chọn theo cách bạn cảm nhận.</p>
     </div>
    </div>
@@ -5059,12 +5059,11 @@ return `<section class="page active hb-home">
     <div class="home-handbook-step"><b>04</b><h3>Xem lại trước khi gửi</h3><p>Kiểm tra người nhận, nội dung KUDOS và các Giá trị văn hóa đã chọn trước khi gửi.</p></div>
     <div class="home-handbook-step"><b>05</b><h3>Gửi KUDOS</h3><p>Khi mọi thứ đã ổn, chọn <strong>Gửi KUDOS</strong>. Lời ghi nhận sẽ được gửi đến đồng nghiệp và lưu lại trong hành trình KUDOS.</p></div>
    </div>
-   <button class="home-handbook-journey-link" data-page="send-kudos">Khám phá hành trình →</button>
   </article>
 
   <div class="home-handbook-bottom">
    <div class="home-handbook-bottom-icon">💬</div>
-   <div><b>Bạn đã sẵn sàng gửi một lời ghi nhận?</b><span>Một lời cảm ơn nhỏ có thể trở thành động lực rất lớn cho đồng nghiệp.</span></div>
+   <div><b>Bạn đã sẵn sàng gửi một lời ghi nhận?</b><span>Một lời cảm ơn nhỏ có thể tạo nên động lực lớn cho đồng nghiệp.</span></div>
    <button class="btn primary" data-page="send-kudos">Gửi KUDOS ngay →</button>
   </div>
  </section>
