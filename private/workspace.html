@@ -1976,7 +1976,7 @@ svg{flex-shrink:0}
 .hb-journey-stat strong{font-size:35px;font-weight:700;color:var(--navy);line-height:1.2}
 .hb-journey-stat:last-child strong{color:#b64b1a}
 .hb-journey-stat b{font-size:14px;font-weight:600;line-height:1.65;display:block;color:#414f61}
-.hb-journey-stat span{font-size:13px;line-height:1.55;display:block;margin-top:3px;color:var(--muted)}.hb-journey-stat-empty strong{font-size:28px;color:#ff7f32}.hb-journey-stat-warm strong{color:#b64b1a}.hb-journey-stat-empty b,.hb-journey-stat-warm b{color:#414f61}
+.hb-journey-stat span{font-size:13px;line-height:1.55;display:block;margin-top:3px;color:var(--muted)}.hb-journey-mini-cta{margin-top:8px;border:0;background:transparent;color:#ff7417;font-size:12px;font-weight:900;padding:0;cursor:pointer;text-align:left}.hb-gift-stat{font-size:30px!important;line-height:1!important}.aha-floating-kudos{position:fixed;right:22px;bottom:22px;width:68px;height:68px;border:1px solid rgba(255,127,50,.22);border-radius:50%;background:#fff8ef;padding:5px;box-shadow:0 14px 30px rgba(14,65,116,.18);z-index:95;display:grid;place-items:center;transition:transform .2s ease,box-shadow .2s ease}.aha-floating-kudos:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 18px 34px rgba(14,65,116,.22)}.aha-floating-kudos img{width:100%;height:100%;object-fit:contain}.home-master-birthday-list{display:grid;gap:8px;margin-top:15px;position:relative;z-index:1}.home-master-birthday-row{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid #edf1f5}.home-master-birthday-row:first-child{border-top:0}.home-master-birthday-row .mini-avatar{width:36px;height:36px}.home-master-birthday-row b{display:block;color:#173f6d;font-size:14px;line-height:1.45}.home-master-birthday-row span{display:block;margin-top:2px;color:#6a7b90;font-size:12px;line-height:1.5}.home-master-birthday-row button{border:1px solid #f0cfb6;border-radius:999px;background:#fff7ef;color:#b34d18;padding:7px 10px;font-size:12px;font-weight:800;white-space:nowrap}.home-master-empty{padding:12px 0;color:#6a7b90;font-size:14px;line-height:1.65}.home-handbook-goals .home-handbook-card-copy,.home-handbook-sources .home-handbook-card-copy{height:100%;display:flex;flex-direction:column}.home-handbook-goals .home-handbook-goal-list{flex:1;align-content:center}.home-handbook-goals .home-handbook-note{margin-top:auto}.home-handbook-sources .home-handbook-source-row{flex:1;align-content:center}.home-handbook-sources .home-handbook-source-row>div{justify-content:center}@media(max-width:760px){.aha-floating-kudos{width:58px;height:58px;right:14px;bottom:78px}.home-master-birthday-row{grid-template-columns:36px 1fr}.home-master-birthday-row button{grid-column:2;justify-self:start}}.hb-journey-stat-empty strong{font-size:28px;color:#ff7f32}.hb-journey-stat-warm strong{color:#b64b1a}.hb-journey-stat-empty b,.hb-journey-stat-warm b{color:#414f61}
 .home-grid{grid-template-columns:minmax(0,1.5fr) minmax(340px,1fr);gap:24px;align-items:start}
 .main-column,.right-rail{display:grid;grid-template-columns:1fr;gap:22px;align-content:start}
 .feed{gap:16px}
@@ -4597,6 +4597,16 @@ const employees=PEOPLE; // kept name for existing admin code paths
 const CULTURE={fair:'Công bằng & Tôn trọng',share:'Học hỏi & Chia sẻ',grow:'Gắn kết & Cùng phát triển'};
 
 function personByEmail(e){return PEOPLE.find(p=>p.email.toLowerCase()===String(e||'').toLowerCase())||null;}
+function employeeTenureDays(p){
+ if(!p)return null;
+ const direct=Number(p.tenureDays);
+ if(Number.isFinite(direct)&&direct>=0)return Math.floor(direct);
+ const raw=p.joinDate||p.startDate||p.workingStartDate||p.onboardDate||p.firstWorkingDate||'';
+ if(!raw)return null;
+ const d=new Date(raw);if(Number.isNaN(d.getTime()))return null;
+ const today=new Date();today.setHours(0,0,0,0);d.setHours(0,0,0,0);
+ return Math.max(0,Math.floor((today-d)/86400000)+1);
+}
 function uid(){return 'k'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
 function nowLabel(d){return (d||new Date()).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});}
 
@@ -4838,7 +4848,7 @@ function demoRoleSwitcher(){
 function contextbar(){
  const u=me();
  const firstName=escapeHtml((u.name||'bạn').split(' ').slice(-1)[0]);
- const tenureDays=Number.isFinite(Number(u.tenureDays))?Number(u.tenureDays):null;
+ const tenureDays=employeeTenureDays(u);
  const tenureLine=tenureDays!==null
    ?`Cảm ơn bạn đã đồng hành cùng Ahamove <strong class="tenure-days">${tenureDays.toLocaleString('vi-VN')}</strong> ngày.`
    :'Cảm ơn bạn đã đồng hành cùng Ahamove.';
@@ -4853,6 +4863,7 @@ function shell(content){
   <a class="hb-skip-link" href="#main-content">Đến nội dung chính</a>
   ${topbar()}
   <main class="main-wrap" id="main-content" tabindex="-1">${contextbar()}${personalBar()}${content}</main>
+  ${state.mode==='employee'?`<button class="aha-floating-kudos" data-page="send-kudos" aria-label="Gửi KUDOS ngay" title="Gửi KUDOS"><img src="/illustrations/mascot-cutout.png" alt=""></button>`:''}
   <footer class="hb-footer"><b>AhaKudos <span>· Ahamove</span></b><span>Always Moving Together</span></footer>
  </div>`;
 }
@@ -4975,8 +4986,10 @@ const recvCount=rec.length, noJourneyYet=sentCount===0&&recvCount===0;
   ? `<div class="hb-journey-stat hb-journey-stat-empty"><strong>✦</strong><div><b>Bắt đầu hành trình KUDOS</b><span>Chưa có KUDOS nào được gửi hoặc nhận. Hãy bắt đầu bằng lời ghi nhận đầu tiên.</span></div></div>`
   : `<div class="hb-journey-stat"><strong>${recvCount}</strong><div><b>${recvCount===0?'Chưa có KUDOS nào nhận được':'KUDOS bạn đã nhận'}</b><span>${recvCount===0?'Khi đồng nghiệp gửi lời ghi nhận, bạn sẽ thấy tại đây.':'Được lưu để xem lại bất cứ lúc nào'}</span></div></div>`;
  const sentJourneyCard=sentCount===0
-  ? `<div class="hb-journey-stat hb-journey-stat-warm"><strong>→</strong><div><b>Gửi KUDOS đầu tiên</b><span>Lan tỏa lời ghi nhận đầu tiên của bạn tới đồng nghiệp ngay hôm nay.</span></div></div>`
-  : `<div class="hb-journey-stat hb-journey-stat-warm"><strong>${sentCount}</strong><div><b>Chúc mừng bạn!</b><span>Bạn đã gửi KUDOS đầu tiên. Hãy chờ đón một món quà nhỏ đặc biệt nhé.</span></div></div>`;
+  ? `<div class="hb-journey-stat hb-journey-stat-warm"><strong>→</strong><div><b>Gửi KUDOS đầu tiên</b><span>Lan tỏa lời ghi nhận đầu tiên của bạn tới đồng nghiệp ngay hôm nay.</span><button class="hb-journey-mini-cta" data-page="send-kudos">Gửi KUDOS ngay →</button></div></div>`
+  : sentCount===1
+   ? `<div class="hb-journey-stat hb-journey-stat-warm"><strong class="hb-gift-stat" aria-label="Quà KUDOS">🎁</strong><div><b>Chúc mừng bạn đã gửi KUDOS đầu tiên!</b><span>Hãy chờ đón một món quà nhỏ đặc biệt dành cho cột mốc này nhé.</span></div></div>`
+   : `<div class="hb-journey-stat hb-journey-stat-warm"><strong>${sentCount}</strong><div><b>KUDOS bạn đã gửi</b><span>Lan tỏa điều tích cực đến đồng nghiệp.</span></div></div>`;
  return `<section class="page active hb-home">
  ${firstRecvBanner}
  <article class="recognition-hero hb-hero">
@@ -4994,7 +5007,7 @@ const recvCount=rec.length, noJourneyYet=sentCount===0&&recvCount===0;
  </div>
  <section class="home-about-kudos home-handbook-layout" aria-label="Thông tin về AhaKudos">
   <div class="home-handbook-progress" aria-label="Các phần chính của AhaKudos">
-   <div class="home-progress-count"><b>1/4 chặng</b><span style="--progress:25%"></span></div>
+   <div class="home-progress-count"><b>1/4</b><span style="--progress:25%"></span></div>
    <a href="#home-about" class="active"><strong>01</strong><span>AhaKudos là gì?</span></a>
    <i></i>
    <a href="#home-goals"><strong>02</strong><span>Mục tiêu</span></a>
@@ -5063,16 +5076,15 @@ const recvCount=rec.length, noJourneyYet=sentCount===0&&recvCount===0;
   </article>
 
   <div class="home-handbook-extra">
-   <article class="home-handbook-mini">
+   <article class="home-handbook-mini home-birthday-master">
     <div class="home-handbook-mini-head">
      <div class="home-handbook-mini-icon">🎂</div>
      <div>
-      <span class="home-handbook-mini-kicker">SINH NHẬT</span>
-      <h3>Xem sinh nhật đồng nghiệp</h3>
+      <span class="home-handbook-mini-kicker">SINH NHẬT · MASTER DATA</span>
+      <h3>Sinh nhật đồng nghiệp sắp tới</h3>
      </div>
     </div>
-    <p>Theo dõi những sinh nhật sắp tới để bạn dễ dàng gửi lời chúc và lan toả một lời ghi nhận đúng lúc.</p>
-    <span class="home-handbook-mini-chip">Coming soon</span>
+    <div class="home-master-birthday-list">${birthdaySuggestions.length?birthdaySuggestions.slice(0,3).map(b=>`<div class="home-master-birthday-row"><div class="mini-avatar birthday-avatar">${b.initials}</div><div><b>${escapeHtml(b.name)}</b><span>${escapeHtml(b.dept||'')} · ${escapeHtml(b.when)} · ${escapeHtml(b.date)}</span></div><button data-birthday="${escapeHtml(b.email)}">Gửi lời chúc →</button></div>`).join(''):`<div class="home-master-empty">Chưa có sinh nhật nào trong 30 ngày tới theo Master Data.</div>`}</div>
    </article>
 
    <article class="home-handbook-mini">
@@ -6387,7 +6399,7 @@ function initHomeHandbookProgress(){
  const bar=root.querySelector('.home-progress-count span');
  const update=(index)=>{
    links.forEach((a,i)=>a.classList.toggle('active',i===index));
-   if(count)count.textContent=`${index+1}/4 chặng`;
+   if(count)count.textContent=`${index+1}/4`;
    if(bar)bar.style.setProperty('--progress',`${(index+1)/4*100}%`);
  };
  links.forEach((a,i)=>a.addEventListener('click',()=>update(i)));
