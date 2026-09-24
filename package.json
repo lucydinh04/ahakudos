@@ -1,11 +1,9 @@
 {
-  "name": "ahakudos-vercel-google-selftest",
-  "version": "28.61.0",
+  "name": "ahakudos-vercel",
+  "version": "30.0.0",
   "private": true,
   "type": "module",
-  "engines": {
-    "node": "22.x"
-  },
+  "engines": { "node": "22.x" },
   "scripts": {
     "build": "node tools/check-build.mjs"
   }

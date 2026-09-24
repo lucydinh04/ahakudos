@@ -1,14 +1,57 @@
-import {readFile} from 'node:fs/promises';
+// GET / (and /ahakudos) — serves the app shell to an identified user, otherwise a sign-in notice
+// (or the DEV sign-in page when ENABLE_DEV_IDENTITY=true outside production).
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import {noCache,session} from '../lib/security.js';
-export default async function handler(req,res){
- noCache(res);
- res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-src 'self' blob: data:; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'");
- res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=()');
- if(req.method!=='GET'){res.status(405).end();return;}
- try{
-  const file=session(req)?'workspace.html':'login.html';
-  const html=await readFile(path.join(process.cwd(),'private',file),'utf8');
-  res.setHeader('Content-Type','text/html; charset=utf-8');return res.status(200).send(html);
- }catch(e){res.setHeader('Content-Type','text/plain; charset=utf-8');return res.status(500).send('Thiếu file giao diện. Giữ nguyên thư mục private/ khi đưa mã lên GitHub.');}
+import { fileURLToPath } from 'node:url';
+import { existsSync } from 'node:fs';
+import { getConfig } from '../lib/config.js';
+import { noCache } from '../lib/http.js';
+import { getCurrentIdentity } from '../lib/identity.js';
+
+const templates = new Map();
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+function privatePath(name) {
+  const local = path.join(HERE, '..', 'private', name);
+  return existsSync(local) ? local : path.join(process.cwd(), 'private', name);
 }
+async function template(name) {
+  if (!templates.has(name)) templates.set(name, await readFile(privatePath(name), 'utf8'));
+  return templates.get(name);
+}
+function escAttr(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function jsonForScript(obj) { return JSON.stringify(obj).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029'); }
+export function securityHeaders(res, config) {
+  const ancestors = ["'self'", config && config.handbookOrigin].filter(Boolean).join(' ');
+  res.setHeader('Content-Security-Policy', [
+    "default-src 'self'", "script-src 'self'", "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com", "img-src 'self' data: blob: https:", "connect-src 'self'",
+    "frame-src 'self' blob: data:", "base-uri 'self'", "object-src 'none'", `frame-ancestors ${ancestors}`, "form-action 'self'"
+  ].join('; '));
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+}
+export function render(tpl, config, extra = {}) {
+  const base = config ? config.basePath : '';
+  const build = config ? config.buildId : 'dev';
+  const client = { basePath: base, env: config ? config.env : 'unknown', buildId: build, handbookUrl: config ? config.handbookOrigin : '', devIdentity: !!(config && config.dev.enabled) };
+  return tpl.split('{{BASE}}').join(escAttr(base)).split('{{BUILD}}').join(escAttr(build))
+    .split('{{HANDBOOK_URL}}').join(escAttr(client.handbookUrl || '#')).split('{{TITLE}}').join(escAttr(extra.title || 'AhaKudos'))
+    .split('{{MESSAGE}}').join(escAttr(extra.message || '')).split('{{CONFIG_JSON}}').join(jsonForScript(client));
+}
+export async function handle(req, res, deps = {}) {
+  noCache(res);
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  let config = null;
+  try { config = getConfig(); } catch (e) {
+    securityHeaders(res, null);
+    console.error('[ahakudos] config', e.details || e.message);
+    return res.status(503).send(render(await template('error.html'), null, { title: 'AhaKudos chưa sẵn sàng', message: 'Không thể kết nối AhaKudos. Vui lòng tải lại trang hoặc thử lại sau.' }));
+  }
+  securityHeaders(res, config);
+  if (req.method !== 'GET' && req.method !== 'HEAD') return res.status(405).send('');
+  let identity = null;
+  try { identity = await getCurrentIdentity(req, config, deps); } catch (e) { identity = null; console.warn('[ahakudos] identity rejected', e.code, e.details || ''); }
+  if (identity) return res.status(200).send(render(await template('workspace.html'), config));
+  if (config.dev.enabled) return res.status(200).send(render(await template('login.html'), config));
+  return res.status(401).send(render(await template('error.html'), config, { title: 'Vui lòng đăng nhập AhaHandbook', message: 'AhaKudos chỉ mở được sau khi bạn đăng nhập AhaHandbook bằng email @' + config.allowedDomain + '.' }));
+}
+export default function handler(req, res) { return handle(req, res); }

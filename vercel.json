@@ -4,65 +4,30 @@
   "buildCommand": "npm run build",
   "outputDirectory": "public",
   "functions": {
-    "api/page.js": {
-      "includeFiles": "private/**",
-      "maxDuration": 60
-    },
-    "api/bridge.js": {
-      "maxDuration": 60
-    },
-    "api/auth.js": {
-      "maxDuration": 60
-    }
+    "api/page.js": { "includeFiles": "private/**", "maxDuration": 30 },
+    "api/bridge.js": { "maxDuration": 60 },
+    "api/dev-login.js": { "maxDuration": 10 },
+    "api/health.js": { "maxDuration": 10 }
   },
   "rewrites": [
-    {
-      "source": "/",
-      "destination": "/api/page"
-    }
+    { "source": "/", "destination": "/api/page" },
+    { "source": "/ahakudos", "destination": "/api/page" },
+    { "source": "/ahakudos/", "destination": "/api/page" },
+    { "source": "/ahakudos/api/:path*", "destination": "/api/:path*" },
+    { "source": "/ahakudos/:path*", "destination": "/:path*" }
   ],
   "headers": [
-    {
-      "source": "/backgrounds/home-launch-hero-v2830.png",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, max-age=0"
-        },
-        {
-          "key": "X-AhaKudos-Asset",
-          "value": "V28.30-HERO"
-        }
-      ]
-    },
-    {
-      "source": "/backgrounds/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    },
+    { "source": "/app/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=300, must-revalidate" }] },
+    { "source": "/ahakudos/app/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=300, must-revalidate" }] },
+    { "source": "/(backgrounds|illustrations|branding)/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }] },
+    { "source": "/ahakudos/(backgrounds|illustrations|branding)/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }] },
     {
       "source": "/(.*)",
       "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "no-referrer"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        }
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
+        { "key": "Referrer-Policy", "value": "no-referrer" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Strict-Transport-Security", "value": "max-age=31536000" }
       ]
     }
   ]
