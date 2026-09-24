@@ -4028,3 +4028,52 @@ body{background:var(--bg)}
 /* ---- V30: Sinh nhật & Thâm niên list from Master Data (no checkbox column) ---- */
 .milestone-admin-row.milestone-admin-row--live{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center}
 @media(max-width:560px){.milestone-admin-row.milestone-admin-row--live{grid-template-columns:36px minmax(0,1fr)}.milestone-admin-row.milestone-admin-row--live .link-btn{grid-column:2;justify-self:start}}
+/* ---- V30.2: loại KUDOS (Đồng nghiệp / Sinh nhật) + trạng thái sinh nhật ---- */
+.kudos-type-switch{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.kudos-type-option{display:flex;align-items:center;gap:12px;text-align:left;border:1.5px solid #dbe4ee;background:#fff;border-radius:16px;padding:14px 16px;cursor:pointer;font:inherit;color:#0e4174;transition:border-color .15s,box-shadow .15s,background .15s}
+.kudos-type-option:hover{border-color:#ffb68a}
+.kudos-type-option.selected{border-color:#ff7f32;background:#fff6ef;box-shadow:0 0 0 3px rgba(255,127,50,.14)}
+.kudos-type-option:focus-visible{outline:3px solid #ffdbc3;outline-offset:2px}
+.kudos-type-icon{font-size:24px;line-height:1}
+.kudos-type-option b{display:block;font-size:15px;font-weight:700}
+.kudos-type-option small{display:block;font-size:12px;line-height:1.5;color:#6b7c90;margin-top:2px}
+.recipient-manual-dob{margin-top:12px}
+.recipient-manual-dob.hidden,.birthday-status.hidden{display:none}
+.birthday-status{margin-top:12px;border-radius:12px;padding:10px 14px;font-size:13px;line-height:1.6;background:#f3f6fa;color:#42546b}
+.birthday-status.is-ok{background:#eaf8ef;color:#1f7a47}
+.birthday-status.is-warn{background:#fff1ea;color:#a13219}
+.home-master-birthday-soon{font-size:12px;color:#8a99ac;white-space:nowrap}
+.kudos-content-format.hidden,.coach.hidden,.culture-field.hidden{display:none!important}
+/* ---- V30.3: Định nghĩa AhaKudos (home) — layout theo mẫu thiết kế mới ---- */
+.home-def-v2{--def-navy:#0c2a5b;--def-blue:#1767e5;--def-ink:#1f3350;--def-orange:#ff8a2b;position:relative;overflow:hidden;isolation:isolate;display:grid;grid-template-columns:minmax(0,1.62fr) minmax(0,1fr);gap:24px;align-items:center;padding:clamp(28px,4vw,52px) clamp(22px,4vw,56px);border-radius:28px;background:linear-gradient(135deg,#f5f9ff 0%,#eaf3ff 55%,#e3efff 100%);border:1px solid #e1ecfb;font-family:'Lexend',Arial,sans-serif}
+.home-def-v2__blob{position:absolute;z-index:-1;border-radius:50%;pointer-events:none}
+.home-def-v2__blob--top{width:420px;height:420px;left:44%;top:-290px;background:rgba(200,224,255,.55)}
+.home-def-v2__blob--right{width:620px;height:620px;right:-300px;top:-60px;background:rgba(255,255,255,.55)}
+.home-def-v2__blob--corner{width:260px;height:260px;right:-120px;bottom:-150px;background:rgba(206,228,255,.6)}
+.home-def-v2__copy{min-width:0}
+.home-def-v2__badge{display:inline-block;padding:7px 16px;border-radius:999px;background:#dbe9ff;color:var(--def-blue);font-size:13px;font-weight:800;letter-spacing:.12em}
+.home-def-v2 .home-def-v2__title{margin:16px 0 14px;font-size:clamp(34px,4.6vw,58px);line-height:1.08;font-weight:800;letter-spacing:-.02em;color:var(--def-navy)}
+.home-def-v2__title span{color:var(--def-blue)}
+.home-def-v2__lead,.home-def-v2__support{margin:0;font-size:clamp(15px,1.35vw,18px);line-height:1.75;color:var(--def-ink)}
+.home-def-v2__quote{position:relative;display:flex;gap:22px;align-items:center;margin:22px 0;padding:22px 28px;border-radius:22px;background:#fff;box-shadow:0 10px 30px rgba(23,103,229,.07)}
+.home-def-v2__quote-mark{flex:0 0 auto;font-family:Georgia,'Times New Roman',serif;font-size:88px;line-height:.6;height:44px;font-weight:700;color:var(--def-blue);transform:translateY(10px)}
+.home-def-v2__quote p{margin:0;font-size:clamp(16px,1.6vw,21px);line-height:1.55;font-weight:700;color:#0f3a82}
+.home-def-v2__note{display:flex;gap:14px;align-items:center;margin-top:22px;padding:16px 22px;border-radius:18px;background:#e2eefd}
+.home-def-v2__note-icon{flex:0 0 auto;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;border:2.5px solid var(--def-blue);color:var(--def-blue);font:800 15px/1 Georgia,serif}
+.home-def-v2__note p{margin:0;font-size:clamp(14px,1.2vw,16px);line-height:1.6;color:var(--def-ink)}
+.home-def-v2__note strong{color:var(--def-navy)}
+.home-def-v2__visual{position:relative;display:flex;flex-direction:column;align-items:center;min-width:0}
+.home-def-v2__slogan{position:relative;align-self:flex-end;margin:0 6% 4px 0;transform:rotate(-12deg)}
+.home-def-v2__slogan span{display:block;font-family:'Caveat Brush','Caveat','Segoe Script','Bradley Hand',cursive;font-size:clamp(30px,3.4vw,50px);line-height:.95;color:var(--def-navy);text-align:left}
+.home-def-v2__spark{position:absolute;width:44px;height:44px;fill:none;stroke:var(--def-orange);stroke-width:6;stroke-linecap:round}
+.home-def-v2__spark--left{left:-50px;top:46%}
+.home-def-v2__spark--right{right:-40px;top:-10px}
+.home-def-v2__spark--mascot{right:-6%;top:28%;width:52px;height:52px}
+.home-def-v2__heart{position:absolute;right:-48px;bottom:14%;width:34px;height:32px;fill:var(--def-orange);transform:rotate(14deg)}
+.home-def-v2__mascot-wrap{position:relative;width:min(100%,380px)}
+.home-def-v2__mascot-wrap::after{content:'';position:absolute;left:16%;right:10%;bottom:-2%;height:9%;border-radius:50%;background:radial-gradient(ellipse at center,rgba(12,42,91,.18),rgba(12,42,91,0) 70%);z-index:-1}
+.home-def-v2__mascot{display:block;width:100%;height:auto;filter:drop-shadow(0 18px 24px rgba(255,120,30,.18))}
+@media(max-width:900px){.home-def-v2{grid-template-columns:1fr}.home-def-v2__visual{order:-1;flex-direction:row;justify-content:center;gap:12px}.home-def-v2__slogan{align-self:center;margin:0}.home-def-v2__mascot-wrap{width:min(55%,240px)}.home-def-v2__spark--left,.home-def-v2__heart{display:none}}
+@media(max-width:520px){.home-def-v2__quote{padding:18px;gap:14px}.home-def-v2__quote-mark{font-size:64px;height:32px}.home-def-v2__slogan span{font-size:28px}}
+.home-def-v2 .home-def-v2__slogan span{font-family:'Caveat Brush','Caveat','Segoe Script','Bradley Hand',cursive!important;font-weight:400!important}
+.home-def-v2 .home-def-v2__quote-mark,.home-def-v2 .home-def-v2__note-icon{font-family:Georgia,'Times New Roman',serif!important}

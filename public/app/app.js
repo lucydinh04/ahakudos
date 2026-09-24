@@ -177,6 +177,7 @@ const state={
   mode:me().inMasterData===false&&BOOT.isAdmin?'admin':'employee',
   page:me().inMasterData===false&&BOOT.isAdmin?'admin-home':'employee-home',
   values:new Set(),
+  kudosType:'recognition',
   selectedTemplate:(BG.LIST[0]||{id:'wish'}).id,
   sendVisibility:'public', // Nhân viên luôn đề xuất CỘNG ĐỒNG KUDOS; Admin kiểm soát trước khi publish.
   prefillRecipient:'',
@@ -190,13 +191,17 @@ const state={
 
 let liveFeedTimer=null;
 
+// Colleagues' birthdays from Master Data: from 2 days ago up to 30 days ahead. Sending opens only within ±2 days.
 function birthdaySuggestionsFor(currentEmail){
- const now=new Date();const year=now.getFullYear();const start=new Date(year,now.getMonth(),now.getDate());
+ const now=new Date();const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
  return PEOPLE.filter(p=>p.email!==currentEmail&&/^\d{2}-\d{2}$/.test(p.birthday||'')).map(p=>{
+   const days=birthdayOffsetDays(p.birthday);if(days===null||days<-2||days>30)return null;
    const [mm,dd]=p.birthday.split('-').map(Number);
-   let next=new Date(year,mm-1,dd);if(next<start)next=new Date(year+1,mm-1,dd);
-   const days=Math.round((next-start)/86400000);if(days<0||days>30)return null;
-   return {initials:initials(p.name),name:p.name,dept:p.dept||'',section:p.section||'',email:p.email,date:String(dd).padStart(2,'0')+'/'+String(mm).padStart(2,'0'),when:days===0?'Hôm nay':days===1?'Ngày mai':'Còn '+days+' ngày',days};
+   const opens=new Date(today);opens.setDate(today.getDate()+days-2);
+   return {initials:initials(p.name),name:p.name,dept:p.dept||'',section:p.section||'',email:p.email,
+     date:String(dd).padStart(2,'0')+'/'+String(mm).padStart(2,'0'),
+     when:days===0?'Hôm nay':days===1?'Ngày mai':days===-1?'Hôm qua':days<0?(-days)+' ngày trước':'Còn '+days+' ngày',
+     days,canSend:Math.abs(days)<=2,opensLabel:String(opens.getDate()).padStart(2,'0')+'/'+String(opens.getMonth()+1).padStart(2,'0')};
  }).filter(Boolean).sort((a,b)=>a.days-b.days).slice(0,5);
 }
 // Background templates = 4 ảnh 3D thật (backgrounds.js). Fallback nếu module vắng.
@@ -211,6 +216,11 @@ function eventById(id){return (EVENTS_LIST||[]).find(e=>e.id===id)||null;}
 function recomputeActiveEvents(){const t=new Date().toISOString().slice(0,10);ACTIVE_EVENT_IDS=(EVENTS_LIST||[]).filter(e=>e.active&&(!e.from||t>=e.from)&&(!e.to||t<=e.to)).map(e=>e.id);}
 function activeEventTemplates(){return (EVENTS_LIST||[]).filter(e=>ACTIVE_EVENT_IDS.includes(e.id)).map(e=>({id:e.id,name:e.name,sticker:'🎁',event:true,url:e.url}));}
 function allTemplates(){return cardTemplates.concat(activeEventTemplates());}
+// KUDOS type is an explicit choice; each type shows only its own backgrounds.
+const KUDOS_TYPES=[{id:'recognition',label:'Đồng nghiệp',icon:'👥',hint:'Ghi nhận hành động, đóng góp của đồng nghiệp'},{id:'birthday',label:'Sinh nhật',icon:'🎂',hint:'(trong vòng 2 ngày trước/sau sinh nhật)'}];
+const BIRTHDAY_TEMPLATE_IDS=(BOOT.config&&BOOT.config.birthdayTemplateIds)||['birthday'];
+const BIRTHDAY_WINDOW_DAYS=Number(BOOT.config&&BOOT.config.birthdayWindowDays)||2;
+function typeTemplates(type){return type==='birthday'?allTemplates().filter(t=>BIRTHDAY_TEMPLATE_IDS.includes(t.id)):allTemplates().filter(t=>!BIRTHDAY_TEMPLATE_IDS.includes(t.id));}
 function templateMeta(id){return allTemplates().find(t=>t.id===id)||cardTemplates[0];}
 function bgFor(id){const e=eventById(id);if(e)return {id:e.id,name:e.name,sticker:'🎁',fallback:'#FFF3E6',url:e.url};return BG?BG.get(id):null;}
 
@@ -420,18 +430,28 @@ const recvCount=rec.length, noJourneyYet=sentCount===0&&recvCount===0;
   </div>
 
   <div class="home-handbook-grid">
-   <article id="home-about" class="home-handbook-feature">
-    <div class="home-handbook-badge">ĐỊNH NGHĨA</div>
-    <div class="home-definition-panel">
-     <div class="home-definition-copy">
-      <h2>AhaKudos là gì?</h2>
-      <p class="home-definition-lead"><strong>AHAKUDOS</strong> là nền tảng ghi nhận nội bộ của Ahamove, được xây dựng để giúp nhân viên dễ dàng gửi lời cảm ơn, ghi nhận những hành động tích cực và lan tỏa các giá trị văn hóa trong công việc hằng ngày.</p>
-      <div class="home-handbook-quote">Khi một đồng nghiệp làm điều gì đó có ý nghĩa, đóng góp ấy xứng đáng được nhìn thấy và trân trọng.</div>
-      <p class="home-definition-support">Đó có thể là khi một đồng nghiệp chủ động hỗ trợ bạn, giải quyết một vấn đề khó, chia sẻ kiến thức, đồng hành cùng team hoặc tạo ra một tác động tích cực.</p>
-      <div class="home-definition-note">AHAKUDOS là chương trình ghi nhận văn hóa và <strong>không thay thế hệ thống đánh giá hiệu suất</strong>.</div>
+   <article id="home-about" class="home-def-v2" aria-labelledby="home-def-title">
+    <span class="home-def-v2__blob home-def-v2__blob--top" aria-hidden="true"></span>
+    <span class="home-def-v2__blob home-def-v2__blob--right" aria-hidden="true"></span>
+    <span class="home-def-v2__blob home-def-v2__blob--corner" aria-hidden="true"></span>
+    <div class="home-def-v2__copy">
+     <span class="home-def-v2__badge">ĐỊNH NGHĨA</span>
+     <h2 id="home-def-title" class="home-def-v2__title">AhaKudos <span>là gì?</span></h2>
+     <p class="home-def-v2__lead">AHAKUDOS là nền tảng ghi nhận nội bộ của Ahamove, được xây dựng để giúp nhân viên dễ dàng gửi lời cảm ơn, ghi nhận những hành động tích cực và lan tỏa các giá trị văn hóa trong công việc hằng ngày.</p>
+     <blockquote class="home-def-v2__quote"><span class="home-def-v2__quote-mark" aria-hidden="true">“</span><p>Khi một đồng nghiệp làm điều gì đó có ý nghĩa, đóng góp ấy xứng đáng được nhìn thấy và trân trọng.</p></blockquote>
+     <p class="home-def-v2__support">Đó có thể là khi một đồng nghiệp chủ động hỗ trợ bạn, giải quyết một vấn đề khó, chia sẻ kiến thức, đồng hành cùng team hoặc tạo ra một tác động tích cực.</p>
+     <div class="home-def-v2__note"><span class="home-def-v2__note-icon" aria-hidden="true">i</span><p>AHAKUDOS là chương trình ghi nhận văn hóa và <strong>không thay thế hệ thống đánh giá hiệu suất.</strong></p></div>
+    </div>
+    <div class="home-def-v2__visual" aria-hidden="true">
+     <div class="home-def-v2__slogan">
+      <svg class="home-def-v2__spark home-def-v2__spark--left" viewBox="0 0 60 60"><path d="M6 20 L30 30 M8 44 L30 40" /></svg>
+      <span>Always<br>Moving<br>Together</span>
+      <svg class="home-def-v2__spark home-def-v2__spark--right" viewBox="0 0 60 60"><path d="M14 38 L38 12" /></svg>
+      <svg class="home-def-v2__heart" viewBox="0 0 32 30"><path d="M16 28C6 21 1 15.5 1 9.6 1 5 4.6 1.5 9 1.5c2.9 0 5.3 1.5 7 3.9 1.7-2.4 4.1-3.9 7-3.9 4.4 0 8 3.5 8 8.1C31 15.5 26 21 16 28Z"/></svg>
      </div>
-     <div class="home-definition-visual">
-      <img src="${BASE}/illustrations/definition-mascot-rider.png" alt="Mascot Ahamove ôm trái tim" class="home-definition-mascot">
+     <div class="home-def-v2__mascot-wrap">
+      <img src="${BASE}/illustrations/definition-mascot-star.png" alt="" class="home-def-v2__mascot" width="760" height="643" loading="lazy" data-hide-on-error>
+      <svg class="home-def-v2__spark home-def-v2__spark--mascot" viewBox="0 0 60 60"><path d="M22 8 L16 26 M40 18 L28 32 M50 34 L32 40" /></svg>
      </div>
     </div>
    </article>
@@ -490,7 +510,7 @@ const recvCount=rec.length, noJourneyYet=sentCount===0&&recvCount===0;
       <h3>Sinh nhật đồng nghiệp sắp tới</h3>
      </div>
     </div>
-    <div class="home-master-birthday-list">${birthdaySuggestions.length?birthdaySuggestions.slice(0,3).map(b=>`<div class="home-master-birthday-row"><div class="mini-avatar birthday-avatar">${b.initials}</div><div><b>${escapeHtml(b.name)}</b><span>${escapeHtml(b.dept||'')} · ${escapeHtml(b.when)} · ${escapeHtml(b.date)}</span></div><button data-birthday="${escapeHtml(b.email)}">Gửi lời chúc →</button></div>`).join(''):`<div class="home-master-empty">Chưa có sinh nhật nào trong 30 ngày tới theo Master Data.</div>`}</div>
+    <div class="home-master-birthday-list">${birthdaySuggestions.length?birthdaySuggestions.slice(0,3).map(b=>`<div class="home-master-birthday-row"><div class="mini-avatar birthday-avatar">${escapeHtml(b.initials)}</div><div><b>${escapeHtml(b.name)}</b><span>${escapeHtml(b.dept||'')} · ${escapeHtml(b.when)} · ${escapeHtml(b.date)}</span></div>${b.canSend?`<button data-birthday="${escapeHtml(b.email)}">Gửi lời chúc →</button>`:`<span class="home-master-birthday-soon">Gửi lời chúc từ ${escapeHtml(b.opensLabel)}</span>`}</div>`).join(''):`<div class="home-master-empty">Chưa có sinh nhật nào trong 30 ngày tới theo Master Data.</div>`}</div>
    </article>
 
    <article class="home-handbook-mini">
@@ -605,6 +625,12 @@ return `<section class="page active kudos-compose-page">
  <div class="hb-compose-steps" aria-label="Các bước gửi KUDOS"><span class="hb-step-intro">GỬI MỘT LỜI GHI NHẬN</span><ol><li><span>01</span>Người nhận & background</li><li><span>02</span>Nội dung KUDOS</li><li><span>03</span>Xem trước KUDOS</li><li><span>04</span>Gửi & chờ Admin duyệt</li></ol></div>
  <div class="form-layout kudos-compose-layout">
   <article class="card form-card kudos-compose-form">
+   <div class="field kudos-type-field">
+    <label id="kudos-type-label">Loại KUDOS</label>
+    <div class="kudos-type-switch" role="radiogroup" aria-labelledby="kudos-type-label">
+     ${KUDOS_TYPES.map(t=>`<button type="button" class="kudos-type-option ${state.kudosType===t.id?'selected':''}" role="radio" aria-checked="${state.kudosType===t.id}" data-kudos-type="${t.id}"><span class="kudos-type-icon" aria-hidden="true">${t.icon}</span><span><b>${t.label}</b><small>${escapeHtml(t.hint)}</small></span></button>`).join('')}
+    </div>
+   </div>
    <div class="field recipient-search-field">
     <label>Email người bạn muốn ghi nhận</label>
     <label class="recipient-mode-toggle"><input id="recipient-no-company-email" type="checkbox" ${state.manualRecipient?'checked':''}><span>Người nhận không có mail công ty</span></label>
@@ -624,17 +650,17 @@ return `<section class="page active kudos-compose-page">
       </div>
       <label for="recipient-manual-email">Email liên hệ</label>
       <input id="recipient-manual-email" class="input" type="email" autocomplete="off" placeholder="name@example.com">
+      <div id="recipient-manual-dob-wrap" class="recipient-manual-dob ${state.kudosType==='birthday'?'':'hidden'}"><label for="recipient-manual-dob">Ngày sinh người nhận</label><input id="recipient-manual-dob" class="input" type="date"><span class="field-hint">Bắt buộc với KUDOS Sinh nhật khi người nhận không có trong Master Data.</span></div>
       <span class="field-hint">Có thể nhập email ngoài @ahamove.com. KUDOS sẽ được đưa vào hàng chờ CỘNG ĐỒNG KUDOS; Admin là người duyệt trước khi hiển thị công khai.</span>
     </div>
+    <div id="birthday-status" class="birthday-status hidden" role="status" aria-live="polite"></div>
    </div>
    <div class="field template-field">
     <label id="background-picker-label">Chọn background cho KUDOS</label>
     <div class="bg-carousel">
      <button type="button" class="bg-nav prev" data-bg-nav="-1" aria-label="Xem các background trước">‹</button>
      <div class="template-gallery kudos-background-gallery" role="group" aria-labelledby="background-picker-label">
-      ${allTemplates().map((t,i)=>`<button type="button" class="template-option ${state.selectedTemplate===t.id?'selected':''}" data-template="${t.id}" aria-label="Background ${escapeHtml(t.name)}" aria-pressed="${state.selectedTemplate===t.id}">
-        <span class="template-thumb tpl-${t.id}" style="${BG?`background:${bgFor(t.id).fallback}`:''}">${BG?`<img class="art-img" src="${bgFor(t.id).url}" alt="" aria-hidden="true">`:(ART?ART.scene(t.id):`<i aria-hidden="true">${t.sticker}</i>`)}<span class="thumb-tick" aria-hidden="true">✓</span></span>
-      </button>`).join('')}
+      ${templateGalleryHtml()}
      </div>
      <button type="button" class="bg-nav next" data-bg-nav="1" aria-label="Xem các background tiếp theo">›</button>
     </div>
@@ -644,7 +670,7 @@ return `<section class="page active kudos-compose-page">
    <div class="compose-writing">
     <div class="field message-field">
      <label for="message">Nội dung KUDOS</label>
-     <div class="kudos-content-format" aria-label="Format nội dung KUDOS">
+     <div class="kudos-content-format ${state.kudosType==='birthday'?'hidden':''}" aria-label="Format nội dung KUDOS">
       <b>Format gợi ý cho một KUDOS:</b>
       <span><strong>01</strong> Hành động cụ thể bạn đã nhìn thấy</span>
       <span><strong>02</strong> Tác động hành động đó tạo ra</span>
@@ -653,7 +679,7 @@ return `<section class="page active kudos-compose-page">
      <textarea id="message" class="textarea" aria-describedby="count" placeholder="Ví dụ: Cảm ơn bạn đã chủ động hỗ trợ team xử lý gấp đầu việc trước deadline. Nhờ vậy cả team kịp tiến độ và tránh được một lỗi quan trọng. Mình rất trân trọng sự chủ động và tinh thần đồng đội của bạn."></textarea>
      <span class="field-hint" id="count">0 ký tự</span>
     </div>
-    <div class="coach" role="region" aria-label="Trợ lý viết nội dung KUDOS">
+    <div class="coach ${state.kudosType==='birthday'?'hidden':''}" role="region" aria-label="Trợ lý viết nội dung KUDOS">
      <div class="coach-head">
       <span class="coach-title"><span aria-hidden="true">✦</span> Trợ lý viết nội dung KUDOS</span>
       <span class="coach-live"><i aria-hidden="true"></i>Realtime</span>
@@ -672,7 +698,7 @@ return `<section class="page active kudos-compose-page">
     </div>
    </div>
 
-   <div class="field culture-field ${state.selectedTemplate==='birthday'?'hidden':''}" id="culture-field">
+   <div class="field culture-field ${state.kudosType==='birthday'?'hidden':''}" id="culture-field">
     <label id="culture-picker-label">Giá trị văn hóa <span class="optional-label">· chọn từ 1 đến 3</span></label>
     <div class="culture-picker" role="group" aria-labelledby="culture-picker-label">
      <button type="button" class="culture-chip ${state.values.has('fair')?'selected':''}" data-value="fair" aria-pressed="${state.values.has('fair')}">Công bằng & Tôn trọng</button>
@@ -1471,7 +1497,7 @@ function bindHandbookUI(){
  const adminPreview=document.querySelector('#admin-recognition-preview');
  if(adminPreview)adminPreview.addEventListener('click',()=>{document.querySelector('.admin-recognition-preview')?.scrollIntoView({behavior:'smooth',block:'start'});});
  document.querySelectorAll('[data-modal="rules"]').forEach(btn=>btn.addEventListener('click',()=>{
-  document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="hb-rules-title"><button class="modal-close" aria-label="Đóng">×</button><div class="kicker">GỬI KUDOS</div><h2 id="hb-rules-title">Quy tắc ghi nhận</h2><div class="rules"><div class="rule"><b>Người nhận</b><span>Tìm email Ahamove trong Master Data; nếu không có mail công ty, tick lựa chọn và nhập thông tin người nhận thủ công.</span></div><div class="rule"><b>Nội dung</b><span>Chia sẻ hành động cụ thể, tác động tạo ra và điều đáng ghi nhận.</span></div><div class="rule"><b>Giá trị văn hóa</b><span>Chọn từ 1 đến 3 Giá trị văn hóa phù hợp. Riêng KUDOS Sinh nhật không bắt buộc.</span></div><div class="rule"><b>Phạm vi</b><span>Mặc định được đề xuất lên CỘNG ĐỒNG KUDOS và chỉ hiển thị sau khi Admin duyệt.</span></div><div class="rule"><b>Hạn mức gửi</b><span>Mỗi nhân sự trong Master Data được gửi tối đa 5 KUDOS mỗi ngày.</span></div></div><button class="btn primary wide hb-rules-close">Đã hiểu</button></div></div>`;
+  document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="hb-rules-title"><button class="modal-close" aria-label="Đóng">×</button><div class="kicker">GỬI KUDOS</div><h2 id="hb-rules-title">Quy tắc ghi nhận</h2><div class="rules"><div class="rule"><b>Người nhận</b><span>Tìm email Ahamove trong Master Data; nếu không có mail công ty, tick lựa chọn và nhập thông tin người nhận thủ công.</span></div><div class="rule"><b>Nội dung</b><span>Chia sẻ hành động cụ thể, tác động tạo ra và điều đáng ghi nhận.</span></div><div class="rule"><b>Giá trị văn hóa</b><span>KUDOS Đồng nghiệp: chọn từ 1 đến 3 Giá trị văn hóa. KUDOS Sinh nhật: không bắt buộc, chỉ gửi được trong vòng 2 ngày trước/sau ngày sinh (theo Master Data, hoặc ngày sinh nhập tay nếu người nhận không có trong Master Data).</span></div><div class="rule"><b>Phạm vi</b><span>Mặc định được đề xuất lên CỘNG ĐỒNG KUDOS và chỉ hiển thị sau khi Admin duyệt.</span></div><div class="rule"><b>Hạn mức gửi</b><span>Mỗi nhân sự trong Master Data được gửi tối đa 5 KUDOS mỗi ngày.</span></div></div><button class="btn primary wide hb-rules-close">Đã hiểu</button></div></div>`;
   document.querySelectorAll('.modal-close,.hb-rules-close').forEach(b=>b.addEventListener('click',()=>document.querySelector('#modal-root').innerHTML=''));
  }));
 }
@@ -1502,7 +1528,7 @@ function bind(){
  if(state.page==='admin-events') bindAdminEvents();
  if((state.page==='admin-home'||state.page==='admin-dept'||state.page==='admin-culture')&&ADMIN.loaded) bindAdminFilters();
  document.querySelectorAll('[data-cta-route]').forEach(b=>b.addEventListener('click',()=>ctaGo(b.dataset.ctaRoute,b.dataset.ctaId)));
- document.querySelectorAll('[data-birthday]').forEach(b=>b.addEventListener('click',()=>{state.prefillRecipient=b.dataset.birthday;state.selectedRecipient=personByEmail(b.dataset.birthday)||null;state.selectedTemplate='birthday';state.page='send-kudos';render();toast('Đã chọn đồng nghiệp và mẫu Sinh nhật. Hãy viết lời chúc.');}));
+ document.querySelectorAll('[data-birthday]').forEach(b=>b.addEventListener('click',()=>{state.prefillRecipient=b.dataset.birthday;state.selectedRecipient=personByEmail(b.dataset.birthday)||null;state.kudosType='birthday';state.selectedTemplate=BIRTHDAY_TEMPLATE_IDS[0];state.page='send-kudos';render();toast('Đã chọn đồng nghiệp và mẫu Sinh nhật. Hãy viết lời chúc.');}));
  document.querySelectorAll('[data-avatar-edit]').forEach(b=>b.addEventListener('click',openAvatarEditor));
  bindHandbookUI();
 }
@@ -1585,6 +1611,7 @@ function updatePreview(){
  fitAllKudosCards(card);
 }
 function renderSelectedRecipient(employee){
+ syncCultureRequirement();
  const box=document.querySelector('#selected-recipient');if(!box)return;
  if(!employee){box.classList.add('hidden');box.innerHTML='';return;}
  box.innerHTML=`<div class="mini-avatar">${initials(employee.name)}</div><div class="sr-main"><b>${escapeHtml(employee.name)}</b><span>${escapeHtml(employee.email)} · ${escapeHtml(employee.dept)}</span></div><span class="recipient-ok">✓ Đã chọn</span><button type="button" class="sr-remove" id="recipient-remove" title="Đổi người nhận" aria-label="Bỏ chọn người nhận">×</button>`;
@@ -1611,11 +1638,63 @@ function runCoach(){
  const hint=document.querySelector('#ai-values');
  if(hint)hint.textContent=sug.length&&msg.value.trim()?'Gợi ý theo nội dung: '+sug.map(v=>CULTURE[v]).join(' · ')+' · Bạn luôn tự quyết định.':'Gợi ý sẽ được làm nổi nhẹ theo nội dung — bạn luôn là người tự chọn.';
 }
+function templateGalleryHtml(){
+ const list=typeTemplates(state.kudosType);
+ if(!list.some(t=>t.id===state.selectedTemplate))state.selectedTemplate=(list[0]||{id:'wish'}).id;
+ return list.map(t=>`<button type="button" class="template-option ${state.selectedTemplate===t.id?'selected':''}" data-template="${escapeHtml(t.id)}" aria-label="Background ${escapeHtml(t.name)}" aria-pressed="${state.selectedTemplate===t.id}">
+        <span class="template-thumb tpl-${escapeHtml(t.id)}" style="background:${bgFor(t.id).fallback}"><img class="art-img" src="${escapeHtml(bgFor(t.id).url)}" alt="" aria-hidden="true"><span class="thumb-tick" aria-hidden="true">✓</span></span>
+      </button>`).join('');
+}
+/** Signed days from today to the nearest occurrence of a MM-DD birthday. */
+function birthdayOffsetDays(md){
+ if(!/^\d{2}-\d{2}$/.test(md||''))return null;
+ const [mm,dd]=md.split('-').map(Number);const now=new Date();const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+ let best=null;
+ for(const y of [today.getFullYear()-1,today.getFullYear(),today.getFullYear()+1]){
+   let d=new Date(y,mm-1,dd);if(mm===2&&dd===29&&d.getMonth()!==1)d=new Date(y,1,28);
+   const off=Math.round((d-today)/86400000);if(best===null||Math.abs(off)<Math.abs(best))best=off;
+ }
+ return best;
+}
+function mdLabel(md){return md?md.slice(3,5)+'/'+md.slice(0,2):'';}
+/** Birthday rule (same as server): DOB from DATA, or typed when the recipient is not in DATA; within ±2 days. */
+function birthdayCheck(){
+ if(state.kudosType!=='birthday')return {ok:true,msg:''};
+ let md='',name='';
+ if(state.manualRecipient){
+   const v=(document.querySelector('#recipient-manual-dob')?.value||'').trim();md=/^\d{4}-\d{2}-\d{2}$/.test(v)?v.slice(5):'';
+   name=(document.querySelector('#recipient-manual-name')?.value||'').trim()||'người nhận';
+   if(!md)return {ok:false,msg:'Nhập ngày sinh của người nhận (người nhận không có trong Master Data).'};
+ }else{
+   const r=state.selectedRecipient&&personByEmail(state.selectedRecipient.email);
+   if(!r)return {ok:false,msg:'Chọn đồng nghiệp nhận lời chúc sinh nhật.',neutral:true};
+   name=r.name;md=r.birthday||'';
+   if(!md)return {ok:false,msg:'Master Data chưa có ngày sinh của '+name+'. Vui lòng liên hệ L&OD.'};
+ }
+ const off=birthdayOffsetDays(md);
+ if(off===null||Math.abs(off)>BIRTHDAY_WINDOW_DAYS)return {ok:false,msg:`Sinh nhật của ${name} là ${mdLabel(md)}. Chỉ gửi KUDOS Sinh nhật trong vòng ${BIRTHDAY_WINDOW_DAYS} ngày trước hoặc sau ngày sinh.`};
+ const when=off===0?'hôm nay':off>0?`còn ${off} ngày`:`${-off} ngày trước`;
+ return {ok:true,msg:`🎂 Sinh nhật của ${name}: ${mdLabel(md)} (${when}). Bạn có thể gửi lời chúc.`};
+}
+function cultureOptional(){return state.kudosType==='birthday';}
 function syncCultureRequirement(){
- const field=document.querySelector('#culture-field');const birthday=state.selectedTemplate==='birthday';
- if(birthday){state.values.clear();document.querySelectorAll('.culture-chip').forEach(c=>{c.classList.remove('selected','suggested');c.setAttribute('aria-pressed','false');});}
- if(field)field.classList.toggle('hidden',birthday);
- const hint=document.querySelector('#ai-values');if(hint&&birthday)hint.textContent='Sinh nhật không yêu cầu chọn Giá trị văn hóa.';
+ const optional=cultureOptional();
+ const birthday=state.kudosType==='birthday';
+ // KUDOS Sinh nhật: không cần Format gợi ý, Trợ lý viết nội dung và Giá trị văn hóa.
+ ['.kudos-content-format','.coach','#culture-field'].forEach(sel=>document.querySelector(sel)?.classList.toggle('hidden',birthday));
+ if(birthday&&state.values.size){state.values.clear();document.querySelectorAll('.culture-chip').forEach(c=>{c.classList.remove('selected','suggested');c.setAttribute('aria-pressed','false');});}
+ const msg=document.querySelector('#message');
+ if(msg)msg.placeholder=birthday?'Ví dụ: Chúc mừng sinh nhật bạn! Chúc bạn tuổi mới thật nhiều niềm vui, sức khỏe và những hành trình đáng nhớ cùng Ahamove.':'Ví dụ: Cảm ơn bạn đã chủ động hỗ trợ team xử lý gấp đầu việc trước deadline. Nhờ vậy cả team kịp tiến độ và tránh được một lỗi quan trọng. Mình rất trân trọng sự chủ động và tinh thần đồng đội của bạn.';
+ const label=document.querySelector('#culture-picker-label .optional-label');
+ if(label)label.textContent=optional?'· không bắt buộc với KUDOS Sinh nhật':'· chọn từ 1 đến 3';
+ const dobWrap=document.querySelector('#recipient-manual-dob-wrap');if(dobWrap)dobWrap.classList.toggle('hidden',state.kudosType!=='birthday');
+ const box=document.querySelector('#birthday-status');
+ if(box){
+   const c=birthdayCheck();
+   box.classList.toggle('hidden',state.kudosType!=='birthday'||!c.msg);
+   box.classList.toggle('is-ok',!!c.ok);box.classList.toggle('is-warn',!c.ok&&!c.neutral);
+   box.textContent=c.msg||'';
+ }
 }
 function bindSend(){
  const msg=document.querySelector('#message');
@@ -1636,7 +1715,7 @@ function bindSend(){
      if(emailInput)emailInput.value='';
      suggestions?.classList.add('hidden');renderSelectedRecipient(null);
      }
-   setVisibilityUi();updatePreview();runCoach();
+   setVisibilityUi();syncCultureRequirement();updatePreview();runCoach();
  }
  function syncPrefill(){if(state.manualRecipient||!emailInput)return;const exact=employees.find(e=>e.email.toLowerCase()===emailInput.value.trim().toLowerCase()&&e.email!==me().email);if(exact){state.selectedRecipient=exact;renderSelectedRecipient(exact);}}
  syncPrefill();applyRecipientMode(!!noCompany?.checked);
@@ -1656,7 +1735,17 @@ function bindSend(){
  });
  emailInput?.addEventListener('blur',()=>setTimeout(()=>{if(document.activeElement!==emailInput&&!suggestions?.contains(document.activeElement))suggestions?.classList.add('hidden');},150));
  msg.addEventListener('input',()=>{document.querySelector('#count').textContent=msg.value.trim().length+' ký tự';updatePreview();clearTimeout(coachTimer);coachTimer=setTimeout(runCoach,160);});
- document.querySelectorAll('[data-template]').forEach(c=>c.addEventListener('click',()=>{state.selectedTemplate=c.dataset.template;document.querySelectorAll('.template-option').forEach(x=>{x.classList.toggle('selected',x===c);x.setAttribute('aria-pressed',String(x===c));});syncCultureRequirement();updatePreview();}));
+ function bindTemplateGallery(){document.querySelectorAll('[data-template]').forEach(c=>c.addEventListener('click',()=>{state.selectedTemplate=c.dataset.template;document.querySelectorAll('.template-option').forEach(x=>{x.classList.toggle('selected',x===c);x.setAttribute('aria-pressed',String(x===c));});syncCultureRequirement();updatePreview();}));}
+ bindTemplateGallery();
+ document.querySelectorAll('[data-kudos-type]').forEach(b=>b.addEventListener('click',()=>{
+   if(state.kudosType===b.dataset.kudosType)return;
+   state.kudosType=b.dataset.kudosType;
+   document.querySelectorAll('[data-kudos-type]').forEach(x=>{const on=x===b;x.classList.toggle('selected',on);x.setAttribute('aria-checked',String(on));});
+   const g=document.querySelector('.kudos-background-gallery');if(g){g.innerHTML=templateGalleryHtml();g.scrollLeft=0;}
+   bindTemplateGallery();syncCultureRequirement();updatePreview();
+ }));
+ document.querySelector('#recipient-manual-dob')?.addEventListener('input',syncCultureRequirement);
+ document.querySelector('#recipient-manual-name')?.addEventListener('input',syncCultureRequirement);
  document.querySelectorAll('.culture-chip').forEach(c=>c.addEventListener('click',()=>{const v=c.dataset.value;if(state.values.has(v)){state.values.delete(v);c.classList.remove('selected')}else if(state.values.size<3){state.values.add(v);c.classList.add('selected')}c.setAttribute('aria-pressed',String(state.values.has(v)));updatePreview();}));
  document.querySelectorAll('[data-visibility]').forEach(btn=>btn.addEventListener('click',()=>{state.sendVisibility=btn.dataset.visibility;setVisibilityUi();updatePreview();}));
  const coachToggle=document.querySelector('#coach-toggle');
@@ -1691,9 +1780,12 @@ async function send(){
  }
  if(text.length<15||text.length>6000){toast('Nội dung KUDOS cần từ 15 đến 6.000 ký tự.');return;}
  if(QUOTA&&QUOTA.limit&&QUOTA.remaining<=0){toast('Bạn đã dùng đủ '+QUOTA.limit+' lượt gửi KUDOS hôm nay. Hạn mức được làm mới vào ngày mai.');return;}
- if(state.selectedTemplate!=='birthday'&&state.values.size===0){toast('Hãy chọn ít nhất 1 Giá trị văn hóa.');return;}
+ if(state.kudosType==='birthday'){const c=birthdayCheck();if(!c.ok){toast(c.msg);document.querySelector('#birthday-status')?.scrollIntoView({block:'center'});return;}}
+ if(!cultureOptional()&&state.values.size===0){toast('Hãy chọn ít nhất 1 Giá trị văn hóa.');document.querySelector('#culture-field')?.scrollIntoView({block:'center'});return;}
+ if(!typeTemplates(state.kudosType).some(t=>t.id===state.selectedTemplate)){toast('Chọn một background phù hợp với loại KUDOS.');return;}
  const first=sentBy(me().email).length===0;
- const payload={recipientEmail:recipient.email,recipientManual:!!recipient.manual,recipientName:recipient.name,recipientDept:recipient.dept,message:text,values:[...state.values],templateId:state.selectedTemplate,visibility:'public'};
+ const payload={kudosType:state.kudosType,recipientEmail:recipient.email,recipientManual:!!recipient.manual,recipientName:recipient.name,recipientDept:recipient.dept,message:text,values:[...state.values],templateId:state.selectedTemplate,visibility:'public'};
+ if(state.kudosType==='birthday'&&recipient.manual)payload.recipientBirthday=(document.querySelector('#recipient-manual-dob')?.value||'').trim();
  const fingerprint=JSON.stringify(payload);
  if(!window.__ahakudosPendingSend||window.__ahakudosPendingSend.fingerprint!==fingerprint)window.__ahakudosPendingSend={fingerprint,requestId:uid()};
  payload.requestId=window.__ahakudosPendingSend.requestId;
@@ -1701,7 +1793,7 @@ async function send(){
  try{
   const result=await rpc('taoKudos',payload);window.__ahakudosPendingSend=null;
   takeRecord(result.record);if(result.quota)QUOTA=result.quota;
-  state.prefillRecipient='';state.selectedRecipient=null;state.manualRecipient=false;state.values.clear();state.sendVisibility='public';
+  state.prefillRecipient='';state.selectedRecipient=null;state.manualRecipient=false;state.values.clear();state.sendVisibility='public';state.kudosType='recognition';state.selectedTemplate=(typeTemplates('recognition')[0]||{id:'wish'}).id;
   state.page='kudos-detail';state.viewKudosId=result.record.id;
   try{history.replaceState(null,'','#/k/'+result.record.id);}catch(e){}
   render();window.scrollTo(0,0);showSuccessBanner(result.record,first);
