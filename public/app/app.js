@@ -83,12 +83,12 @@ function publicFeedList(){return store.community;}
 async function refreshEmployeeData(){
  const d=await rpc('layTrangThai');
  BOOT=d;store.received=d.received||[];store.sent=d.sent||[];store.community=d.community||[];QUOTA=d.quota||QUOTA;
- EVENTS_LIST=d.events||[];ACTIVE_EVENT_IDS=d.activeEventIds||[];employeeStale=false;
+ CUSTOM_BGS=d.backgrounds||[];employeeStale=false;
 }
 async function loadAdminData(force){
  if(ADMIN.loading||(ADMIN.loaded&&!force))return;
  ADMIN.loading=true;ADMIN.error='';
- try{const d=await rpc('layDuLieuAdmin');Object.assign(ADMIN,{records:d.records||[],blacklist:d.blacklist||[],settings:d.settings||{},master:d.master||null,upcoming:d.upcoming||{birthdays:[],anniversaries:[]},health:d.health||{},loaded:true});}
+ try{const d=await rpc('layDuLieuAdmin');if(d.backgrounds)CUSTOM_BGS=d.backgrounds;Object.assign(ADMIN,{records:d.records||[],blacklist:d.blacklist||[],settings:d.settings||{},master:d.master||null,upcoming:d.upcoming||{birthdays:[],anniversaries:[]},health:d.health||{},loaded:true});}
  catch(e){ADMIN.error=e.message;console.error('[AhaKudos] admin data',e);}
  finally{ADMIN.loading=false;}
  if(state.mode==='admin')render();
@@ -209,20 +209,18 @@ const cardTemplates=(BG&&BG.LIST&&BG.LIST.length)
   ? BG.LIST.map(t=>({id:t.id,name:t.name,sticker:t.sticker}))
   : [{id:'warm',name:'Ấm áp',sticker:'💛'}];
 // Background theo sự kiện (Admin quản lý) — chỉ hiện sự kiện đang kích hoạt trong picker.
-let EVENTS_LIST=BOOT.events||[];
-let ACTIVE_EVENT_IDS=BOOT.activeEventIds||[];
-let editingEventId=null;
-function eventById(id){return (EVENTS_LIST||[]).find(e=>e.id===id)||null;}
-function recomputeActiveEvents(){const t=new Date().toISOString().slice(0,10);ACTIVE_EVENT_IDS=(EVENTS_LIST||[]).filter(e=>e.active&&(!e.from||t>=e.from)&&(!e.to||t<=e.to)).map(e=>e.id);}
-function activeEventTemplates(){return (EVENTS_LIST||[]).filter(e=>ACTIVE_EVENT_IDS.includes(e.id)).map(e=>({id:e.id,name:e.name,sticker:'🎁',event:true,url:e.url}));}
-function allTemplates(){return cardTemplates.concat(activeEventTemplates());}
+// Admin-uploaded backgrounds for special occasions (served privately via /api/background). Employees only render them.
+let CUSTOM_BGS=BOOT.backgrounds||[];
+function customBg(id){return CUSTOM_BGS.find(b=>b.id===id)||null;}
+function customBgTemplates(){return CUSTOM_BGS.filter(b=>b.status==='ACTIVE').map(b=>({id:b.id,name:b.name,sticker:'🎁',custom:true}));}
+function allTemplates(){return cardTemplates.slice();}
 // KUDOS type is an explicit choice; each type shows only its own backgrounds.
 const KUDOS_TYPES=[{id:'recognition',label:'Đồng nghiệp',icon:'👥',hint:'Ghi nhận hành động, đóng góp của đồng nghiệp'},{id:'birthday',label:'Sinh nhật',icon:'🎂',hint:'(trong vòng 2 ngày trước/sau sinh nhật)'}];
 const BIRTHDAY_TEMPLATE_IDS=(BOOT.config&&BOOT.config.birthdayTemplateIds)||['birthday'];
 const BIRTHDAY_WINDOW_DAYS=Number(BOOT.config&&BOOT.config.birthdayWindowDays)||2;
 function typeTemplates(type){return type==='birthday'?allTemplates().filter(t=>BIRTHDAY_TEMPLATE_IDS.includes(t.id)):allTemplates().filter(t=>!BIRTHDAY_TEMPLATE_IDS.includes(t.id));}
-function templateMeta(id){return allTemplates().find(t=>t.id===id)||cardTemplates[0];}
-function bgFor(id){const e=eventById(id);if(e)return {id:e.id,name:e.name,sticker:'🎁',fallback:'#FFF3E6',url:e.url};return BG?BG.get(id):null;}
+function templateMeta(id){return allTemplates().concat(customBgTemplates()).find(t=>t.id===id)||cardTemplates[0];}
+function bgFor(id){if(/^bg_[a-z0-9]{8,32}$/.test(String(id||''))){const c=customBg(id);return {id,name:c?c.name:'Background dịp đặc biệt',sticker:'🎁',fallback:'#FFF3E6',url:BASE+'/api/background?id='+encodeURIComponent(id)};}return BG?BG.get(id):null;}
 
 const icons={
 home:'<path d="M3 11.5 12 4l9 7.5"/><path d="M5 10.5V20h14v-9.5"/><path d="M9 20v-6h6v6"/>',
@@ -249,6 +247,19 @@ const logo=(light=true)=>`<img src="${light?A.logoLight:A.logoDark}" alt="Ahamov
 const kudosLogo=()=>`<img src="${A.kudosLogo||A.logoLight}" alt="Ahamove">`;
 const mascotIllustration=()=>`<img src="${A.mascotCutout||A.logoLight}" alt="Mascot Ahamove">`;
 
+// Admin navigation: 5 groups; pages inside a group are reached through sub-tabs.
+const ADMIN_NAV=[
+ {id:'admin-home',icon:'grid',label:'Tổng quan',tabs:[['admin-home','Tổng quan'],['admin-dept','Phòng ban'],['admin-culture','Giá trị văn hóa']]},
+ {id:'admin-quality',icon:'shield',label:'Duyệt nội dung',tabs:[['admin-quality','Duyệt nội dung']]},
+ {id:'admin-people',icon:'team',label:'Nhân viên',tabs:[['admin-people','Nhân viên']]},
+ {id:'admin-recognition',icon:'send',label:'Gửi AhaKudos',tabs:[['admin-recognition','Gửi AhaKudos'],['admin-ops','Sinh nhật & Thâm niên']]},
+ {id:'admin-notify',icon:'settings',label:'Cài đặt',tabs:[['admin-notify','Email thông báo'],['admin-words','Từ cấm']]}
+];
+function adminGroupOf(page){return ADMIN_NAV.find(g=>g.tabs.some(t=>t[0]===page))||ADMIN_NAV[0];}
+function adminSubtabs(){
+ const g=adminGroupOf(state.page);if(g.tabs.length<2)return '';
+ return `<nav class="admin-subtabs" aria-label="${escapeHtml(g.label)}">${g.tabs.map(([id,label])=>`<button type="button" class="admin-subtab ${state.page===id?'active':''}" data-page="${id}" ${state.page===id?'aria-current="page"':''}>${escapeHtml(label)}</button>`).join('')}</nav>`;
+}
 function sidebar(){
  const emp=[
   ['employee-home','home','Trang chủ'],
@@ -256,19 +267,14 @@ function sidebar(){
   ['public-feed','feed','CỘNG ĐỒNG KUDOS'],
   ['kudos-profile','profile','Hồ sơ KUDOS']
  ];
- const adm=[
-  ['admin-home','grid','Tổng quan'],
-  ['admin-notify','mail','Email thông báo'],
-  ['admin-recognition','send','Gửi AhaKudos'],
-  ['admin-quality','shield','Duyệt nội dung'],
-   ['admin-events','image','Nền sự kiện'],
-  ['admin-dept','team','Phòng ban'],
-  ['admin-culture','culture','Giá trị văn hóa'],
-  ['admin-ops','settings','Sinh nhật & Thâm niên']
- ];
+ const adm=ADMIN_NAV.map(g=>[g.id,g.icon,g.label]);
  const items=state.mode==='employee'?emp:adm;
- const active=(id)=>state.page===id||(id==='kudos-profile'&&state.page==='kudos-detail');
- const badge=(id)=>{if(id==='admin-notify'){const n=ADMIN.records.filter(k=>k.email&&k.email.status==='FAILED').length;return n?`<span class="nav-badge" aria-label="${n} email cần xử lý">${n>99?'99+':n}</span>`:'';}return '';};
+ const active=(id)=>state.mode==='admin'?adminGroupOf(state.page).id===id:(state.page===id||(id==='kudos-profile'&&state.page==='kudos-detail'));
+ const badge=(id)=>{
+  if(state.mode!=='admin')return '';
+  const n=id==='admin-quality'?ADMIN.records.filter(k=>modStatusOf(k)==='HELD').length:id==='admin-notify'?ADMIN.records.filter(k=>k.email&&k.email.status==='FAILED').length:0;
+  return n?`<span class="nav-badge" aria-label="${n} mục cần xử lý">${n>99?'99+':n}</span>`:'';
+ };
  return `<nav class="hb-nav" aria-label="${state.mode==='employee'?'Điều hướng AhaKudos':'Điều hướng quản trị'}">
   ${items.map(([id,ic,lb])=>`<button class="nav-btn ${active(id)?'active':''}" data-page="${id}" ${active(id)?'aria-current="page"':''}>${svg(ic)}<span>${lb}</span>${badge(id)}</button>`).join('')}
  </nav>`;
@@ -833,7 +839,10 @@ function kudosDetail(){
 // ---- Admin (giữ nguyên) ----------------------------------------------------
 // ---- Dashboard dữ liệu thật + lọc ngày + export CSV (feedback #4) ----
 let dashFrom='',dashTo='',dashDept='';
-function dashFiltered(){return (ADMIN.records||[]).filter(r=>{const d=(r.createdAt||'').slice(0,10);if(dashFrom&&d<dashFrom)return false;if(dashTo&&d>dashTo)return false;return true;});}
+// Dates in reports are Vietnam dates (createdAt is stored in UTC).
+function vnDay(v){const d=v instanceof Date?v:new Date(v||0);if(!isFinite(d.getTime()))return '';return new Date(d.getTime()+7*3600000).toISOString().slice(0,10);}
+function isApproved(k){return modStatusOf(k)==='APPROVED';}
+function dashFiltered(){return (ADMIN.records||[]).filter(r=>{const d=vnDay(r.createdAt);if(dashFrom&&d<dashFrom)return false;if(dashTo&&d>dashTo)return false;return true;});}
 function dashScoped(){return dashFiltered().filter(r=>!dashDept||r.recipientDept===dashDept);}
 function deptOptions(){var set={};(ADMIN.records||[]).forEach(r=>{if(r.recipientDept)set[r.recipientDept]=1;});return Object.keys(set).sort();}
 // Thanh lọc dùng chung: ngày (preset + tùy chọn) + phòng ban + xuất CSV. exportKey: 'kudos'|'dept'|'culture'.
@@ -870,8 +879,8 @@ function deptAgg(recs){
 }
 function csvEsc(v){const s=String(v==null?'':v).replace(/"/g,'""');return /[",\n\r]/.test(s)?`"${s}"`:s;}
 function downloadCsv(lines,prefix){try{const csv='﻿'+lines.join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=prefix+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},600);toast('Đã xuất CSV ('+(lines.length-1)+' dòng).');}catch(e){toast('Không xuất được CSV: '+e.message);}}
-function deptExportCsv(){const agg=deptAgg(dashScoped());const head=['Phong_ban','KUDOS_nhan','Nguoi_gui','Nguoi_nhan','Gia_tri_noi_bat'];const lines=[head.join(',')];agg.forEach(a=>lines.push([a.dept,a.received,a.senders,a.receivers,a.topCult].map(csvEsc).join(',')));downloadCsv(lines,'ahakudos_phongban_');}
-function cultureExportCsv(){const recs=dashScoped();const deptSet=[];recs.forEach(r=>{if(r.recipientDept&&deptSet.indexOf(r.recipientDept)<0)deptSet.push(r.recipientDept);});const head=['Phong_ban','Gan_ket_Cung_phat_trien','Hoc_hoi_Chia_se','Cong_bang_Ton_trong'];const lines=[head.join(',')];deptSet.forEach(d=>{const rr=recs.filter(x=>x.recipientDept===d);const c={fair:0,share:0,grow:0};rr.forEach(x=>(x.values||[]).forEach(v=>{if(c[v]!=null)c[v]++;}));lines.push([d,c.grow,c.share,c.fair].map(csvEsc).join(','));});downloadCsv(lines,'ahakudos_giatri_');}
+function deptExportCsv(){const agg=deptAgg(dashScoped().filter(isApproved));const head=['Phong_ban','KUDOS_nhan','Nguoi_gui','Nguoi_nhan','Gia_tri_noi_bat'];const lines=[head.join(',')];agg.forEach(a=>lines.push([a.dept,a.received,a.senders,a.receivers,a.topCult].map(csvEsc).join(',')));downloadCsv(lines,'ahakudos_phongban_');}
+function cultureExportCsv(){const recs=dashScoped().filter(isApproved);const deptSet=[];recs.forEach(r=>{if(r.recipientDept&&deptSet.indexOf(r.recipientDept)<0)deptSet.push(r.recipientDept);});const head=['Phong_ban','Gan_ket_Cung_phat_trien','Hoc_hoi_Chia_se','Cong_bang_Ton_trong'];const lines=[head.join(',')];deptSet.forEach(d=>{const rr=recs.filter(x=>x.recipientDept===d);const c={fair:0,share:0,grow:0};rr.forEach(x=>(x.values||[]).forEach(v=>{if(c[v]!=null)c[v]++;}));lines.push([d,c.grow,c.share,c.fair].map(csvEsc).join(','));});downloadCsv(lines,'ahakudos_giatri_');}
 function adminDataDashboard(){
  const recs=dashScoped();
  const uniq=(a)=>Array.from(new Set(a.filter(Boolean))).length;
@@ -881,8 +890,9 @@ function adminDataDashboard(){
  const held=recs.filter(r=>modStatusOf(r)==='HELD').length;
  const pub=recs.filter(r=>r.visibility==='public'&&r.publicConsent==='approved').length;
  const CULT={fair:'Công bằng & Tôn trọng',share:'Học hỏi & Chia sẻ',grow:'Gắn kết & Cùng phát triển'};
- const cultCount={fair:0,share:0,grow:0};recs.forEach(r=>(r.values||[]).forEach(v=>{if(cultCount[v]!=null)cultCount[v]++;}));
- const deptCount={};recs.forEach(r=>{const d=r.recipientDept||'—';deptCount[d]=(deptCount[d]||0)+1;});
+ const ok=recs.filter(isApproved); // charts count approved KUDOS only
+ const cultCount={fair:0,share:0,grow:0};ok.forEach(r=>(r.values||[]).forEach(v=>{if(cultCount[v]!=null)cultCount[v]++;}));
+ const deptCount={};ok.forEach(r=>{const d=r.recipientDept||'—';deptCount[d]=(deptCount[d]||0)+1;});
  const deptTop=Object.entries(deptCount).sort((a,b)=>b[1]-a[1]).slice(0,6);
  const maxDept=Math.max(1,...deptTop.map(d=>d[1]));
  const maxCult=Math.max(1,cultCount.fair,cultCount.share,cultCount.grow);
@@ -898,7 +908,7 @@ function adminDataDashboard(){
     .dash-bar-row b{color:var(--navy)}
     @media(max-width:820px){.dash-breakdown{grid-template-columns:1fr}}
    </style>
-   <div class="card-head"><div><div class="kicker">DỮ LIỆU THẬT · TỪ GOOGLE SHEET</div><h3>Tổng quan KUDOS</h3><div class="sub">Lọc theo thời gian tạo KUDOS (${rangeLabel})${dashDept?(' · '+escapeHtml(dashDept)):''}. Xuất CSV để làm báo cáo.</div></div></div>
+   <div class="card-head"><div><div class="kicker">DỮ LIỆU THẬT · TỪ GOOGLE SHEET</div><h3>Tổng quan KUDOS</h3><div class="sub">Lọc theo thời gian tạo KUDOS (${rangeLabel})${dashDept?(' · '+escapeHtml(dashDept)):''}. Ô số liệu tính mọi KUDOS; biểu đồ tính KUDOS đã duyệt. Xuất CSV để làm báo cáo.</div></div></div>
    ${filterBar('kudos')}
    <div class="metric-grid" style="margin-top:14px">
      ${tile('⌘','Tổng KUDOS',recs.length,rangeLabel==='toàn bộ'?'toàn bộ':'trong khoảng')}
@@ -931,23 +941,23 @@ function dashExportCsv(){
 }
 function bindAdminFilters(){
  document.querySelectorAll('[data-dash-preset]').forEach(b=>b.addEventListener('click',()=>{
-   const p=b.dataset.dashPreset,now=new Date(),iso=d=>d.toISOString().slice(0,10);
+   const p=b.dataset.dashPreset,today=vnDay(new Date());
    if(p==='all'){dashFrom='';dashTo='';}
-   else if(p==='month'){dashFrom=iso(new Date(now.getFullYear(),now.getMonth(),1));dashTo=iso(now);}
-   else{const days=parseInt(p,10),from=new Date(now);from.setDate(now.getDate()-days+1);dashFrom=iso(from);dashTo=iso(now);}
+   else if(p==='month'){dashFrom=today.slice(0,8)+'01';dashTo=today;}
+   else{const days=parseInt(p,10);dashFrom=vnDay(new Date(Date.now()-(days-1)*86400000));dashTo=today;}
    render();
  }));
  const apply=document.querySelector('#dash-apply');if(apply)apply.addEventListener('click',()=>{dashFrom=(document.querySelector('#dash-from').value||'');dashTo=(document.querySelector('#dash-to').value||'');const ds=document.querySelector('#dash-dept');if(ds)dashDept=ds.value;render();});
  const ds=document.querySelector('#dash-dept');if(ds)ds.addEventListener('change',()=>{dashDept=ds.value;render();});
- document.querySelectorAll('[data-export]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.export;if(k==='dept')deptExportCsv();else if(k==='culture')cultureExportCsv();else dashExportCsv();}));
+ document.querySelectorAll('[data-export]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.export;if(k==='people'){if(adminPerson)personExportCsv(adminPerson);else peopleExportCsv();}else if(k==='dept')deptExportCsv();else if(k==='culture')cultureExportCsv();else dashExportCsv();}));
 }
 function adminHome(){
  const gate=adminGate();if(gate)return gate;
  const recs=ADMIN.records;
- const agg=deptAgg(recs).slice(0,6);
+ const agg=deptAgg(recs.filter(isApproved)).slice(0,6);
  const maxR=Math.max(1,...agg.map(a=>a.received));
  const held=recs.filter(k=>modStatusOf(k)==='HELD');
- const cnt={fair:0,share:0,grow:0};recs.forEach(r=>(r.values||[]).forEach(v=>{if(cnt[v]!=null)cnt[v]++;}));
+ const cnt={fair:0,share:0,grow:0};recs.filter(isApproved).forEach(r=>(r.values||[]).forEach(v=>{if(cnt[v]!=null)cnt[v]++;}));
  const totalV=(cnt.fair+cnt.share+cnt.grow)||1;
  const up=ADMIN.upcoming||{birthdays:[],anniversaries:[]};
  const emailFailed=recs.filter(k=>k.email&&k.email.status==='FAILED').length;
@@ -961,7 +971,7 @@ function adminHome(){
  ${masterWarn}
  ${adminDataDashboard()}
  <div class="admin-grid">
-  <article class="card admin-card"><div class="card-head"><div><div class="kicker">PHÒNG BAN</div><h3>Mức độ được ghi nhận</h3><div class="sub">Theo số KUDOS nhận (toàn bộ dữ liệu).</div></div><button class="link-btn" data-page="admin-dept">Chi tiết →</button></div>
+  <article class="card admin-card"><div class="card-head"><div><div class="kicker">PHÒNG BAN</div><h3>Mức độ được ghi nhận</h3><div class="sub">Theo số KUDOS đã duyệt mà phòng ban nhận được.</div></div><button class="link-btn" data-page="admin-dept">Chi tiết →</button></div>
    <div class="table-wrap"><table><thead><tr><th>Phòng ban</th><th>KUDOS nhận</th><th>Người gửi</th><th>Người nhận</th></tr></thead><tbody>${agg.length?agg.map(a=>`<tr><td>${escapeHtml(a.dept)}</td><td><span class="bar"><i style="width:${Math.round(a.received/maxR*100)}%"></i></span>${a.received}</td><td>${a.senders}</td><td>${a.receivers}</td></tr>`).join(''):'<tr><td colspan="4" style="color:var(--muted);padding:14px">Chưa có dữ liệu.</td></tr>'}</tbody></table></div>
   </article>
   <article class="card admin-card"><div class="card-head"><div><div class="kicker">HÀNG CHỜ</div><h3>Nội dung cần duyệt (${held.length})</h3></div><button class="link-btn" data-page="admin-quality">Xem tất cả →</button></div>
@@ -980,12 +990,12 @@ function adminHome(){
 }
 function adminDept(){
  const gate=adminGate();if(gate)return gate;
- const recs=dashScoped();
+ const recs=dashScoped().filter(isApproved);
  const agg=deptAgg(recs);
  const maxR=Math.max(1,...agg.map(a=>a.received));
  const rows=agg.length?agg.map(a=>`<tr><td>${escapeHtml(a.dept)}</td><td><span class="bar"><i style="width:${Math.round(a.received/maxR*100)}%"></i></span>${a.received}</td><td>${a.senders}</td><td>${a.receivers}</td><td>${escapeHtml(a.topCult)}</td></tr>`).join(''):`<tr><td colspan="5" style="color:var(--muted);padding:14px">Chưa có dữ liệu trong khoảng lọc.</td></tr>`;
  return `<section class="page active">
-   <div class="page-head"><div><div class="kicker">THEO PHÒNG BAN</div><h1>Mức độ ghi nhận & tham gia</h1><p class="page-sub">Dữ liệu thật từ KUDOS. Lọc theo thời gian / phòng ban và xuất CSV để báo cáo.</p></div></div>
+   <div class="page-head"><div><div class="kicker">THEO PHÒNG BAN</div><h1>Mức độ ghi nhận & tham gia</h1><p class="page-sub">Chỉ tính KUDOS đã được Admin duyệt. Lọc theo thời gian / phòng ban và xuất CSV để báo cáo.</p></div></div>
    ${filterBar('dept')}
    <article class="card admin-card" style="padding:16px 18px;margin-top:14px"><div class="table-wrap"><table>
      <thead><tr><th>Phòng ban</th><th>KUDOS nhận</th><th>Người gửi</th><th>Người nhận</th><th>Giá trị nổi bật</th></tr></thead>
@@ -994,7 +1004,7 @@ function adminDept(){
 }
 function adminCulture(){
  const gate=adminGate();if(gate)return gate;
- const recs=dashScoped();
+ const recs=dashScoped().filter(isApproved);
  const CULT={grow:'Gắn kết & Cùng phát triển',share:'Học hỏi & Chia sẻ',fair:'Công bằng & Tôn trọng'};
  const cnt={fair:0,share:0,grow:0};recs.forEach(r=>(r.values||[]).forEach(v=>{if(cnt[v]!=null)cnt[v]++;}));
  const total=(cnt.fair+cnt.share+cnt.grow)||1;
@@ -1002,104 +1012,14 @@ function adminCulture(){
  const deptSet=[];recs.forEach(r=>{if(r.recipientDept&&deptSet.indexOf(r.recipientDept)<0)deptSet.push(r.recipientDept);});
  const rows=deptSet.length?deptSet.map(d=>{const rr=recs.filter(x=>x.recipientDept===d);const c={fair:0,share:0,grow:0};rr.forEach(x=>(x.values||[]).forEach(v=>{if(c[v]!=null)c[v]++;}));return `<tr><td>${escapeHtml(d)}</td><td>${c.grow}</td><td>${c.share}</td><td>${c.fair}</td></tr>`;}).join(''):`<tr><td colspan="4" style="color:var(--muted);padding:14px">Chưa có dữ liệu trong khoảng lọc.</td></tr>`;
  return `<section class="page active">
-   <div class="page-head"><div><div class="kicker">DỮ LIỆU VĂN HÓA</div><h1>Giá trị văn hóa đang được thể hiện</h1><p class="page-sub">Dữ liệu thật từ KUDOS (theo lượt chọn giá trị). Lọc theo thời gian / phòng ban và xuất CSV.</p></div></div>
+   <div class="page-head"><div><div class="kicker">DỮ LIỆU VĂN HÓA</div><h1>Giá trị văn hóa đang được thể hiện</h1><p class="page-sub">Chỉ tính KUDOS đã được Admin duyệt (theo lượt chọn giá trị). Lọc theo thời gian / phòng ban và xuất CSV.</p></div></div>
    ${filterBar('culture')}
    <article class="card admin-card" style="padding:16px 18px;margin-top:14px"><div class="card-head"><div><div class="kicker">TỶ TRỌNG</div><h3>Toàn công ty</h3></div></div><div class="culture-bars">${bars}</div></article>
    <article class="card admin-card" style="padding:16px 18px;margin-top:14px"><div class="card-head"><div><div class="kicker">THEO PHÒNG BAN</div><h3>Lượt giá trị theo phòng ban</h3></div></div><div class="table-wrap"><table><thead><tr><th>Phòng ban</th><th>Gắn kết & Cùng phát triển</th><th>Học hỏi & Chia sẻ</th><th>Công bằng & Tôn trọng</th></tr></thead><tbody>${rows}</tbody></table></div></article>
  </section>`;
 }
 
-function clientNormUrl(u){
- const s=String(u||'').trim();if(!s)return '';
- const m=s.match(/drive\.google\.com\/file\/d\/([A-Za-z0-9_-]{10,})/)||s.match(/[?&]id=([A-Za-z0-9_-]{10,})/);
- if(m&&/drive\.google\.com/.test(s))return 'https://lh3.googleusercontent.com/d/'+m[1];
- return /^https:\/\//i.test(s)?s:'';
-}
-function adminEvents(){
- const ev=editingEventId?eventById(editingEventId):null;
- const list=EVENTS_LIST||[];
- const today=new Date().toISOString().slice(0,10);
- const statusOf=(e)=>{if(!e.active)return {t:'Đang tắt',c:'#8390a3',b:'#eef1f5'};if(e.from&&today<e.from)return {t:'Chờ tới lịch',c:'#9a6e1d',b:'#fff4e3'};if(e.to&&today>e.to)return {t:'Hết hạn',c:'#8390a3',b:'#eef1f5'};return {t:'Đang chạy',c:'#2a8f5a',b:'#eaf8ef'};};
- const rows=list.length?list.map(e=>{const s=statusOf(e);return `<div class="ev-row">
-     <span class="ev-thumb" style="background-image:url('${escapeHtml(e.url)}')"></span>
-     <div class="ev-info"><b>${escapeHtml(e.name)}</b><div class="ev-meta"><span class="ev-status" style="color:${s.c};background:${s.b}">${s.t}</span>${(e.from||e.to)?`<span class="ev-dates">${escapeHtml(e.from||'…')} → ${escapeHtml(e.to||'…')}</span>`:''}</div>${e.note?`<div class="ev-note">${escapeHtml(e.note)}</div>`:''}</div>
-     <div class="ev-actions">
-       <button class="btn secondary" data-ev-toggle="${e.id}" data-on="${e.active?'':'1'}">${e.active?'Tắt':'Bật'}</button>
-       <button class="btn secondary" data-ev-edit="${e.id}">Sửa</button>
-       <button class="btn danger" data-ev-del="${e.id}">Xoá</button>
-     </div>
-   </div>`;}).join(''):`<div class="empty"><div class="icon">🖼️</div><h3>Chưa có sự kiện nào</h3><p>Thêm background theo dịp (Tết, sinh nhật, kỷ niệm…) để nhân viên chọn khi gửi Kudos.</p></div>`;
- const pUrl=ev?ev.url:'';
- return `<section class="page active">
-  <style>
-   .ev-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.82fr);gap:16px;align-items:start}
-   .ev-form .field{margin-bottom:14px}
-   .ev-form label{display:block;font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px}
-   .ev-check{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink)}
-   .ev-date-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-   .ev-preview{position:sticky;top:96px}
-   .ev-prev-kudos{width:100%;min-height:250px;border-radius:18px;background:#FFF3E6 center/cover no-repeat;border:1px solid var(--line);box-shadow:0 8px 22px rgba(23,58,94,.1);padding:18px;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
-   .ev-prev-kudos-card{width:min(92%,420px);background:rgba(255,255,255,.9);border-radius:16px;padding:18px;box-shadow:0 10px 25px rgba(23,58,94,.14)}
-   .ev-prev-kudos-card b{display:block;color:var(--navy);font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:9px}.ev-prev-kudos-card p{font-size:14px;line-height:1.7;color:var(--text);margin:0}.ev-prev-kudos-card span{display:inline-block;margin-top:10px;background:#EAF2FB;color:#2F6FB8;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:700}
-   .ev-hint{font-size:13px;color:var(--muted);line-height:1.7;margin-top:6px}
-   .ev-list{display:grid;gap:12px;margin-top:14px}
-   .ev-row{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:16px;padding:12px;background:#fff}
-   .ev-thumb{flex:0 0 auto;width:64px;height:64px;border-radius:14px;background:#FFF3E6 center/cover no-repeat}
-   .ev-info{flex:1;min-width:0}.ev-info b{font-size:14px;color:var(--navy)}
-   .ev-meta{display:flex;gap:8px;align-items:center;margin-top:5px;flex-wrap:wrap}
-   .ev-status{font-size:12px;font-weight:700;border-radius:999px;padding:4px 10px}
-   .ev-dates{font-size:12px;color:var(--muted)}.ev-note{font-size:12px;color:var(--muted);margin-top:4px}
-   .ev-actions{display:flex;gap:6px;flex-wrap:wrap}.ev-actions .btn{padding:8px 12px;font-size:13px}
-   @media(max-width:900px){.ev-layout{grid-template-columns:1fr}.ev-preview{position:static}.ev-row{flex-wrap:wrap}.ev-actions{width:100%;justify-content:flex-end}}
-  </style>
-  <div class="page-head"><div><div class="kicker">NỀN THEO SỰ KIỆN</div><h1>Quản lý background sự kiện</h1><p class="page-sub">Thêm template/background theo dịp bằng URL ảnh (hỗ trợ Google Drive “Bất kỳ ai có link”). Sự kiện đang bật + trong lịch sẽ hiện trong picker của nhân viên và trang chi tiết KUDOS. Email thông báo không dùng ảnh sự kiện.</p></div></div>
-  <div class="ev-layout">
-   <article class="card admin-card ev-form" style="padding:18px">
-     <div class="card-head"><div><div class="kicker">${ev?'SỬA SỰ KIỆN':'THÊM SỰ KIỆN'}</div><h3>${ev?escapeHtml(ev.name):'Sự kiện mới'}</h3></div>${ev?'<button class="link-btn" id="ev-cancel">+ Thêm mới</button>':''}</div>
-     <div class="field"><label>Tên sự kiện</label><input id="ev-name" class="input" maxlength="80" placeholder="VD: Tết 2026" value="${ev?escapeHtml(ev.name):''}"></div>
-     <div class="field"><label>URL ảnh nền (HTTPS hoặc Google Drive share link)</label><input id="ev-url" class="input" placeholder="https://… hoặc https://drive.google.com/file/d/…/view" value="${escapeHtml(pUrl)}"><div class="ev-hint">Drive: bấm Share → “Anyone with the link” → dán link. Hệ thống tự chuyển sang link hiển thị trực tiếp.</div></div>
-     <div class="ev-date-row">
-       <div class="field"><label>Từ ngày (tuỳ chọn)</label><input id="ev-from" class="input" type="date" value="${ev?escapeHtml(ev.from||''):''}"></div>
-       <div class="field"><label>Đến ngày (tuỳ chọn)</label><input id="ev-to" class="input" type="date" value="${ev?escapeHtml(ev.to||''):''}"></div>
-     </div>
-     <div class="field"><label>Ghi chú (tuỳ chọn)</label><input id="ev-note" class="input" maxlength="200" value="${ev?escapeHtml(ev.note||''):''}"></div>
-     <div class="field"><label class="ev-check"><input id="ev-active" type="checkbox" ${(!ev||ev.active)?'checked':''}> Kích hoạt (cho phép chọn ngay)</label></div>
-     <div class="form-actions" style="display:flex;gap:8px;justify-content:flex-end"><button class="btn primary" id="ev-save" data-id="${ev?ev.id:''}">${ev?'Lưu thay đổi':'Thêm sự kiện'}</button></div>
-   </article>
-   <aside class="card admin-card ev-preview" style="padding:18px">
-     <div class="card-head"><div><div class="kicker">XEM TRƯỚC</div><h3>Đồng bộ phía nhân viên & email</h3></div></div>
-     <div class="ev-prev-kudos" id="ev-prev" style="${pUrl?`background-image:url('${escapeHtml(pUrl)}')`:''}">
-       <div class="ev-prev-kudos-card"><b>Lời ghi nhận dành cho bạn</b><p>Cảm ơn bạn đã chủ động hỗ trợ team hoàn thành công việc đúng hạn. Đây là nội dung mẫu để xem background.</p><span>Gắn kết & Cùng phát triển</span></div>
-     </div>
-     <div class="ev-hint">Preview KUDOS giống màn người nhận: nội dung nằm trên background sự kiện đã chọn.</div>
-   </aside>
-  </div>
-  <article class="card admin-card" style="padding:16px 18px;margin-top:14px"><div class="card-head"><div><div class="kicker">DANH SÁCH</div><h3>Sự kiện (${list.length})</h3></div></div>
-   <div class="ev-list">${rows}</div>
-  </article>
- </section>`;
-}
-function bindAdminEvents(){
- const prev=document.querySelector('#ev-prev');const urlIn=document.querySelector('#ev-url');
- if(urlIn&&prev)urlIn.addEventListener('input',()=>{const u=clientNormUrl(urlIn.value);prev.style.backgroundImage=u?`url('${u}')`:'';});
- const cancel=document.querySelector('#ev-cancel');if(cancel)cancel.addEventListener('click',()=>{editingEventId=null;render();});
- const save=document.querySelector('#ev-save');
- if(save)save.addEventListener('click',async()=>{
-   const payload={id:save.dataset.id||'',name:document.querySelector('#ev-name').value.trim(),url:document.querySelector('#ev-url').value.trim(),from:document.querySelector('#ev-from').value,to:document.querySelector('#ev-to').value,note:document.querySelector('#ev-note').value.trim(),active:document.querySelector('#ev-active').checked};
-   if(!payload.name){toast('Nhập tên sự kiện.');return;}
-   if(!clientNormUrl(payload.url)){toast('URL ảnh chưa hợp lệ (cần HTTPS hoặc Drive link).');return;}
-   save.disabled=true;
-   try{const res=await rpc('luuEvent',payload);EVENTS_LIST=res.events||[];recomputeActiveEvents();editingEventId=null;toast(res.notice||'Đã lưu.');render();}catch(e){save.disabled=false;toast(e.message);}
- });
- document.querySelectorAll('[data-ev-edit]').forEach(b=>b.addEventListener('click',()=>{editingEventId=b.dataset.evEdit;render();window.scrollTo(0,0);}));
- document.querySelectorAll('[data-ev-del]').forEach(b=>b.addEventListener('click',async()=>{
-   if(!window.confirm('Xoá sự kiện này? Kudos đã gửi vẫn giữ nền của chúng.'))return;
-   b.disabled=true;try{const res=await rpc('xoaEvent',b.dataset.evDel);EVENTS_LIST=res.events||[];recomputeActiveEvents();if(editingEventId===b.dataset.evDel)editingEventId=null;toast(res.notice||'Đã xoá.');render();}catch(e){b.disabled=false;toast(e.message);}
- }));
- document.querySelectorAll('[data-ev-toggle]').forEach(b=>b.addEventListener('click',async()=>{
-   b.disabled=true;try{const res=await rpc('datEventKichHoat',b.dataset.evToggle,b.dataset.on==='1');EVENTS_LIST=res.events||[];recomputeActiveEvents();toast(res.notice||'Đã cập nhật.');render();}catch(e){b.disabled=false;toast(e.message);}
- }));
-}
+let modFilter='HELD';
 function adminQuality(){
  const gate=adminGate();if(gate)return gate;
  const held=ADMIN.records.filter(k=>modStatusOf(k)==='HELD');
@@ -1111,19 +1031,23 @@ function adminQuality(){
     <div class="mod-item-head">
       <div class="mini-avatar">${escapeHtml(initials(k.senderName))}</div>
       <div class="mod-item-who"><b>${escapeHtml(k.senderName||'Đồng nghiệp')}</b><span>${escapeHtml(k.senderDept||'')} → ${escapeHtml(k.recipientName||'')}</span></div>
-      <span class="mod-flag">Chờ Admin duyệt</span>
+      <span class="mod-flag">${({HELD:'Chờ Admin duyệt',APPROVED:'Đã duyệt',HIDDEN:'Đã ẩn'})[modStatusOf(k)]||''}${k.sentAtLabel?' · '+escapeHtml(k.sentAtLabel):''}</span>
     </div>
     <div class="mod-reasons">${reasons.map(r=>`<span class="mod-reason-chip">⚑ ${escapeHtml(r)}</span>`).join('')||'<span class="mod-reason-chip">Chờ Admin duyệt</span>'}</div><div class="mod-scope-control"><span>Phạm vi:</span><button class="btn secondary ${k.visibility==='private'?'active':''}" data-mod-scope="private" data-kid="${k.id}">Riêng tư</button><button class="btn secondary ${k.visibility==='public'?'active':''}" data-mod-scope="public" data-kid="${k.id}">CỘNG ĐỒNG KUDOS</button></div>
     <div class="mod-msg">${escapeHtml(k.message||'').replace(/\r?\n/g,'<br>')}</div>
+    ${modStatusOf(k)==='HIDDEN'&&k.moderation&&k.moderation.hiddenReason?`<div class="mod-reasons"><span class="mod-reason-chip">Lý do ẩn: ${escapeHtml(k.moderation.hiddenReason)}</span></div>`:''}
     <div class="mod-actions">
       <button class="btn secondary" data-mod-detail="${k.id}">Xem chi tiết KUDOS</button><button class="btn secondary" data-mod-preview="${k.id}">Xem email</button>
-      <button class="btn secondary" data-mod-edit="${k.id}">Sửa</button>
-      <button class="btn danger" data-mod-hide="${k.id}">Ẩn</button>
-      <button class="btn primary" data-mod-approve="${k.id}">Duyệt & gửi</button>
+      ${modStatusOf(k)!=='APPROVED'?`<button class="btn secondary" data-mod-edit="${k.id}">Sửa</button>`:''}
+      ${modStatusOf(k)!=='HIDDEN'?`<button class="btn danger" data-mod-hide="${k.id}">Ẩn</button>`:''}
+      ${modStatusOf(k)==='HELD'?`<button class="btn primary" data-mod-approve="${k.id}">Duyệt & gửi</button>`:modStatusOf(k)==='HIDDEN'?`<button class="btn primary" data-mod-approve="${k.id}">Duyệt lại</button>`:''}
     </div>
   </div>`;
  };
- const heldHtml=held.length?held.map(card).join(''):`<div class="empty"><div class="icon">✅</div><h3>Không có KUDOS nào chờ duyệt</h3><p>Mọi KUDOS mới đều chờ Admin duyệt. Khi Admin duyệt, email mới được gửi và CỘNG ĐỒNG KUDOS mới được publish.</p></div>`;
+ const lists={HELD:held,APPROVED:approved,HIDDEN:hidden};
+ const shown=lists[modFilter]||held;
+ const emptyText={HELD:'Không có KUDOS nào chờ duyệt. Khi Admin duyệt, email mới được gửi và CỘNG ĐỒNG KUDOS mới được publish.',APPROVED:'Chưa có KUDOS nào được duyệt.',HIDDEN:'Không có KUDOS nào bị ẩn.'}[modFilter];
+ const heldHtml=shown.length?shown.slice(0,200).map(card).join(''):`<div class="empty"><div class="icon">✅</div><h3>Không có mục nào</h3><p>${emptyText}</p></div>`;
  return `<section class="page active">
   <style>
    .mod-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
@@ -1145,17 +1069,11 @@ function adminQuality(){
 </style>
   ${bannerHero('ai_review')}
   <div class="page-head"><div><div class="kicker">ADMIN CONTROL</div><h1>Admin duyệt toàn bộ KUDOS</h1><p class="page-sub">Mọi KUDOS đều được giữ tại đây trước khi gửi email. Admin có thể xem chi tiết, chỉnh nội dung, chọn Riêng tư hoặc CỘNG ĐỒNG KUDOS, rồi mới Duyệt & gửi.</p></div></div>
-  <div class="mod-stat-row">
-   <div class="mod-stat"><span>Chờ duyệt</span><strong>${held.length}</strong></div>
-   <div class="mod-stat"><span>Đã duyệt</span><strong>${approved.length}</strong></div>
-   <div class="mod-stat"><span>Đã ẩn</span><strong>${hidden.length}</strong></div>
+  <div class="mod-stat-row" role="tablist" aria-label="Lọc theo trạng thái">
+   ${[['HELD','Chờ duyệt',held.length],['APPROVED','Đã duyệt',approved.length],['HIDDEN','Đã ẩn',hidden.length]].map(([id,label,n])=>`<button type="button" role="tab" aria-selected="${modFilter===id}" class="mod-stat mod-stat-tab ${modFilter===id?'active':''}" data-mod-filter="${id}"><span>${label}</span><strong>${n}</strong></button>`).join('')}
   </div>
-  <article class="card admin-card" style="padding:16px 18px"><div class="card-head"><div><div class="kicker">HÀNG CHỜ</div><h3>Chờ duyệt (${held.length})</h3></div></div>
+  <article class="card admin-card" style="padding:16px 18px"><div class="card-head"><div><div class="kicker">${({HELD:'HÀNG CHỜ',APPROVED:'ĐÃ DUYỆT',HIDDEN:'ĐÃ ẨN'})[modFilter]}</div><h3>${({HELD:'Chờ duyệt',APPROVED:'Đã duyệt',HIDDEN:'Đã ẩn'})[modFilter]} (${shown.length})</h3>${shown.length>200?'<div class="sub">Hiển thị 200 KUDOS mới nhất.</div>':''}</div></div>
    <div class="mod-list">${heldHtml}</div>
-  </article>
-  <article class="card admin-card" style="padding:16px 18px;margin-top:14px"><div class="card-head"><div><div class="kicker">CẤU HÌNH</div><h3>Danh sách từ cấm (${ADMIN.blacklist.length})</h3><div class="sub">Mỗi từ/cụm một dòng, hoặc ngăn bằng dấu phẩy. KUDOS chứa từ này sẽ được giữ lại để duyệt.</div></div></div>
-   <textarea id="mod-blacklist" class="textarea" style="min-height:120px;margin-top:10px">${escapeHtml(ADMIN.blacklist.join('\n'))}</textarea>
-   <div class="form-actions" style="margin-top:10px;display:flex;justify-content:flex-end"><button class="btn primary" id="mod-blacklist-save">Lưu danh sách</button></div>
   </article>
  </section>`;
 }
@@ -1200,15 +1118,180 @@ function bindAdminQuality(){
   if(reason===null)return;
   b.disabled=true;try{const res=await rpc('anKudos',b.dataset.modHide,reason);takeAdminRecord(res.record);toast(res.notice||'Đã ẩn.');render();}catch(e){b.disabled=false;toast(e.message);}
  }));
+ document.querySelectorAll('[data-mod-filter]').forEach(b=>b.addEventListener('click',()=>{modFilter=b.dataset.modFilter;render();}));
+}
+// ---- Admin: Nhân viên — số liệu và chi tiết KUDOS theo từng người ----
+let peopleQuery='',peopleSort='sent',adminPerson='',personTab='received';
+function peopleStats(){
+ const recs=dashFiltered(),map={};
+ const row=(email,name,dept)=>{const k=String(email||'').toLowerCase();if(!k)return null;if(!map[k]){const p=personByEmail(k);map[k]={email:k,name:p?p.name:(name||k),dept:p?p.dept:(dept||''),section:p?p.section:'',inData:!!p,sent:0,sentOk:0,received:0,receivedOk:0,held:0,last:''};}return map[k];};
+ PEOPLE.forEach(p=>row(p.email,p.name,p.dept));
+ recs.forEach(k=>{
+  const ok=isApproved(k),held=modStatusOf(k)==='HELD';
+  const s=k.senderEmail?row(k.senderEmail,k.senderName,k.senderDept):null;
+  if(s){s.sent++;if(ok)s.sentOk++;if(held)s.held++;if(k.createdAt>s.last)s.last=k.createdAt;}
+  const r=row(k.recipientEmail,k.recipientName,k.recipientDept);
+  if(r){r.received++;if(ok)r.receivedOk++;if(k.createdAt>r.last)r.last=k.createdAt;}
+ });
+ return Object.values(map);
+}
+function fmtDateTime(iso){if(!iso)return '—';const d=new Date(iso);return isFinite(d.getTime())?d.toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';}
+function peopleFiltered(){
+ const q=normalizeSearch(peopleQuery);
+ let list=peopleStats().filter(p=>(!dashDept||p.dept===dashDept)&&(!q||normalizeSearch(p.name+' '+p.email+' '+p.dept+' '+p.section).includes(q)));
+ const by={sent:(a,b)=>b.sent-a.sent||b.received-a.received,received:(a,b)=>b.received-a.received||b.sent-a.sent,recent:(a,b)=>String(b.last).localeCompare(String(a.last)),name:(a,b)=>a.name.localeCompare(b.name,'vi')}[peopleSort];
+ return list.sort(by||((a,b)=>0));
+}
+function normalizeSearch(s){return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/gi,'d').toLowerCase().trim();}
+function peopleRowsHtml(list){
+ return list.slice(0,300).map(p=>`<tr class="people-row" data-person="${escapeHtml(p.email)}" tabindex="0" role="button" aria-label="Xem chi tiết ${escapeHtml(p.name)}">
+   <td><div class="people-cell"><div class="mini-avatar">${escapeHtml(initials(p.name))}</div><div><b>${escapeHtml(p.name)}</b><span>${escapeHtml(p.email)}${p.inData?'':' · ngoài Master Data'}</span></div></div></td>
+   <td>${escapeHtml(p.dept||'—')}${p.section?`<span class="people-sub">${escapeHtml(p.section)}</span>`:''}</td>
+   <td><b>${p.sentOk}</b><span class="people-sub">/${p.sent} đã gửi</span></td>
+   <td><b>${p.receivedOk}</b><span class="people-sub">/${p.received} đã nhận</span></td>
+   <td>${p.held?`<span class="status-pill status-pending"><i></i>${p.held}</span>`:'—'}</td>
+   <td>${escapeHtml(fmtDateTime(p.last))}</td>
+   <td class="people-go">Chi tiết →</td>
+ </tr>`).join('')||'<tr><td colspan="7" style="color:var(--muted);padding:16px">Không có nhân viên phù hợp.</td></tr>';
+}
+function adminPeople(){
+ const gate=adminGate();if(gate)return gate;
+ if(adminPerson)return adminPersonDetail(adminPerson);
+ const all=peopleStats(),list=peopleFiltered();
+ const active=all.filter(p=>p.sent||p.received).length,senders=all.filter(p=>p.sent).length,receivers=all.filter(p=>p.received).length;
+ const inData=all.filter(p=>p.inData).length;
+ const tile=(ic,label,val,sub)=>`<article class="metric"><div class="metric-icon">${ic}</div><span>${label}</span><strong>${val}</strong><em>${sub||''}</em></article>`;
+ return `<section class="page active">
+  <div class="page-head"><div><div class="kicker">NHÂN VIÊN</div><h1>Hoạt động KUDOS theo từng nhân viên</h1><p class="page-sub">Số đậm là KUDOS đã được duyệt; số nhỏ là tổng đã tạo trong khoảng lọc. Bấm vào một người để xem chi tiết.</p></div></div>
+  ${filterBar('people')}
+  <div class="metric-grid" style="margin-top:14px">
+   ${tile('👥','Nhân viên trong Master Data',inData,'tab DATA')}
+   ${tile('✦','Có hoạt động',active,inData?Math.round(active/inData*100)+'% nhân viên':'')}
+   ${tile('→','Đã gửi KUDOS',senders,'người')}
+   ${tile('★','Đã nhận KUDOS',receivers,'người')}
+  </div>
+  <article class="card admin-card" style="padding:16px 18px;margin-top:14px">
+   <div class="people-toolbar">
+    <div class="search people-search"><input id="people-search" class="input" placeholder="Tìm theo tên, email, phòng ban…" value="${escapeHtml(peopleQuery)}" autocomplete="off" aria-label="Tìm nhân viên">${svg('search')}</div>
+    <label class="people-sort">Sắp xếp <select id="people-sort" class="select">${[['sent','Gửi nhiều nhất'],['received','Nhận nhiều nhất'],['recent','Hoạt động gần nhất'],['name','Tên A → Z']].map(([v,l])=>`<option value="${v}" ${peopleSort===v?'selected':''}>${l}</option>`).join('')}</select></label>
+   </div>
+   <div class="table-wrap"><table class="people-table"><thead><tr><th>Nhân viên</th><th>Phòng ban</th><th>Đã gửi</th><th>Đã nhận</th><th>Chờ duyệt</th><th>Hoạt động gần nhất</th><th></th></tr></thead>
+    <tbody id="people-tbody">${peopleRowsHtml(list)}</tbody></table></div>
+   <p class="sub" id="people-count">${list.length>300?'Hiển thị 300 / '+list.length+' nhân viên — dùng ô tìm kiếm để thu hẹp.':list.length+' nhân viên'}</p>
+  </article>
+ </section>`;
+}
+function adminPersonDetail(email){
+ const st=peopleStats().find(p=>p.email===email)||{email,name:email,dept:'',section:'',inData:false,sent:0,sentOk:0,received:0,receivedOk:0,held:0,last:''};
+ const recs=dashFiltered();
+ const sent=recs.filter(k=>k.senderEmail===email),received=recs.filter(k=>k.recipientEmail===email);
+ const valCount=list=>{const c={fair:0,share:0,grow:0};list.filter(isApproved).forEach(k=>(k.values||[]).forEach(v=>{if(c[v]!=null)c[v]++;}));return c;};
+ const bars=c=>{const t=(c.fair+c.share+c.grow)||1;return ['grow','share','fair'].map(v=>`<div class="culture-item"><div class="culture-bar-head"><span>${CULTURE[v]}</span><b>${c[v]}</b></div><div class="culture-line"><i style="width:${Math.round(c[v]/t*100)}%"></i></div></div>`).join('');};
+ const top=(list,key)=>{const m={};list.filter(isApproved).forEach(k=>{const n=k[key];if(n)m[n]=(m[n]||0)+1;});return Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,3);};
+ const pill=k=>{const st=modStatusOf(k);return `<span class="status-pill ${st==='APPROVED'?'status-public':st==='HELD'?'status-pending':'status-private'}"><i></i>${({HELD:'Chờ duyệt',APPROVED:'Đã duyệt',HIDDEN:'Đã ẩn'})[st]}</span>`;};
+ const item=(k,dir)=>`<div class="person-kudos">
+   <div class="person-kudos-head"><div><b>${dir==='in'?'Từ '+escapeHtml(k.senderName||''):'Gửi '+escapeHtml(k.recipientName||'')}</b><span>${escapeHtml(dir==='in'?k.senderDept||'':k.recipientDept||'')} · ${escapeHtml(fmtDateTime(k.createdAt))} · ${k.kudosType==='birthday'?'🎂 Sinh nhật':'👥 Đồng nghiệp'}</span></div>${pill(k)}</div>
+   <p>${escapeHtml(k.message||'')}</p>
+   <div class="person-kudos-foot"><div class="value-tags">${(k.values||[]).map(v=>`<span>${escapeHtml(CULTURE[v]||v)}</span>`).join('')}</div><button class="link-btn" data-mod-detail="${escapeHtml(k.id)}">Xem thiệp →</button></div>
+ </div>`;
+ const list=personTab==='sent'?sent:received;
+ const tile=(label,val,sub)=>`<article class="metric"><span>${label}</span><strong>${val}</strong><em>${sub||''}</em></article>`;
+ const topSenders=top(received,'senderName'),topRecipients=top(sent,'recipientName');
+ return `<section class="page active">
+  <button class="kd-back" data-person-back>← Danh sách nhân viên</button>
+  <div class="person-head card admin-card">
+   <div class="person-avatar">${escapeHtml(initials(st.name))}</div>
+   <div class="person-id"><h1>${escapeHtml(st.name)}</h1><p>${escapeHtml(st.email)}${st.dept?' · '+escapeHtml(st.dept):''}${st.section?' · '+escapeHtml(st.section):''}${st.inData?'':' · <b>ngoài Master Data</b>'}</p></div>
+   <button class="btn secondary" data-person-export="${escapeHtml(email)}">⬇ Xuất CSV</button>
+  </div>
+  ${filterBar('people')}
+  <div class="metric-grid" style="margin-top:14px">
+   ${tile('Đã gửi (đã duyệt)',st.sentOk,st.sent+' KUDOS đã tạo')}
+   ${tile('Đã nhận (đã duyệt)',st.receivedOk,st.received+' KUDOS gửi tới')}
+   ${tile('Chờ duyệt',st.held,'KUDOS người này gửi')}
+   ${tile('Hoạt động gần nhất',escapeHtml(fmtDateTime(st.last).split(' ')[0]||'—'),'')}
+  </div>
+  <div class="admin-grid" style="margin-top:14px">
+   <article class="card admin-card"><div class="card-head"><div><div class="kicker">GIÁ TRỊ ĐƯỢC GHI NHẬN</div><h3>Qua KUDOS đã nhận</h3></div></div><div class="culture-bars">${bars(valCount(received))}</div>
+    <div class="person-top"><b>Được ghi nhận nhiều nhất bởi</b>${topSenders.length?topSenders.map(([n,c])=>`<span>${escapeHtml(n)} · ${c}</span>`).join(''):'<span>—</span>'}</div></article>
+   <article class="card admin-card"><div class="card-head"><div><div class="kicker">GIÁ TRỊ ĐÃ TRAO</div><h3>Qua KUDOS đã gửi</h3></div></div><div class="culture-bars">${bars(valCount(sent))}</div>
+    <div class="person-top"><b>Ghi nhận nhiều nhất cho</b>${topRecipients.length?topRecipients.map(([n,c])=>`<span>${escapeHtml(n)} · ${c}</span>`).join(''):'<span>—</span>'}</div></article>
+  </div>
+  <article class="card admin-card" style="padding:16px 18px;margin-top:14px">
+   <div class="tabs"><button class="tab ${personTab==='received'?'active':''}" data-person-tab="received">Đã nhận (${received.length})</button><button class="tab ${personTab==='sent'?'active':''}" data-person-tab="sent">Đã gửi (${sent.length})</button></div>
+   <div class="person-kudos-list">${list.length?list.map(k=>item(k,personTab==='sent'?'out':'in')).join(''):'<div class="empty"><div class="icon">✦</div><h3>Chưa có KUDOS trong khoảng lọc</h3></div>'}</div>
+  </article>
+ </section>`;
+}
+function peopleExportCsv(){
+ const head=['Nhan_vien','Email','Phong_ban','Bo_phan','Trong_Master_Data','Da_gui_duyet','Da_gui_tong','Da_nhan_duyet','Da_nhan_tong','Cho_duyet','Hoat_dong_gan_nhat'];
+ const lines=[head.join(',')];peopleFiltered().forEach(p=>lines.push([p.name,p.email,p.dept,p.section,p.inData?'Co':'Khong',p.sentOk,p.sent,p.receivedOk,p.received,p.held,p.last].map(csvEsc).join(',')));
+ downloadCsv(lines,'ahakudos_nhanvien_');
+}
+function personExportCsv(email){
+ const recs=dashFiltered().filter(k=>k.senderEmail===email||k.recipientEmail===email);
+ const head=['Thoi_gian','Chieu','Loai','Nguoi_gui','Nguoi_nhan','Trang_thai','Gia_tri','Noi_dung'];
+ const lines=[head.join(',')];recs.forEach(k=>lines.push([k.createdAt,k.senderEmail===email?'Gui':'Nhan',k.kudosType==='birthday'?'Sinh nhat':'Dong nghiep',k.senderName,k.recipientName,modStatusOf(k),(k.values||[]).map(v=>CULTURE[v]||v).join(' | '),String(k.message||'').replace(/\r?\n/g,' ')].map(csvEsc).join(',')));
+ downloadCsv(lines,'ahakudos_'+email.split('@')[0]+'_');
+}
+function bindAdminPeople(){
+ const openPerson=email=>{adminPerson=email;personTab='received';render();window.scrollTo(0,0);};
+ const bindRows=()=>document.querySelectorAll('[data-person]').forEach(r=>{r.addEventListener('click',()=>openPerson(r.dataset.person));r.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openPerson(r.dataset.person);}});});
+ bindRows();
+ const q=document.querySelector('#people-search');
+ if(q)q.addEventListener('input',()=>{peopleQuery=q.value;const list=peopleFiltered();document.querySelector('#people-tbody').innerHTML=peopleRowsHtml(list);document.querySelector('#people-count').textContent=list.length>300?'Hiển thị 300 / '+list.length+' nhân viên — dùng ô tìm kiếm để thu hẹp.':list.length+' nhân viên';bindRows();});
+ const sort=document.querySelector('#people-sort');if(sort)sort.addEventListener('change',()=>{peopleSort=sort.value;render();});
+ document.querySelectorAll('[data-person-back]').forEach(b=>b.addEventListener('click',()=>{adminPerson='';render();window.scrollTo(0,0);}));
+ document.querySelectorAll('[data-person-tab]').forEach(b=>b.addEventListener('click',()=>{personTab=b.dataset.personTab;render();}));
+ document.querySelectorAll('[data-person-export]').forEach(b=>b.addEventListener('click',()=>personExportCsv(b.dataset.personExport)));
+ document.querySelectorAll('[data-mod-detail]').forEach(b=>b.addEventListener('click',()=>openModDetail(b.dataset.modDetail)));
+}
+// ---- Admin: Cài đặt › Từ cấm ----
+function adminWords(){
+ const gate=adminGate();if(gate)return gate;
+ return `<section class="page active">
+  <div class="page-head"><div><div class="kicker">CÀI ĐẶT</div><h1>Danh sách từ cấm</h1><p class="page-sub">KUDOS chứa các từ này vẫn vào hàng chờ duyệt nhưng được gắn cờ để Admin chú ý.</p></div></div>
+  <article class="card admin-card" style="padding:16px 18px"><div class="card-head"><div><div class="kicker">TỪ CẤM</div><h3>${ADMIN.blacklist.length} từ / cụm từ</h3><div class="sub">Mỗi từ hoặc cụm từ một dòng, hoặc ngăn cách bằng dấu phẩy.</div></div></div>
+   <textarea id="mod-blacklist" class="textarea" style="min-height:220px;margin-top:10px">${escapeHtml(ADMIN.blacklist.join('\n'))}</textarea>
+   <div class="form-actions" style="margin-top:10px;display:flex;justify-content:flex-end"><button class="btn primary" id="mod-blacklist-save">Lưu danh sách</button></div>
+  </article>
+ </section>`;
+}
+function bindAdminWords(){
  const save=document.querySelector('#mod-blacklist-save');
  if(save)save.addEventListener('click',async()=>{
-  const raw=document.querySelector('#mod-blacklist').value;
-  const list=raw.split(/[\n,]/).map(s=>s.trim()).filter(Boolean);
+  const list=document.querySelector('#mod-blacklist').value.split(/[\n,]/).map(x=>x.trim()).filter(Boolean);
   save.disabled=true;try{const res=await rpc('datTuCam',list);ADMIN.blacklist=res.blacklist||list;toast(res.notice||'Đã lưu danh sách.');render();}catch(e){save.disabled=false;toast(e.message);}
  });
 }
 
 
+function adminGalleryHtml(selected){
+ const list=cardTemplates.concat(customBgTemplates());
+ return list.map(t=>{const bg=bgFor(t.id);return `<button type="button" class="template-option ${selected===t.id?'selected':''}" data-admin-template="${escapeHtml(t.id)}" aria-label="Background ${escapeHtml(t.name)}" aria-pressed="${selected===t.id}" title="${escapeHtml(t.name)}"><span class="template-thumb" style="background:${bg.fallback}"><img class="art-img" src="${escapeHtml(bg.url)}" alt="" aria-hidden="true" loading="lazy"><span class="thumb-tick" aria-hidden="true">✓</span></span>${t.custom?`<span class="admin-bg-name">${escapeHtml(t.name)}</span>`:''}</button>`;}).join('')
+  +`<button type="button" class="template-option admin-bg-add" id="admin-bg-upload-open" aria-label="Tải background mới"><span class="template-thumb"><b>＋</b><small>Tải background</small></span></button>`;
+}
+function adminBgListHtml(){
+ if(!CUSTOM_BGS.length)return '';
+ return `<div class="admin-bg-list"><div class="admin-bg-list-head">Background đã tải (${CUSTOM_BGS.length})</div>${CUSTOM_BGS.map(b=>`<div class="admin-bg-row"><span class="admin-bg-thumb"><img src="${escapeHtml(bgFor(b.id).url)}" alt="" loading="lazy"></span><div><b>${escapeHtml(b.name)}</b><span>${b.status==='ACTIVE'?'Đang dùng':'Đã lưu trữ — KUDOS cũ vẫn hiển thị'} · ${escapeHtml(fmtDateTime(b.createdAt).split(' ')[0])}</span></div><button type="button" class="btn secondary" data-bg-toggle="${escapeHtml(b.id)}" data-on="${b.status==='ACTIVE'?'':'1'}">${b.status==='ACTIVE'?'Lưu trữ':'Dùng lại'}</button></div>`).join('')}</div>`;
+}
+/** Center-crop to 16:9 and resize to 1672×941 JPEG in the browser before upload (keeps requests small). */
+function prepareBackgroundImage(file){
+ return new Promise((resolve,reject)=>{
+  if(!/^image\/(png|jpeg|webp)$/.test(file.type))return reject(new Error('Chỉ nhận ảnh PNG, JPEG hoặc WebP.'));
+  if(file.size>20*1024*1024)return reject(new Error('Ảnh gốc quá lớn (tối đa 20 MB).'));
+  const url=URL.createObjectURL(file),img=new Image();
+  img.onload=()=>{
+   const W=1672,H=941,r=Math.max(W/img.naturalWidth,H/img.naturalHeight),w=img.naturalWidth*r,h=img.naturalHeight*r;
+   const c=document.createElement('canvas');c.width=W;c.height=H;const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);ctx.drawImage(img,(W-w)/2,(H-h)/2,w,h);
+   URL.revokeObjectURL(url);
+   let q=0.86,data=c.toDataURL('image/jpeg',q);while(data.length>3200000&&q>0.5){q-=0.08;data=c.toDataURL('image/jpeg',q);}
+   resolve(data);
+  };
+  img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('Không đọc được ảnh.'));};
+  img.src=url;
+ });
+}
 function adminRecognition(){
  const gate=adminGate();if(gate)return gate;
  const recognitionTypes=[
@@ -1262,10 +1345,18 @@ function adminRecognition(){
            <button type="button" class="visibility-option" data-admin-visibility="private"><span class="visibility-icon lock">●</span><div><b>Chỉ người nhận biết</b><p>Không xuất hiện trên feed công khai; vẫn lưu trong Hồ sơ KUDOS của nhân sự.</p></div><i>✓</i></button>
          </div>
        </div>
-       <div class="field"><label>Chọn mẫu thiệp</label>
-         <div class="template-gallery admin-template-gallery">
-           ${cardTemplates.map((t,i)=>`<button type="button" class="template-option ${t.id==='wish'?'selected':''}" data-admin-template="${t.id}" aria-label="Chọn background ${i+1}" aria-pressed="${t.id==='wish'}"><span class="template-thumb tpl-${t.id}"><i>${t.sticker}</i><b>AhaKudos</b></span></button>`).join('')}
+       <div class="field"><label>Chọn background</label>
+         <div class="template-gallery admin-template-gallery" id="admin-template-gallery">${adminGalleryHtml('wish')}</div>
+         <span class="field-hint">4 mẫu có sẵn và các background dịp đặc biệt do Admin tải lên. Chỉ Admin dùng được background tải lên.</span>
+         <div id="admin-bg-upload" class="admin-bg-upload hidden">
+           <div class="admin-bg-upload-grid">
+             <div><label for="admin-bg-name">Tên dịp / background</label><input id="admin-bg-name" class="input" maxlength="60" placeholder="VD: Tết Nguyên đán 2027"></div>
+             <div><label>Ảnh (PNG, JPEG hoặc WebP)</label><label class="avatar-file-btn admin-bg-file-btn">Chọn ảnh<input id="admin-bg-file" type="file" accept="image/png,image/jpeg,image/webp"></label></div>
+           </div>
+           <div class="admin-bg-preview" id="admin-bg-preview"><span>Ảnh sẽ được tự cắt về khung 16:9 (1672 × 941) giống các mẫu có sẵn. Nên dùng ảnh có vùng giữa trống để đặt nội dung.</span></div>
+           <div class="form-actions"><button type="button" class="btn secondary" id="admin-bg-cancel">Huỷ</button><button type="button" class="btn primary" id="admin-bg-save" disabled>Tải lên</button></div>
          </div>
+         <div id="admin-bg-list">${adminBgListHtml()}</div>
        </div>
        <div class="admin-recognition-note"><span>ⓘ</span><p><b>AhaKudos từ Admin</b> là lớp ghi nhận chính thức của chương trình. Background được chọn sẽ đi cùng email người nhận và bản lưu trong Hồ sơ KUDOS.</p></div>
        <div class="form-actions"><button class="btn secondary" id="admin-recognition-preview">Xem trước</button><button class="btn primary" id="admin-recognition-send">Gửi AhaKudos</button></div>
@@ -1273,14 +1364,8 @@ function adminRecognition(){
      <aside class="card admin-recognition-preview">
        <div class="card-head"><div><div class="kicker">PREVIEW</div><h3>AhaKudos gửi đến nhân sự</h3></div></div>
        <div class="recipient-preview" id="admin-recipient-preview"><div class="mini-avatar">@</div><div><b>Chưa chọn người nhận</b><span>Nhập email nhân sự để tìm kiếm</span></div></div>
-       <div class="preview-message tpl-celebrate" id="admin-preview-card">
-         <div class="card-sticker" id="admin-card-sticker">🎉</div>
-         <div class="preview-logo plain">${kudosLogo()}</div>
-         <div class="kicker">AHAKUDOS · GHI NHẬN TỪ AHAMOVE</div>
-         <h3 id="admin-preview-title">Cảm ơn bạn vì một hành trình đáng ghi nhận</h3>
-         <p id="admin-preview-text">Nội dung AhaKudos sẽ xuất hiện tại đây.</p>
-         <div class="preview-visibility" id="admin-preview-visibility">◎ CỘNG ĐỒNG KUDOS</div>
-       </div>
+       <div class="kudos-preview-card admin-kudos-preview" id="admin-preview-card"></div>
+       <div class="preview-visibility" id="admin-preview-visibility">◎ CỘNG ĐỒNG KUDOS</div>
        <div class="admin-email-preview-note"><span>✉</span><div><b>Email thông báo</b><p>Sau khi Admin duyệt, người nhận nhận email thông báo (không chứa nội dung) và mở lời ghi nhận trong AhaKudos với mẫu thiệp này.</p></div></div>
      </aside>
    </div>
@@ -1403,7 +1488,7 @@ function render(){
  if(state.mode==='employee'){
   content=state.page==='public-feed'?publicFeedPage():state.page==='send-kudos'?sendKudos():state.page==='kudos-profile'?profile():state.page==='kudos-detail'?kudosDetail():employeeHome();
  } else {
-  content=state.page==='admin-notify'?adminNotify():state.page==='admin-recognition'?adminRecognition():state.page==='admin-quality'?adminQuality():state.page==='admin-events'?adminEvents():state.page==='admin-dept'?adminDept():state.page==='admin-culture'?adminCulture():state.page==='admin-ops'?adminOps():adminHome();
+  content=adminSubtabs()+(state.page==='admin-people'?adminPeople():state.page==='admin-words'?adminWords():state.page==='admin-notify'?adminNotify():state.page==='admin-recognition'?adminRecognition():state.page==='admin-quality'?adminQuality():state.page==='admin-dept'?adminDept():state.page==='admin-culture'?adminCulture():state.page==='admin-ops'?adminOps():adminHome());
  }
  document.querySelector('#app').innerHTML=shell(content);
  bind();
@@ -1525,14 +1610,15 @@ function bind(){
  if(state.page==='admin-ops'&&ADMIN.loaded) bindAdminOps();
  if(state.page==='admin-notify'&&ADMIN.loaded) bindAdminEmail();
  if(state.page==='admin-quality'&&ADMIN.loaded) bindAdminQuality();
- if(state.page==='admin-events') bindAdminEvents();
- if((state.page==='admin-home'||state.page==='admin-dept'||state.page==='admin-culture')&&ADMIN.loaded) bindAdminFilters();
+ if(state.page==='admin-words'&&ADMIN.loaded) bindAdminWords();
+ if(state.page==='admin-people'&&ADMIN.loaded) bindAdminPeople();
+ if((state.page==='admin-home'||state.page==='admin-dept'||state.page==='admin-culture'||state.page==='admin-people')&&ADMIN.loaded) bindAdminFilters();
  document.querySelectorAll('[data-cta-route]').forEach(b=>b.addEventListener('click',()=>ctaGo(b.dataset.ctaRoute,b.dataset.ctaId)));
  document.querySelectorAll('[data-birthday]').forEach(b=>b.addEventListener('click',()=>{state.prefillRecipient=b.dataset.birthday;state.selectedRecipient=personByEmail(b.dataset.birthday)||null;state.kudosType='birthday';state.selectedTemplate=BIRTHDAY_TEMPLATE_IDS[0];state.page='send-kudos';render();toast('Đã chọn đồng nghiệp và mẫu Sinh nhật. Hãy viết lời chúc.');}));
  document.querySelectorAll('[data-avatar-edit]').forEach(b=>b.addEventListener('click',openAvatarEditor));
  bindHandbookUI();
 }
-function goToPage(page){state.page=page;if(page!=='kudos-detail')state.viewKudosId=null;render();window.scrollTo(0,0);}
+function goToPage(page){adminPerson='';state.page=page;if(page!=='kudos-detail')state.viewKudosId=null;render();window.scrollTo(0,0);}
 function openKudos(id){state.viewKudosId=id;state.page='kudos-detail';try{history.replaceState(null,'','#/k/'+id);}catch(e){}render();window.scrollTo(0,0);}
 
 function bindTabs(){
@@ -1547,13 +1633,40 @@ function bindAdminRecognition(){
  function visibilityUi(){document.querySelectorAll('[data-admin-visibility]').forEach(x=>{x.disabled=false;x.classList.remove('disabled');x.classList.toggle('selected',x.dataset.adminVisibility===selectedVisibility);});}
  function syncManualPreview(){if(!manualRecipient)return;const emp={name:manualName.value.trim(),dept:manualDept.value.trim(),email:manualEmail.value.trim(),manual:true};if(emp.name||emp.email)renderEmployee(emp);else renderEmployee(null);updatePreview();}
  function applyMode(on){manualRecipient=!!on;companyMode.classList.toggle('hidden',manualRecipient);manualMode.classList.toggle('hidden',!manualRecipient);if(manualRecipient){emailInput.value='';suggestions.classList.add('hidden');renderEmployee(null);}visibilityUi();syncManualPreview();updatePreview();}
- function updatePreview(){document.querySelector('#admin-preview-title').textContent=title.value.trim()||'AhaKudos dành cho bạn';document.querySelector('#admin-preview-text').textContent=message.value.trim()||'Nội dung AhaKudos sẽ xuất hiện tại đây.';const card=document.querySelector('#admin-preview-card');cardTemplates.forEach(t=>card.classList.remove('tpl-'+t.id));card.classList.add('tpl-'+selectedTemplate);document.querySelector('#admin-card-sticker').textContent=templateMeta(selectedTemplate).sticker;const visibility=document.querySelector('#admin-preview-visibility');if(visibility){visibility.textContent=selectedVisibility==='public'?'◎ CỘNG ĐỒNG KUDOS':'● Chỉ người nhận biết';visibility.classList.toggle('private',selectedVisibility==='private');}}
+ function updatePreview(){const card=document.querySelector('#admin-preview-card');if(card){card.innerHTML=buildKudosCard({senderName:'AhaKudos',senderDept:'Ahamove',message:message.value.trim()||'Nội dung AhaKudos sẽ xuất hiện tại đây.',templateId:selectedTemplate,values:[]},{mode:selectedVisibility==='public'?'public':''});fitAllKudosCards(card);}const visibility=document.querySelector('#admin-preview-visibility');if(visibility){visibility.textContent=selectedVisibility==='public'?'◎ CỘNG ĐỒNG KUDOS':'● Chỉ người nhận biết';visibility.classList.toggle('private',selectedVisibility==='private');}}
  noCompany?.addEventListener('change',()=>applyMode(noCompany.checked));
  [manualName,manualDept,manualEmail].forEach(el=>el?.addEventListener('input',syncManualPreview));
  emailInput.addEventListener('input',()=>{if(manualRecipient)return;selectedEmployee=null;renderEmployee(null);const q=emailInput.value.trim().toLowerCase();if(!q){suggestions.classList.add('hidden');suggestions.innerHTML='';return}const matches=employees.filter(e=>e.email.toLowerCase().includes(q)).slice(0,5);suggestions.innerHTML=matches.length?matches.map(e=>`<button type="button" class="recipient-suggestion" data-admin-email="${escapeHtml(e.email)}"><div class="mini-avatar">${escapeHtml(initials(e.name))}</div><div><b>${escapeHtml(e.name)}</b><span>${escapeHtml(e.email)}</span><em>${escapeHtml(e.dept)}</em></div></button>`).join(''):'<div class="recipient-no-result">Không tìm thấy email phù hợp. Có thể tick “không có mail công ty”.</div>';suggestions.classList.remove('hidden');suggestions.querySelectorAll('[data-admin-email]').forEach(btn=>btn.addEventListener('click',()=>{const emp=employees.find(e=>e.email===btn.dataset.adminEmail);emailInput.value=emp.email;suggestions.classList.add('hidden');renderEmployee(emp);}));});
  emailInput.addEventListener('blur',()=>setTimeout(()=>suggestions.classList.add('hidden'),150));
  document.querySelectorAll('[data-recognition-type]').forEach(btn=>btn.addEventListener('click',()=>{selectedType=btn.dataset.recognitionType;document.querySelectorAll('[data-recognition-type]').forEach(x=>x.classList.toggle('selected',x===btn));const defaults={acting:'Cảm ơn bạn đã chủ động đảm nhận thêm một vai trò',promotion:'Chúc mừng một bước phát triển mới',trainer:'Cảm ơn bạn đã đồng hành và phát triển người khác',project:'Ghi nhận một dấu mốc đáng nhớ của dự án',campaign:'Cảm ơn đóng góp của bạn cho hoạt động chung',other:'Một điều đáng được Ahamove ghi nhận'};title.value=defaults[selectedType]||defaults.other;updatePreview();}));
- document.querySelectorAll('[data-admin-template]').forEach(btn=>btn.addEventListener('click',()=>{selectedTemplate=btn.dataset.adminTemplate;document.querySelectorAll('[data-admin-template]').forEach(x=>{x.classList.toggle('selected',x===btn);x.setAttribute('aria-pressed',String(x===btn));});updatePreview();}));
+ function bindGallery(){
+  document.querySelectorAll('[data-admin-template]').forEach(btn=>btn.addEventListener('click',()=>{selectedTemplate=btn.dataset.adminTemplate;document.querySelectorAll('[data-admin-template]').forEach(x=>{x.classList.toggle('selected',x===btn);x.setAttribute('aria-pressed',String(x===btn));});updatePreview();}));
+  document.querySelector('#admin-bg-upload-open')?.addEventListener('click',()=>{document.querySelector('#admin-bg-upload').classList.remove('hidden');document.querySelector('#admin-bg-name').focus();});
+  document.querySelectorAll('[data-bg-toggle]').forEach(b=>b.addEventListener('click',async()=>{
+   b.disabled=true;
+   try{const res=await rpc('doiTrangThaiAnhNen',b.dataset.bgToggle,b.dataset.on==='1');CUSTOM_BGS=res.backgrounds||CUSTOM_BGS;employeeStale=true;if(!customBgTemplates().some(t=>t.id===selectedTemplate)&&!cardTemplates.some(t=>t.id===selectedTemplate))selectedTemplate='wish';refreshGallery();toast(res.notice);}
+   catch(e){b.disabled=false;toast(e.message);}
+  }));
+ }
+ function refreshGallery(){document.querySelector('#admin-template-gallery').innerHTML=adminGalleryHtml(selectedTemplate);document.querySelector('#admin-bg-list').innerHTML=adminBgListHtml();bindGallery();updatePreview();}
+ bindGallery();
+ let pendingBg=null;
+ const bgFile=document.querySelector('#admin-bg-file'),bgName=document.querySelector('#admin-bg-name'),bgSave=document.querySelector('#admin-bg-save'),bgPrev=document.querySelector('#admin-bg-preview');
+ const syncBgSave=()=>{bgSave.disabled=!(pendingBg&&bgName.value.trim().length>=2);};
+ bgName.addEventListener('input',syncBgSave);
+ bgFile.addEventListener('change',async()=>{
+  const f=bgFile.files&&bgFile.files[0];if(!f)return;
+  try{pendingBg=await prepareBackgroundImage(f);bgPrev.innerHTML=`<img src="${pendingBg}" alt="Xem trước background">`;if(!bgName.value.trim())bgName.value=f.name.replace(/\.[a-z0-9]+$/i,'').slice(0,60);}
+  catch(e){pendingBg=null;toast(e.message);}
+  syncBgSave();
+ });
+ document.querySelector('#admin-bg-cancel').addEventListener('click',()=>{pendingBg=null;bgFile.value='';bgName.value='';bgPrev.innerHTML='<span>Ảnh sẽ được tự cắt về khung 16:9 (1672 × 941) giống các mẫu có sẵn.</span>';syncBgSave();document.querySelector('#admin-bg-upload').classList.add('hidden');});
+ bgSave.addEventListener('click',async()=>{
+  bgSave.disabled=true;bgSave.textContent='Đang tải lên…';
+  try{const res=await rpc('taiAnhNen',{name:bgName.value.trim(),dataUrl:pendingBg});CUSTOM_BGS=res.backgrounds||CUSTOM_BGS;employeeStale=true;selectedTemplate=res.id;pendingBg=null;bgFile.value='';bgName.value='';document.querySelector('#admin-bg-upload').classList.add('hidden');refreshGallery();toast(res.notice);}
+  catch(e){toast(e.message);syncBgSave();}
+  finally{bgSave.textContent='Tải lên';}
+ });
  document.querySelectorAll('[data-admin-visibility]').forEach(btn=>btn.addEventListener('click',()=>{selectedVisibility=btn.dataset.adminVisibility;visibilityUi();updatePreview();}));
  title.addEventListener('input',updatePreview);message.addEventListener('input',updatePreview);
  document.querySelector('#admin-recognition-preview').addEventListener('click',()=>{updatePreview();toast('Đã cập nhật bản xem trước.')});
@@ -1850,6 +1963,27 @@ function handleDeepLink(){
  return false;
 }
 window.addEventListener('hashchange',()=>{if(handleDeepLink())render();initHomeHandbookProgress();});
+
+// ---- Typography: never leave a single last word alone on the final line ----
+// CSS text-wrap handles modern browsers; this joins the last two words with a no-break space everywhere else.
+const GLUE_SELECTOR='h1,h2,h3,h4,h5,p,li,label,button,a,span,b,strong,em,small,td,th,blockquote,.field-hint,.page-sub,.sub,.kicker,.birthday-status,.notif-hint';
+function glueLastWords(root){
+ if(!root)return;
+ root.querySelectorAll(GLUE_SELECTOR).forEach(el=>{
+  if(el.closest('textarea,select,script,style,svg,.kd-card-msg'))return;
+  const words=(el.textContent||'').trim().split(/\s+/);
+  if(words.length<3)return;
+  const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let last=null,n;
+  while((n=walker.nextNode())){if(n.nodeValue.trim())last=n;}
+  if(!last)return;
+  const m=last.nodeValue.match(/^([\s\S]*\S)[ \t]+(\S+[\s]*)$/);
+  if(m)last.nodeValue=m[1]+'\u00A0'+m[2];
+ });
+}
+let glueQueued=false;
+function queueGlue(){if(glueQueued)return;glueQueued=true;requestAnimationFrame(()=>{glueQueued=false;glueLastWords(document.body);});}
+const glueObserver=new MutationObserver(queueGlue);
+glueObserver.observe(document.body,{childList:true,subtree:true}); // text edits are characterData, so no feedback loop
 
 // ---- 8. Start ---------------------------------------------------------------
 handleDeepLink();
