@@ -4359,3 +4359,21 @@ p,li,small,.sub,blockquote,.coach-nudge,.home-def-v2__lead,.home-def-v2__support
 .value-suggest-panel p{margin:0;font-size:12.5px;color:var(--muted)}
 .welcome-onboard__cta{align-self:flex-start;margin-top:8px;border:0;border-radius:999px;background:#fff;color:#C9571B;font:800 14px/1.2 Lexend,system-ui,sans-serif;padding:10px 16px;cursor:pointer;box-shadow:0 6px 14px rgba(0,0,0,.12)}
 .welcome-onboard__cta:hover{transform:translateY(-1px)}
+/* Welcome strip: CTA sits right next to the text (same row), wraps below only on narrow screens */
+.welcome-onboard__copy{flex-direction:row;align-items:center;flex-wrap:wrap;gap:12px 22px}
+.welcome-onboard__text{display:flex;flex-direction:column;gap:4px;min-width:0;flex:0 1 auto}
+.welcome-onboard__copy .welcome-onboard__cta{margin-top:0;flex:0 0 auto;white-space:nowrap}
+
+/* ---- V30.18: Từ / Đến on the card, AHAKUDOS avatar, soft alternating backgrounds on profile lists ---- */
+.kd-party-row{display:flex;flex-wrap:wrap;align-items:flex-start;gap:6px 28px}
+.kd-party-row .kd-sender-stack{min-width:0}
+.kd-recipient-stack{padding-left:18px;border-left:1px solid rgba(14,65,116,.18)}
+.mini-avatar.is-ahakudos{background:#fff}
+.hb-account img{border-radius:50%;object-fit:cover}
+
+.kudos-soft-bg{position:relative;isolation:isolate;overflow:hidden}
+.kudos-soft-bg::before{content:"";position:absolute;inset:0;z-index:-2;background:var(--soft-bg) center/cover no-repeat;opacity:.22}
+.kudos-soft-bg::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(100deg,rgba(255,255,255,.95) 0%,rgba(255,255,255,.86) 55%,rgba(255,255,255,.55) 100%)}
+.feed .kudos-soft-bg:nth-child(odd){background-color:#FFF9F3}
+.feed .kudos-soft-bg:nth-child(even){background-color:#F5F9FE}
+.feed .kudos-soft-bg:nth-child(even)::after{background:linear-gradient(260deg,rgba(255,255,255,.95) 0%,rgba(255,255,255,.86) 55%,rgba(255,255,255,.55) 100%)}

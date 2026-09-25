@@ -110,7 +110,7 @@ function fabHtml(){const f=fabState();return `<button class="aha-floating-kudos 
 function openFab(btn){const k=btn.dataset.fab;if(k==='unread'&&btn.dataset.fabId){state.mode='employee';state.page='kudos-detail';state.viewKudosId=btn.dataset.fabId;try{history.replaceState(null,'','#/k/'+btn.dataset.fabId);}catch(e){}render();window.scrollTo(0,0);}else goToPage(k==='community'?'public-feed':'send-kudos');}
 // Welcome Onboard: the signed-in employee's Onboard Day is today → banner + confetti (once per day).
 function isOnboardToday(){const d=me().onboardDate;return !!d&&d===vnDay(new Date().toISOString());}
-function welcomeOnboardHtml(){if(!isOnboardToday())return '';const first=String(me().name||'').split(' ').slice(-1)[0];const w=store.received.find(k=>k.welcome);return `<section class="welcome-onboard" aria-label="Chào mừng thành viên mới"><img src="${BASE}/illustrations/welcome-onboard.webp" alt="Welcome Onboard — Chúc bạn có thật nhiều trải nghiệm tuyệt vời cùng đại gia đình Ahamove" width="1600" height="900"><div class="welcome-onboard__copy"><b>Hôm nay là ngày đầu tiên của ${escapeHtml(first)} tại Ahamove 🎉</b><span>${w?'Có một lời nhắn dành riêng cho bạn đang chờ được mở.':'Hãy dành chút thời gian làm quen với đồng đội mới nhé.'}</span>${w?`<button class="welcome-onboard__cta" data-open-kudos="${escapeHtml(w.id)}">💌 Mở lời nhắn →</button>`:''}</div></section>`;}
+function welcomeOnboardHtml(){if(!isOnboardToday())return '';const first=String(me().name||'').split(' ').slice(-1)[0];const w=store.received.find(k=>k.welcome);return `<section class="welcome-onboard" aria-label="Chào mừng thành viên mới"><img src="${BASE}/illustrations/welcome-onboard.webp" alt="Welcome Onboard — Chúc bạn có thật nhiều trải nghiệm tuyệt vời cùng đại gia đình Ahamove" width="1600" height="900"><div class="welcome-onboard__copy"><div class="welcome-onboard__text"><b>Hôm nay là ngày đầu tiên của ${escapeHtml(first)} tại Ahamove 🎉</b><span>${w?'Có một lời nhắn dành riêng cho bạn đang chờ được mở.':'Hãy dành chút thời gian làm quen với đồng đội mới nhé.'}</span></div>${w?`<button class="welcome-onboard__cta" data-open-kudos="${escapeHtml(w.id)}">💌 Mở lời nhắn →</button>`:''}</div></section>`;}
 let welcomeCelebrated=false;
 function celebrateOnboard(){if(welcomeCelebrated||!isOnboardToday()||state.mode!=='employee'||state.page!=='employee-home')return;welcomeCelebrated=true;const key='ahakudos-welcome-onboard:'+me().email+':'+me().onboardDate;if(safeGet(key))return;safeSet(key,'1');setTimeout(launchConfetti,400);}
 function sentBy(){return store.sent;}
@@ -169,10 +169,17 @@ function buildKudosCard(k,opts){
    <div class="kd-card-content">
      <div class="kd-template-brand"><span class="kd-template-brand-logo">${kudosLogo()}</span><span class="kd-template-brand-name"><b>AHA</b><strong>KUDOS</strong></span></div>
      <div class="kd-card-label">${cardLabel}</div>
-     <div class="kd-sender-stack">
-       <span class="kd-sender-caption">TỪ</span>
-       <b class="kd-sender-name">${senderName}</b>
-       ${senderOrg?`<span class="kd-sender-dept">${senderOrg}</span>`:''}
+     <div class="kd-party-row">
+       <div class="kd-sender-stack">
+         <span class="kd-sender-caption">TỪ</span>
+         <b class="kd-sender-name">${senderName}</b>
+         ${senderOrg?`<span class="kd-sender-dept">${senderOrg}</span>`:''}
+       </div>
+       ${k.recipientName?`<div class="kd-sender-stack kd-recipient-stack">
+         <span class="kd-sender-caption">ĐẾN</span>
+         <b class="kd-sender-name">${escapeHtml(k.recipientName)}</b>
+         ${k.recipientDept?`<span class="kd-sender-dept">${escapeHtml(k.recipientDept)}</span>`:''}
+       </div>`:''}
      </div>
      <div class="kd-card-msg${msgClass}">${msg}</div>
      ${vals.length?`<div class="kd-values-block"><div class="kd-value-caption">Giá trị cốt lõi được ghi nhận</div><div class="kd-value-row">${chips}</div></div>`:''}
@@ -250,7 +257,8 @@ function rewriteKudos(id){
 let loaderOverlayTimer=null;
 function showLoaderOverlay(label){hideLoaderOverlay();loaderOverlayTimer=setTimeout(()=>{const o=document.createElement('div');o.className='aha-loader-overlay';o.innerHTML=loaderHtml(label);document.body.appendChild(o);},250);}
 function hideLoaderOverlay(){clearTimeout(loaderOverlayTimer);document.querySelectorAll('.aha-loader-overlay').forEach(o=>o.remove());}
-function miniAvatar(email,name,cls=''){const u=avatarUrl(email);return `<div class="mini-avatar ${cls}${u?' has-photo':''}">${u?`<img src="${escapeHtml(u)}" alt="" loading="lazy" data-hide-on-error>`:''}<span>${escapeHtml(initials(name||email||''))}</span></div>`;}
+const ADMIN_AVATAR=`${BASE}/illustrations/ahakudos-admin-avatar.webp`; // avatar of AHAKUDOS / Admin
+function miniAvatar(email,name,cls=''){if(!email&&String(name||'').trim()==='AHAKUDOS')return `<div class="mini-avatar ${cls} has-photo is-ahakudos"><img src="${ADMIN_AVATAR}" alt="" loading="lazy" data-hide-on-error><span>AK</span></div>`;const u=avatarUrl(email);return `<div class="mini-avatar ${cls}${u?' has-photo':''}">${u?`<img src="${escapeHtml(u)}" alt="" loading="lazy" data-hide-on-error>`:''}<span>${escapeHtml(initials(name||email||''))}</span></div>`;}
 const state={
   mode:me().inMasterData===false&&BOOT.isAdmin?'admin':'employee',
   page:me().inMasterData===false&&BOOT.isAdmin?'admin-home':'employee-home',
@@ -381,7 +389,7 @@ function topbar(){
    ${sidebar()}
    <div class="hb-header-actions">
     ${BOOT.isAdmin&&me().inMasterData!==false?`<button class="switch-btn" data-switch="${state.mode==='employee'?'admin':'employee'}" title="Chuyển giữa giao diện Nhân viên và Quản trị">${svg(state.mode==='employee'?'shield':'home')}<span>${state.mode==='employee'?'Giao diện Admin':'Giao diện Nhân viên'}</span></button>`:''}
-    <button class="hb-account" data-page="${state.mode==='employee'?'kudos-profile':'admin-home'}" aria-label="Hồ sơ ${escapeHtml(u.name)}">${state.avatarData?`<img src="${state.avatarData}" alt="" style="transform:scale(${state.avatarScale})">`:initials(u.name)}</button>
+    <button class="hb-account" data-page="${state.mode==='employee'?'kudos-profile':'admin-home'}" aria-label="Hồ sơ ${escapeHtml(u.name)}">${state.mode==='admin'?`<img src="${ADMIN_AVATAR}" alt="Admin AHAKUDOS">`:state.avatarData?`<img src="${state.avatarData}" alt="" style="transform:scale(${state.avatarScale})">`:initials(u.name)}</button>
    </div>
   </div>
  </header>`;
@@ -419,7 +427,7 @@ function shell(content){
 function receivedFeedItem(k,{big=false}={}){
  const cn=(k.values||[]).map(valueLabel);
  const tags=cn.map(n=>`<span>${escapeHtml(n)}</span>`).join('');
- return `<div class="feed-item kudos-open" role="button" tabindex="0" data-open-kudos="${k.id}">
+ return `<div class="feed-item kudos-open kudos-soft-bg" style="--soft-bg:url('${escapeHtml(bgFor(k.templateId).url)}')" role="button" tabindex="0" data-open-kudos="${k.id}">
    <div class="feed-head">${miniAvatar(k.senderEmail,k.senderName)}<div class="who"><b>${escapeHtml(k.senderName)}</b><span>${escapeHtml(k.senderDept||'')}</span></div><time>${escapeHtml(k.sentAtLabel||'')}</time></div>
    <p>${escapeHtml(k.message)}</p>
    <div class="value-tags">${tags}</div>
@@ -865,7 +873,7 @@ function profile(){
      const cn=(k.values||[]).map(valueLabel);
      const ms=modStatusOf(k);
      const statusText=k.needsImprovement?'✎ Cần bổ sung nội dung':ms==='HIDDEN'?'● Không được duyệt hiển thị':ms==='HELD'?'🕓 Chờ Admin duyệt':k.visibility==='public'?'◎ CỘNG ĐỒNG KUDOS · Admin đã duyệt':'● Chỉ người nhận biết · Admin đã duyệt';
-     return `<div class="feed-item sent-feed-item kudos-open" role="button" tabindex="0" data-open-kudos="${k.id}">
+     return `<div class="feed-item sent-feed-item kudos-open kudos-soft-bg" style="--soft-bg:url('${escapeHtml(bgFor(k.templateId).url)}')" role="button" tabindex="0" data-open-kudos="${k.id}">
        <div class="feed-head">${miniAvatar(k.recipientEmail,k.recipientName)}<div class="who"><b>${escapeHtml(k.recipientName)}</b><span>${escapeHtml(k.recipientEmail)}</span></div><time>${escapeHtml(k.sentAtLabel||'Đã gửi')}</time></div>
        <p>${escapeHtml(k.message)}</p>
        ${k.needsImprovement?qualityNoticeHtml(k):''}
@@ -940,7 +948,7 @@ function kudosDetail(){
    senderBlock=`<div class="kd-panel"><h3>Trạng thái</h3><p class="kd-sender-status">${s}</p></div>`+(k.needsImprovement?qualityNoticeHtml(k):'');
  }
  const replyBlock=isRecipient?(k.canReply||(k.replies||[]).length?replyThreadHtml(k,true):''):isSender&&(k.replies||[]).length?replyThreadHtml(k,false):'';
- const shareBlock=isRecipient&&k.canShareToCommunity?`<div class="kd-panel kd-share-panel"><h3>${k.sharedByRecipient?'Đang hiển thị trên CỘNG ĐỒNG KUDOS':'Lan tỏa niềm vui này?'}</h3><p>${k.sharedByRecipient?'Mọi người trong Ahamove đang cùng chúc mừng bạn. Bạn có thể thôi chia sẻ bất cứ lúc nào.':'AHAKUDOS này đang ở chế độ riêng tư. Bạn có thể chia sẻ lên CỘNG ĐỒNG KUDOS để đồng nghiệp cùng chúc mừng.'}</p><button class="btn ${k.sharedByRecipient?'secondary':'primary'}" data-share-community="${escapeHtml(k.id)}" data-share="${k.sharedByRecipient?'0':'1'}">${k.sharedByRecipient?'Thôi chia sẻ':'Chia sẻ đến CỘNG ĐỒNG KUDOS →'}</button></div>`:'';
+ const shareBlock=isRecipient&&k.canShareToCommunity?`<div class="kd-panel kd-share-panel"><h3>${k.sharedByRecipient?'Đang hiển thị trên CỘNG ĐỒNG KUDOS':'Lan tỏa niềm vui này?'}</h3><p>${k.sharedByRecipient?'Mọi người trong Ahamove đang cùng chúc mừng bạn. Bạn có thể chuyển về Riêng tư bất cứ lúc nào.':'AHAKUDOS này đang ở chế độ riêng tư. Bạn có thể chia sẻ lên CỘNG ĐỒNG KUDOS để đồng nghiệp cùng chúc mừng.'}</p><button class="btn ${k.sharedByRecipient?'secondary':'primary'}" data-share-community="${escapeHtml(k.id)}" data-share="${k.sharedByRecipient?'0':'1'}">${k.sharedByRecipient?'Chuyển về Riêng tư':'Chia sẻ đến CỘNG ĐỒNG KUDOS →'}</button></div>`:'';
  const backTarget=isSender&&!isRecipient?'kudos-profile':(k.isCommunity&&!isRecipient?'public-feed':'employee-home');
  const kicker=isRecipient?'KUDOS DÀNH CHO BẠN':isSender?'KUDOS BẠN ĐÃ GỬI':'CỘNG ĐỒNG KUDOS';
  const title=isRecipient&&k.welcome?'Lời nhắn từ AHAKUDOS 💌':isRecipient?'Có một lời ghi nhận dành riêng cho bạn 🧡':isSender?'Lời ghi nhận bạn đã gửi':'Một lời ghi nhận đang được lan tỏa';
