@@ -34,7 +34,7 @@ export function render(tpl, config, extra = {}) {
   const build = config ? config.buildId : 'dev';
   const client = { basePath: base, env: config ? config.env : 'unknown', buildId: build, handbookUrl: config ? config.handbookOrigin : '', devIdentity: !!(config && config.dev.enabled) };
   return tpl.split('{{BASE}}').join(escAttr(base)).split('{{BUILD}}').join(escAttr(build))
-    .split('{{HANDBOOK_URL}}').join(escAttr(client.handbookUrl || '#')).split('{{TITLE}}').join(escAttr(extra.title || 'AhaKudos'))
+    .split('{{HANDBOOK_URL}}').join(escAttr(client.handbookUrl || '#')).split('{{TITLE}}').join(escAttr(extra.title || 'AHAKUDOS'))
     .split('{{MESSAGE}}').join(escAttr(extra.message || '')).split('{{CONFIG_JSON}}').join(jsonForScript(client));
 }
 export async function handle(req, res, deps = {}) {
@@ -44,7 +44,7 @@ export async function handle(req, res, deps = {}) {
   try { config = getConfig(); } catch (e) {
     securityHeaders(res, null);
     console.error('[ahakudos] config', e.details || e.message);
-    return res.status(503).send(render(await template('error.html'), null, { title: 'AhaKudos chưa sẵn sàng', message: 'Không thể kết nối AhaKudos. Vui lòng tải lại trang hoặc thử lại sau.' }));
+    return res.status(503).send(render(await template('error.html'), null, { title: 'AHAKUDOS chưa sẵn sàng', message: 'Không thể kết nối AHAKUDOS. Vui lòng tải lại trang hoặc thử lại sau.' }));
   }
   securityHeaders(res, config);
   if (req.method !== 'GET' && req.method !== 'HEAD') return res.status(405).send('');
@@ -52,6 +52,6 @@ export async function handle(req, res, deps = {}) {
   try { identity = await getCurrentIdentity(req, config, deps); } catch (e) { identity = null; console.warn('[ahakudos] identity rejected', e.code, e.details || ''); }
   if (identity) return res.status(200).send(render(await template('workspace.html'), config));
   if (config.dev.enabled) return res.status(200).send(render(await template('login.html'), config));
-  return res.status(401).send(render(await template('error.html'), config, { title: 'Vui lòng đăng nhập AhaHandbook', message: 'AhaKudos chỉ mở được sau khi bạn đăng nhập AhaHandbook bằng email @' + config.allowedDomain + '.' }));
+  return res.status(401).send(render(await template('error.html'), config, { title: 'Vui lòng đăng nhập AhaHandbook', message: 'AHAKUDOS chỉ mở được sau khi bạn đăng nhập AhaHandbook bằng email @' + config.allowedDomain + '.' }));
 }
 export default function handler(req, res) { return handle(req, res); }

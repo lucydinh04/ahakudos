@@ -4146,3 +4146,89 @@ p,li,small,.sub,blockquote,.coach-nudge,.home-def-v2__lead,.home-def-v2__support
 .admin-bg-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .admin-kudos-preview{margin-top:10px}
 @media(max-width:640px){.admin-bg-upload-grid{grid-template-columns:1fr}}
+/* ---- V30.7: dịp "Khác" (Sinh nhật / Thâm niên) ---- */
+.occasion-switch{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}
+.occasion-switch.hidden{display:none}
+.occasion-option{display:inline-flex;align-items:center;gap:6px;border:1.5px solid #dbe4ee;background:#fff;color:#0e4174;border-radius:999px;padding:8px 16px;font:600 14px Lexend,Arial,sans-serif;cursor:pointer}
+.occasion-option.selected{border-color:#ff7f32;background:#fff6ef;box-shadow:0 0 0 3px rgba(255,127,50,.14)}
+.occasion-hint{font-size:12px;color:#6b7c90}
+
+/* ---- V30.8: avatars from server, mascot loader, confetti, centred success modal ---- */
+.mini-avatar{position:relative;overflow:hidden}
+.mini-avatar>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit;background:#fff}
+.mini-avatar.has-photo{background:#EAF0F7}
+
+.aha-loader{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:48px 16px;text-align:center;color:#0E4174}
+.aha-loader--boot{min-height:70vh}
+.aha-loader--page{min-height:52vh}
+.aha-loader__stage{position:relative;width:min(220px,56vw);aspect-ratio:560/426}
+/* The mascot runs in place: bob + lean. transform never uses a negative scaleX, so it is never mirrored. */
+.aha-loader__mascot{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transform-origin:50% 90%;animation:aha-run .56s cubic-bezier(.45,0,.55,1) infinite alternate}
+.aha-loader__shadow{position:absolute;left:22%;right:14%;bottom:-6px;height:12px;border-radius:50%;background:rgba(14,65,116,.14);animation:aha-shadow .56s cubic-bezier(.45,0,.55,1) infinite alternate}
+.aha-loader__bar{width:min(240px,62vw);height:14px;border-radius:999px;background:#E3E8F0;box-shadow:inset 0 1px 2px rgba(14,65,116,.12);overflow:hidden;margin-top:6px}
+.aha-loader__bar i{display:block;height:100%;width:45%;border-radius:inherit;background:linear-gradient(90deg,#FF6A00,#FF9A3D);box-shadow:inset 0 -2px 0 rgba(0,0,0,.08);animation:aha-bar 1.5s ease-in-out infinite}
+.aha-loader__word{margin:4px 0 0;font:800 26px/1.2 Lexend,system-ui,sans-serif;color:#0E4174;letter-spacing:.2px}
+.aha-loader__label{margin:0;font-size:14px;color:#5B6B7F}
+.aha-loader-overlay{position:fixed;inset:0;z-index:170;display:grid;place-items:center;background:rgba(246,249,253,.88);backdrop-filter:blur(3px)}
+@keyframes aha-run{0%{transform:translateY(0) rotate(-1.5deg)}100%{transform:translateY(-9%) rotate(2deg)}}
+@keyframes aha-shadow{0%{transform:scaleX(1);opacity:1}100%{transform:scaleX(.82);opacity:.6}}
+@keyframes aha-bar{0%{transform:translateX(-100%)}100%{transform:translateX(225%)}}
+@media (prefers-reduced-motion:reduce){.aha-loader__mascot,.aha-loader__shadow{animation:none}.aha-loader__bar i{animation-duration:3s}}
+
+.aha-confetti{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:200}
+.kudos-success-backdrop{z-index:160}
+.modal.kudos-success-modal{width:min(560px,100%);padding:34px 34px 30px;text-align:center;border-radius:28px;animation:aha-pop .42s cubic-bezier(.2,1.3,.4,1) both}
+.kudos-success-art{width:min(230px,60%);margin:-4px auto 8px}
+.kudos-success-art img{display:block;width:100%;height:auto;animation:aha-run .6s cubic-bezier(.45,0,.55,1) 3 alternate}
+.kudos-success-modal .kicker{color:#FF7F32;letter-spacing:1.4px}
+.kudos-success-modal h2{font-size:30px;line-height:1.3;margin:8px 0 12px;color:#0E4174;padding:0}
+.kudos-success-modal p{font-size:16px;line-height:1.7;color:#4A5B70;margin:0 auto 22px;max-width:440px}
+.kudos-success-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.kudos-success-actions .btn{min-width:170px}
+@keyframes aha-pop{0%{transform:scale(.86);opacity:0}100%{transform:scale(1);opacity:1}}
+@media (max-width:620px){.modal.kudos-success-modal{padding:28px 20px 22px}.kudos-success-modal h2{font-size:23px}.kudos-success-modal p{font-size:15px}.kudos-success-actions .btn{flex:1 1 100%}}
+
+/* ---- V30.9: Thư ký hỗ trợ nội dung (featured), Dịp khác, quality notice, admin auto-tags ---- */
+.coach.coach--featured{position:relative;border:1.5px solid transparent;border-radius:18px;padding:16px 18px;
+  background:linear-gradient(#FFFBF6,#FFFBF6) padding-box,linear-gradient(120deg,#FF7F32,#FFC36B 45%,#4F8FE0) border-box;
+  box-shadow:0 10px 26px rgba(255,127,50,.14)}
+.coach--featured .coach-title{align-items:flex-start;gap:12px;font-size:16px;color:#0E4174;flex:1 1 320px;min-width:0}
+.coach--featured .coach-title>span.coach-title-copy{display:flex;flex-direction:column;gap:3px;width:auto;height:auto;background:none;border-radius:0;font-size:inherit;color:inherit!important;line-height:1.4;justify-content:flex-start;align-items:flex-start;min-width:0}
+.coach--featured .coach-title>span.coach-badge{width:38px;height:38px;border-radius:12px;font-size:18px}
+.coach--featured .coach-title b{font-size:16px;font-weight:800;color:#0E4174}
+.coach--featured .coach-title small{font-size:13px;font-weight:500;color:#6A5A4A;line-height:1.55}
+.coach-badge{flex:0 0 auto;display:grid!important;place-items:center;width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#FF7F32,#FFA95E);color:#fff;font-size:18px;box-shadow:0 6px 14px rgba(255,127,50,.35)}
+.coach--featured .coach-live{background:#FFF1E6;color:#C9571B}
+.coach--featured .coach-nudge{background:#fff;border:1px dashed #F5C9A6;border-radius:12px;padding:10px 12px;margin-top:12px;font-size:14px}
+
+.occasion-custom{margin-top:12px;display:grid;gap:8px;padding:14px;border:1px solid #F0D8C6;border-radius:14px;background:#FFFCF8}
+.occasion-custom>label{font-weight:700;font-size:14px;color:#0E4174}
+.occasion-suggest{display:flex;flex-wrap:wrap;gap:6px}
+.occasion-suggest button{border:1px solid #E7D3C2;background:#fff;color:#8A4B1F;border-radius:999px;padding:6px 11px;font:600 12.5px/1.2 inherit;cursor:pointer}
+.occasion-suggest button:hover,.occasion-suggest button:focus-visible{border-color:#FF7F32;color:#C9571B}
+
+.quality-notice{display:flex;gap:14px;align-items:center;margin:12px 0;padding:14px 16px;border-radius:16px;background:#FFF7EE;border:1px solid #F6D2B2;text-align:left}
+.quality-notice img{width:92px;height:auto;flex:0 0 auto}
+.quality-notice b{display:block;color:#0E4174;font-size:15px;margin-bottom:4px}
+.quality-notice p{margin:0 0 10px;font-size:14px;line-height:1.65;color:#5A4A3A}
+.quality-notice .btn{padding:9px 14px;font-size:13px}
+.modal.quality-modal{width:min(580px,100%);padding:30px 32px 26px;text-align:center;border-radius:28px;animation:aha-pop .42s cubic-bezier(.2,1.3,.4,1) both}
+.quality-art{width:min(190px,52%);margin:-2px auto 6px}.quality-art img{display:block;width:100%;height:auto}
+.quality-modal .kicker{color:#FF7F32;letter-spacing:1.3px}
+.quality-modal h2{font-size:26px;line-height:1.3;margin:8px 0 10px;color:#0E4174;padding:0}
+.quality-modal>p{font-size:15.5px;line-height:1.75;color:#4A5B70;margin:0 auto 16px;max-width:470px}
+.quality-format{display:grid;gap:6px;text-align:left;background:#F6F9FD;border:1px solid #DCE7F2;border-radius:14px;padding:12px 14px;margin:0 auto 20px;max-width:440px}
+.quality-format b{color:#0E4174;font-size:14px}.quality-format span{font-size:14px;color:#33475E}.quality-format strong{color:#FF7F32;margin-right:6px}
+@media (max-width:620px){.modal.quality-modal{padding:26px 18px 20px}.quality-modal h2{font-size:22px}.quality-notice{flex-direction:column;text-align:center}}
+
+.mod-tagbar{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:10px 0 4px;padding:12px;border-radius:14px;background:#F8FAFD;border:1px solid var(--line)}
+.mod-tagbar-title{font-size:12px;font-weight:800;letter-spacing:.8px;color:#0E4174;text-transform:uppercase;margin-right:4px}
+.mod-tagfilter{display:inline-flex;align-items:center;gap:6px;border:1px solid #D8E2EE;background:#fff;border-radius:999px;padding:6px 11px;font:600 12.5px/1.2 inherit;color:#33475E;cursor:pointer}
+.mod-tagfilter b{font-weight:800;color:#0E4174}
+.mod-tagfilter.active{background:#0E4174;border-color:#0E4174;color:#fff}.mod-tagfilter.active b{color:#fff}
+.mod-tagfilter:disabled{opacity:.45;cursor:default}
+.mod-tagbar-note{flex-basis:100%;margin:4px 2px 0;font-size:12px;color:var(--muted)}
+.mod-tag{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700}
+.mod-tag i{font-style:normal}
+.mod-tag--red{background:#FDECEC;color:#C0392B}.mod-tag--amber{background:#FFF4E3;color:#A5611E}.mod-tag--blue{background:#EAF2FB;color:#205C9E}.mod-tag--violet{background:#F1E9FF;color:#6B44B0}.mod-tag--ok{background:#EAF8EF;color:#23804F}
+.mod-tagfilter.mod-tag--red:not(.active){color:#C0392B}.mod-tagfilter.mod-tag--amber:not(.active){color:#A5611E}.mod-tagfilter.mod-tag--blue:not(.active){color:#205C9E}.mod-tagfilter.mod-tag--violet:not(.active){color:#6B44B0}.mod-tagfilter.mod-tag--ok:not(.active){color:#23804F}

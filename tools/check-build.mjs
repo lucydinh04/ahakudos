@@ -10,7 +10,7 @@ const read = p => readFileSync(p, 'utf8');
 const walk = d => readdirSync(d).flatMap(f => { const p = path.join(d, f); return statSync(p).isDirectory() ? walk(p) : [p]; });
 
 // 1. Required files
-const REQUIRED = ['api/page.js', 'api/bridge.js', 'api/dev-login.js', 'api/health.js', 'api/background.js', 'lib/config.js', 'lib/http.js', 'lib/identity.js', 'lib/jwt.js', 'lib/bridge.js',
+const REQUIRED = ['api/page.js', 'api/bridge.js', 'api/dev-login.js', 'api/health.js', 'api/background.js', 'api/avatar.js', 'lib/config.js', 'lib/http.js', 'lib/identity.js', 'lib/jwt.js', 'lib/bridge.js',
   'private/workspace.html', 'private/login.html', 'private/error.html', 'public/app/app.js', 'public/app/app.css', 'public/app/boot.js',
   'public/app/illustrations.js', 'public/app/dev-login.js', 'public/robots.txt'];
 REQUIRED.forEach(p => { if (!existsSync(p)) fail('Missing ' + p); });

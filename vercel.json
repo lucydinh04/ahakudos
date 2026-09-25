@@ -19,6 +19,9 @@
     },
     "api/background.js": {
       "maxDuration": 30
+    },
+    "api/avatar.js": {
+      "maxDuration": 30
     }
   },
   "rewrites": [
