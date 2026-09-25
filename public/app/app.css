@@ -4372,8 +4372,18 @@ p,li,small,.sub,blockquote,.coach-nudge,.home-def-v2__lead,.home-def-v2__support
 .hb-account img{border-radius:50%;object-fit:cover}
 
 .kudos-soft-bg{position:relative;isolation:isolate;overflow:hidden}
-.kudos-soft-bg::before{content:"";position:absolute;inset:0;z-index:-2;background:var(--soft-bg) center/cover no-repeat;opacity:.22}
-.kudos-soft-bg::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(100deg,rgba(255,255,255,.95) 0%,rgba(255,255,255,.86) 55%,rgba(255,255,255,.55) 100%)}
+.kudos-soft-bg::before{content:"";position:absolute;inset:0;z-index:-2;background:var(--soft-bg) center/cover no-repeat;opacity:.42}
+.kudos-soft-bg::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(100deg,rgba(255,255,255,.9) 0%,rgba(255,255,255,.72) 50%,rgba(255,255,255,.32) 100%)}
 .feed .kudos-soft-bg:nth-child(odd){background-color:#FFF9F3}
 .feed .kudos-soft-bg:nth-child(even){background-color:#F5F9FE}
-.feed .kudos-soft-bg:nth-child(even)::after{background:linear-gradient(260deg,rgba(255,255,255,.95) 0%,rgba(255,255,255,.86) 55%,rgba(255,255,255,.55) 100%)}
+.feed .kudos-soft-bg:nth-child(even)::after{background:linear-gradient(260deg,rgba(255,255,255,.9) 0%,rgba(255,255,255,.72) 50%,rgba(255,255,255,.32) 100%)}
+
+/* ---- V30.19: card text colours balanced — cam (nhãn), xanh dương (tên, giá trị), đen (nội dung) ---- */
+.kd-card .kd-card-label{color:#C9500A}
+.kd-card .kd-sender-caption{color:#C9500A}
+.kd-card .kd-sender-name{color:#1E62B8}
+.kd-card .kd-sender-dept{color:#3F4A57}
+.kd-card.kd-card-fullbg .kd-card-msg{color:#1B1F24}
+.kd-card .kd-value-caption{color:#C9500A}
+.kd-card .kd-value-chip{color:#1E62B8;border-color:rgba(30,98,184,.28);background:rgba(255,255,255,.72)}
+.kd-card .kd-recipient-stack{border-left-color:rgba(255,127,50,.35)}

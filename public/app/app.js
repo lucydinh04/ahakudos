@@ -257,7 +257,7 @@ function rewriteKudos(id){
 let loaderOverlayTimer=null;
 function showLoaderOverlay(label){hideLoaderOverlay();loaderOverlayTimer=setTimeout(()=>{const o=document.createElement('div');o.className='aha-loader-overlay';o.innerHTML=loaderHtml(label);document.body.appendChild(o);},250);}
 function hideLoaderOverlay(){clearTimeout(loaderOverlayTimer);document.querySelectorAll('.aha-loader-overlay').forEach(o=>o.remove());}
-const ADMIN_AVATAR=`${BASE}/illustrations/ahakudos-admin-avatar.webp`; // avatar of AHAKUDOS / Admin
+const ADMIN_AVATAR=`${BASE}/illustrations/ahakudos-admin-avatar-v2.webp`; // avatar of AHAKUDOS / Admin
 function miniAvatar(email,name,cls=''){if(!email&&String(name||'').trim()==='AHAKUDOS')return `<div class="mini-avatar ${cls} has-photo is-ahakudos"><img src="${ADMIN_AVATAR}" alt="" loading="lazy" data-hide-on-error><span>AK</span></div>`;const u=avatarUrl(email);return `<div class="mini-avatar ${cls}${u?' has-photo':''}">${u?`<img src="${escapeHtml(u)}" alt="" loading="lazy" data-hide-on-error>`:''}<span>${escapeHtml(initials(name||email||''))}</span></div>`;}
 const state={
   mode:me().inMasterData===false&&BOOT.isAdmin?'admin':'employee',
