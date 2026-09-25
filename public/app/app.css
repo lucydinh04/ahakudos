@@ -4232,3 +4232,27 @@ p,li,small,.sub,blockquote,.coach-nudge,.home-def-v2__lead,.home-def-v2__support
 .mod-tag i{font-style:normal}
 .mod-tag--red{background:#FDECEC;color:#C0392B}.mod-tag--amber{background:#FFF4E3;color:#A5611E}.mod-tag--blue{background:#EAF2FB;color:#205C9E}.mod-tag--violet{background:#F1E9FF;color:#6B44B0}.mod-tag--ok{background:#EAF8EF;color:#23804F}
 .mod-tagfilter.mod-tag--red:not(.active){color:#C0392B}.mod-tagfilter.mod-tag--amber:not(.active){color:#A5611E}.mod-tagfilter.mod-tag--blue:not(.active){color:#205C9E}.mod-tagfilter.mod-tag--violet:not(.active){color:#6B44B0}.mod-tagfilter.mod-tag--ok:not(.active){color:#23804F}
+
+/* ---- V30.10: Giá trị cốt lõi (cards with definitions), greeting size, success banner name ---- */
+.kudos-compose-page .culture-picker.culture-picker--defs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.kudos-compose-page .culture-chip.culture-card{display:flex;flex-direction:column;align-items:stretch;gap:8px;text-align:left;border-radius:16px;padding:14px 16px;min-height:0;background:#fff;border:1.5px solid var(--line);color:#33475E;font-size:14px;cursor:pointer;transition:border-color .15s,box-shadow .15s,background .15s}
+.culture-card-head{display:flex;align-items:center;gap:8px}
+.culture-card-head i{font-style:normal;font-size:18px}
+.culture-card-head b{font-size:16px;color:#0E4174;font-weight:800}
+.culture-card-suggest{display:none;margin-left:auto;font-style:normal;font-size:11px;font-weight:800;letter-spacing:.4px;color:#C9571B;background:#FFEBDD;border-radius:999px;padding:3px 8px}
+.culture-card-tick{display:none;margin-left:auto;width:22px;height:22px;border-radius:50%;background:#fff;color:var(--orange);font-weight:900;font-size:13px;align-items:center;justify-content:center}
+.culture-card-def{font-size:13px;line-height:1.6;color:#5B6B7F;font-weight:500}
+.kudos-compose-page .culture-chip.culture-card.suggested:not(.selected){border-color:#F3C9A6;background:#FFF8F2}
+.kudos-compose-page .culture-chip.culture-card.suggested:not(.selected) .culture-card-suggest{display:inline-block}
+.kudos-compose-page .culture-chip.culture-card.selected{background:linear-gradient(160deg,#FF8A3D,#FF6F0F);border-color:#FF6F0F;color:#fff;box-shadow:0 10px 22px rgba(255,111,15,.25)}
+.kudos-compose-page .culture-chip.culture-card.selected .culture-card-head b,.kudos-compose-page .culture-chip.culture-card.selected .culture-card-def{color:#fff}
+.kudos-compose-page .culture-chip.culture-card.selected .culture-card-tick{display:inline-flex}
+.kudos-compose-page .culture-chip.culture-card.selected .culture-card-suggest{display:none}
+@media (max-width:760px){.kudos-compose-page .culture-picker.culture-picker--defs{grid-template-columns:1fr}}
+
+.hb-contextbar .greeting b{font-size:20px}
+.hb-contextbar .greeting b .wave{font-size:21px}
+.hb-contextbar .greeting span{font-size:16px}
+@media (max-width:620px){.hb-contextbar .greeting b{font-size:18px}.hb-contextbar .greeting span{font-size:15px}}
+
+.nowrap-name{white-space:nowrap}
