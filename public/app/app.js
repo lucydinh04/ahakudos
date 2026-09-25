@@ -53,7 +53,7 @@ catch(e){
 const legacyLinkId=new URLSearchParams(location.search).get('id')||''; // V28 emails used ?id=<kudosId>
 
 // The web app and Apps Script are deployed separately. If Apps Script is older, new features (e.g. Giá trị cốt lõi) fail with old errors.
-const REQUIRED_BACKEND='V30.14';
+const REQUIRED_BACKEND='V30.17';
 function backendOutdated(){const v=String((BOOT.config&&BOOT.config.version)||'');const m=v.match(/^V(\d+)\.(\d+)/),r=REQUIRED_BACKEND.match(/^V(\d+)\.(\d+)/);return !m||Number(m[1])<Number(r[1])||(Number(m[1])===Number(r[1])&&Number(m[2])<Number(r[2]));}
 if(backendOutdated())console.warn('[AHAKUDOS] Apps Script '+((BOOT.config&&BOOT.config.version)||'?')+' cũ hơn web app ('+REQUIRED_BACKEND+'). Dán Code.gs mới và tạo New version.');
 const PEOPLE=BOOT.people||[];
@@ -110,7 +110,7 @@ function fabHtml(){const f=fabState();return `<button class="aha-floating-kudos 
 function openFab(btn){const k=btn.dataset.fab;if(k==='unread'&&btn.dataset.fabId){state.mode='employee';state.page='kudos-detail';state.viewKudosId=btn.dataset.fabId;try{history.replaceState(null,'','#/k/'+btn.dataset.fabId);}catch(e){}render();window.scrollTo(0,0);}else goToPage(k==='community'?'public-feed':'send-kudos');}
 // Welcome Onboard: the signed-in employee's Onboard Day is today → banner + confetti (once per day).
 function isOnboardToday(){const d=me().onboardDate;return !!d&&d===vnDay(new Date().toISOString());}
-function welcomeOnboardHtml(){if(!isOnboardToday())return '';const first=String(me().name||'').split(' ').slice(-1)[0];return `<section class="welcome-onboard" aria-label="Chào mừng thành viên mới"><img src="${BASE}/illustrations/welcome-onboard.webp" alt="Welcome Onboard — Chúc bạn có thật nhiều trải nghiệm tuyệt vời cùng đại gia đình Ahamove" width="1600" height="900"><div class="welcome-onboard__copy"><b>Chào mừng ${escapeHtml(first)} đến với Ahamove! 🎉</b><span>Hôm nay là ngày đầu tiên của bạn. Cả đại gia đình Ahamove rất vui được đồng hành cùng bạn trên hành trình Always Moving.</span></div></section>`;}
+function welcomeOnboardHtml(){if(!isOnboardToday())return '';const first=String(me().name||'').split(' ').slice(-1)[0];const w=store.received.find(k=>k.welcome);return `<section class="welcome-onboard" aria-label="Chào mừng thành viên mới"><img src="${BASE}/illustrations/welcome-onboard.webp" alt="Welcome Onboard — Chúc bạn có thật nhiều trải nghiệm tuyệt vời cùng đại gia đình Ahamove" width="1600" height="900"><div class="welcome-onboard__copy"><b>Hôm nay là ngày đầu tiên của ${escapeHtml(first)} tại Ahamove 🎉</b><span>${w?'Có một lời nhắn dành riêng cho bạn đang chờ được mở.':'Hãy dành chút thời gian làm quen với đồng đội mới nhé.'}</span>${w?`<button class="welcome-onboard__cta" data-open-kudos="${escapeHtml(w.id)}">💌 Mở lời nhắn →</button>`:''}</div></section>`;}
 let welcomeCelebrated=false;
 function celebrateOnboard(){if(welcomeCelebrated||!isOnboardToday()||state.mode!=='employee'||state.page!=='employee-home')return;welcomeCelebrated=true;const key='ahakudos-welcome-onboard:'+me().email+':'+me().onboardDate;if(safeGet(key))return;safeSet(key,'1');setTimeout(launchConfetti,400);}
 function sentBy(){return store.sent;}
@@ -228,7 +228,7 @@ function confirmQuality(){
    <button class="modal-close" data-q="edit" aria-label="Đóng">×</button>
    <div class="quality-art" aria-hidden="true"><img src="${BASE}/illustrations/quality-mascot.webp" alt="" width="560" height="484" data-hide-on-error></div>
    <div class="kicker">THƯ KÝ KUDOS</div>
-   <h2 id="quality-title">Sắp hoàn hảo rồi nè 💛</h2>
+   <h2 id="quality-title">Sắp hoàn hảo rồi nè 🧡</h2>
    <p>${escapeHtml(QUALITY_MESSAGE)}</p>
    ${qualityFormatHtml()}
    <div class="kudos-success-actions"><button class="btn secondary" data-q="send">Vẫn gửi KUDOS</button><button class="btn primary" data-q="edit">Bổ sung nội dung</button></div>
@@ -285,7 +285,7 @@ function birthdaySuggestionsFor(currentEmail){
 // Background templates = 4 ảnh 3D thật (backgrounds.js). Fallback nếu module vắng.
 const cardTemplates=(BG&&BG.LIST&&BG.LIST.length)
   ? BG.LIST.map(t=>({id:t.id,name:t.name,sticker:t.sticker}))
-  : [{id:'warm',name:'Ấm áp',sticker:'💛'}];
+  : [{id:'warm',name:'Ấm áp',sticker:'🧡'}];
 // Background theo sự kiện (Admin quản lý) — chỉ hiện sự kiện đang kích hoạt trong picker.
 // Admin-uploaded backgrounds for special occasions (served privately via /api/background). Employees only render them.
 let CUSTOM_BGS=BOOT.backgrounds||[];
@@ -395,7 +395,7 @@ function contextbar(){
  const firstName=escapeHtml((u.name||'bạn').split(' ').slice(-1)[0]);
  const tenureDays=employeeTenureDays(u);
  const tenureLine=isOnboardToday()||tenureDays===0
-   ?'Hôm nay là ngày đầu tiên của bạn tại Ahamove — chào mừng bạn! 🎉'
+   ?'Cùng khám phá AHAKUDOS — nơi mọi lời cảm ơn được lưu lại ✨'
    :tenureDays!==null
    ?`Cảm ơn bạn đã đồng hành cùng Ahamove <strong class="tenure-days">${tenureDays.toLocaleString('vi-VN')}</strong> ngày.`
    :'Cảm ơn bạn đã đồng hành cùng Ahamove.';
@@ -429,7 +429,7 @@ function receivedFeedItem(k,{big=false}={}){
 function replyThreadHtml(k,isRecipient){
  const other=isRecipient?k.senderName:k.recipientName;
  const otherFirst=String(other||'').trim();
- const quick=[`Cảm ơn bạn ${otherFirst} rất nhiều 💛`,'Then kiu dancers 💃'];
+ const quick=[`Cảm ơn bạn ${otherFirst} rất nhiều 🧡`,'Then kiu dancers 💃'];
  const list=(k.replies||[]).map(r=>`<div class="reply-msg ${r.mine?'is-mine':''}"><b>${escapeHtml(r.mine?'Bạn':r.name||'')}</b><p>${escapeHtml(r.text)}</p><time>${escapeHtml(fmtDateTime(r.at))}</time></div>`).join('');
  return `<div class="kd-panel kd-reply-panel"><h3>💬 ${isRecipient?'Nhắn lại cho '+escapeHtml(other||'người gửi'):'Lời nhắn từ '+escapeHtml(other||'người nhận')}</h3>
   ${list?`<div class="reply-list">${list}</div>`:`<p class="reply-empty">${isRecipient?'Gửi một lời cảm ơn để người gửi biết KUDOS đã chạm tới bạn nhé.':'Chưa có lời nhắn nào.'}</p>`}
@@ -651,7 +651,7 @@ const recvCount=rec.length, noJourneyYet=sentCount===0&&recvCount===0;
 
 // ---- Public feed -----------------------------------------------------------
 function publicFeedPage(){
- const reactionMeta={heart:['💛','Đồng cảm'],clap:['👏','Vỗ tay'],cheer:['🙌','Tuyệt vời'],spark:['✨','Lan tỏa']};
+ const reactionMeta={heart:['🧡','Đồng cảm'],clap:['👏','Vỗ tay'],cheer:['🙌','Tuyệt vời'],spark:['✨','Lan tỏa']};
  const list=publicFeedList();
  const cards=list.map(k=>{
    const tags=(k.values||[]).map(v=>`<span>${escapeHtml(CULTURE[v]||v)}</span>`).join('');
@@ -803,7 +803,7 @@ return `<section class="page active kudos-compose-page">
     </div>
     <div class="coach coach--featured ${isOccasion()?'hidden':''}" role="region" aria-label="Thư ký hỗ trợ nội dung KUDOS">
      <div class="coach-head">
-      <span class="coach-title"><span class="coach-badge" aria-hidden="true">✍</span><span class="coach-title-copy"><b>Thư ký hỗ trợ nội dung KUDOS</b><small>Thư ký nhỏ sẽ là người bạn đồng hành giúp bạn thêm một chút “gia vị”, để lời KUDOS thật là woah và chạm đến trái tim đồng nghiệp 💛</small></span></span>
+      <span class="coach-title"><span class="coach-badge" aria-hidden="true">✍</span><span class="coach-title-copy"><b>Thư ký hỗ trợ nội dung KUDOS</b><small>Thư ký nhỏ sẽ là người bạn đồng hành giúp bạn thêm một chút “gia vị”, để lời KUDOS thật là woah và chạm đến trái tim đồng nghiệp 🧡</small></span></span>
       <span class="coach-actions"><span class="coach-live"><i aria-hidden="true"></i>Realtime</span><button type="button" class="coach-toggle" id="coach-toggle" aria-expanded="false" aria-controls="coach-more">Xem thêm</button></span>
      </div>
      <p class="coach-nudge" id="coach-nudge" role="status" aria-live="polite">Bắt đầu viết, mình sẽ kiểm tra xem nội dung đã có Khoảnh khắc → Sự hỗ trợ / Năng lượng bạn nhận được chưa.</p>
@@ -943,8 +943,8 @@ function kudosDetail(){
  const shareBlock=isRecipient&&k.canShareToCommunity?`<div class="kd-panel kd-share-panel"><h3>${k.sharedByRecipient?'Đang hiển thị trên CỘNG ĐỒNG KUDOS':'Lan tỏa niềm vui này?'}</h3><p>${k.sharedByRecipient?'Mọi người trong Ahamove đang cùng chúc mừng bạn. Bạn có thể thôi chia sẻ bất cứ lúc nào.':'AHAKUDOS này đang ở chế độ riêng tư. Bạn có thể chia sẻ lên CỘNG ĐỒNG KUDOS để đồng nghiệp cùng chúc mừng.'}</p><button class="btn ${k.sharedByRecipient?'secondary':'primary'}" data-share-community="${escapeHtml(k.id)}" data-share="${k.sharedByRecipient?'0':'1'}">${k.sharedByRecipient?'Thôi chia sẻ':'Chia sẻ đến CỘNG ĐỒNG KUDOS →'}</button></div>`:'';
  const backTarget=isSender&&!isRecipient?'kudos-profile':(k.isCommunity&&!isRecipient?'public-feed':'employee-home');
  const kicker=isRecipient?'KUDOS DÀNH CHO BẠN':isSender?'KUDOS BẠN ĐÃ GỬI':'CỘNG ĐỒNG KUDOS';
- const title=isRecipient?'Có một lời ghi nhận dành riêng cho bạn 💛':isSender?'Lời ghi nhận bạn đã gửi':'Một lời ghi nhận đang được lan tỏa';
- const sub=isRecipient?'Một đồng đội đã nhìn thấy điều bạn làm và muốn gửi đến bạn lời ghi nhận này.':isSender?'Đây là lời ghi nhận bạn đã gửi (trên background đã chọn).':'Lời ghi nhận đã được Admin duyệt cho CỘNG ĐỒNG KUDOS.';
+ const title=isRecipient&&k.welcome?'Lời nhắn từ AHAKUDOS 💌':isRecipient?'Có một lời ghi nhận dành riêng cho bạn 🧡':isSender?'Lời ghi nhận bạn đã gửi':'Một lời ghi nhận đang được lan tỏa';
+ const sub=isRecipient&&k.welcome?'Gửi đến bạn nhân ngày gia nhập Ahamove.':isRecipient&&k.source==='ADMIN'?'AHAKUDOS gửi đến bạn lời ghi nhận nhân dịp đặc biệt này.':isRecipient?'Một đồng đội đã nhìn thấy điều bạn làm và muốn gửi đến bạn lời ghi nhận này.':isSender?'Đây là lời ghi nhận bạn đã gửi (trên background đã chọn).':'Lời ghi nhận đã được Admin duyệt cho CỘNG ĐỒNG KUDOS.';
  return `<section class="page active kudos-detail-page">
    <button class="kd-back" data-page="${backTarget}">← ${backTarget==='kudos-profile'?'Về Hồ sơ':backTarget==='public-feed'?'Về Cộng đồng':'Về trang chủ'}</button>
    <div class="page-head"><div><div class="kicker">${kicker}</div><h1>${title}</h1><p class="page-sub">${sub}</p></div></div>
@@ -1781,7 +1781,7 @@ function showEmployeeHomeIntroBanner(){
      <button class="home-intro-close" aria-label="Đóng">×</button>
      <div class="home-intro-header"><div class="home-intro-brandmark">${logo(true)}</div><div class="kicker">CHÀO MỪNG ĐẾN VỚI AHAKUDOS</div><p>AHAKUDOS là nơi bạn gửi lời ghi nhận đến đồng nghiệp, theo dõi những lời cảm ơn đang lan tỏa trong công ty và lưu lại hành trình ghi nhận của chính mình.</p></div>
      <div class="home-intro-card-grid">
-       <div class="intro-showcase-card card-send"><div class="intro-showcase-icon" aria-hidden="true">💛</div><h3>Gửi KUDOS</h3><p>Viết lời ghi nhận cho một hành động cụ thể mà bạn trân trọng ở đồng nghiệp.</p><button class="intro-showcase-btn" data-home-intro-action="send">Gửi ngay</button></div>
+       <div class="intro-showcase-card card-send"><div class="intro-showcase-icon" aria-hidden="true">🧡</div><h3>Gửi KUDOS</h3><p>Viết lời ghi nhận cho một hành động cụ thể mà bạn trân trọng ở đồng nghiệp.</p><button class="intro-showcase-btn" data-home-intro-action="send">Gửi ngay</button></div>
        <div class="intro-showcase-card card-feed"><div class="intro-showcase-icon" aria-hidden="true">🚀</div><h3>CỘNG ĐỒNG KUDOS</h3><p>Khám phá những lời ghi nhận đã được Admin duyệt để hiển thị công khai.</p><button class="intro-showcase-btn" data-home-intro-action="feed">Khám phá</button></div>
        <div class="intro-showcase-card card-profile"><div class="intro-showcase-icon" aria-hidden="true">🏆</div><h3>Hồ sơ KUDOS</h3><p>Xem lại những KUDOS bạn đã gửi, đã nhận và giữ lại để đọc về sau.</p><button class="intro-showcase-btn" data-home-intro-action="profile">Xem thêm</button></div>
        <div class="intro-showcase-card card-milestone"><div class="intro-showcase-icon" aria-hidden="true">🎁</div><h3>Lời chúc đặc biệt</h3><p>Gửi lời chúc cho sinh nhật và những dấu mốc đặc biệt của đồng nghiệp.</p><button class="intro-showcase-btn" data-home-intro-action="explore">Đã rõ</button></div>
@@ -1960,11 +1960,11 @@ function qualityCoach(text,ctx){
  const q=kudosQuality(text);
  // Thư ký KUDOS: thân thiện, dễ thương, tích cực, không phán xét — góp ý nhẹ nhàng, cụ thể.
  const who=name?` ${name}`:'';
- const cheers=['Đỉnh nóc kịch trần! 🚀 KUDOS này đủ woah để gửi rồi đó ✨','KUDOS đủ woah để gửi rồi đó ✨ Gửi thôi nào!','Tuyệt cú mèo! 💛 Có khoảnh khắc, có năng lượng — đồng nghiệp sẽ vui lắm đây.'];
+ const cheers=['Đỉnh nóc kịch trần! 🚀 KUDOS này đủ woah để gửi rồi đó ✨','KUDOS đủ woah để gửi rồi đó ✨ Gửi thôi nào!','Tuyệt cú mèo! 🧡 Có khoảnh khắc, có năng lượng — đồng nghiệp sẽ vui lắm đây.'];
  let nudge;
  if(len===0){nudge=`Chào bạn 👋 Thư ký đây! Kể mình nghe <b>khoảnh khắc</b> khiến bạn muốn ghi nhận${who} nha.`;}
  else if(len>=12&&!q.has.about){nudge=`Hình như nội dung này chưa nói về đồng nghiệp bạn muốn ghi nhận 🤔 KUDOS là lời <b>cảm ơn / ghi nhận dành cho một người cụ thể</b> — thử kể điều${who||' đồng nghiệp'} đã làm cho bạn hoặc team nhé.`;}
- else if(!q.has.moment||len<25){nudge=`Lời cảm ơn ấm áp quá 💛 Mình thêm một <b>khoảnh khắc cụ thể</b> nữa nhé — lúc nào,${who||' đồng nghiệp'} đã làm gì — để lời KUDOS thật đáng nhớ.`;}
+ else if(!q.has.moment||len<25){nudge=`Lời cảm ơn ấm áp quá 🧡 Mình thêm một <b>khoảnh khắc cụ thể</b> nữa nhé — lúc nào,${who||' đồng nghiệp'} đã làm gì — để lời KUDOS thật đáng nhớ.`;}
  else if(!q.has.energy){nudge=`Sắp xong rồi nè ✨ Điều đó đã mang lại <b>sự hỗ trợ / năng lượng</b> gì cho bạn hoặc team? Thêm một câu thôi là chạm tim luôn.`;}
  else if(!q.ok){nudge=`Gần xong rồi 🌱 Thêm vài chi tiết nhỏ (khoảng ${KUDOS_QUALITY.minWords} từ trở lên) để${who||' đồng nghiệp'} cảm nhận rõ hơn sự chân thành của bạn nha.`;}
  else{let h=0;for(const ch of String(text).slice(0,24))h=(h*31+ch.charCodeAt(0))>>>0;nudge=cheers[h%cheers.length];}
@@ -2306,6 +2306,8 @@ function handleDeepLink(){
  return false;
 }
 window.addEventListener('hashchange',()=>{if(handleDeepLink())render();initHomeHandbookProgress();});
+// Re-fit KUDOS cards when the window size changes (rotation, split view, resized pane).
+let fitTimer=null;window.addEventListener('resize',()=>{clearTimeout(fitTimer);fitTimer=setTimeout(()=>fitAllKudosCards(document.body),150);});
 
 // ---- Typography: never leave a single last word alone on the final line ----
 // CSS text-wrap handles modern browsers; this joins the last two words with a no-break space everywhere else.
