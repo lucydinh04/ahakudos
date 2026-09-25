@@ -4329,3 +4329,21 @@ p,li,small,.sub,blockquote,.coach-nudge,.home-def-v2__lead,.home-def-v2__support
 .mod-tag small{font-size:11.5px;font-weight:600;opacity:.85;margin-left:2px}
 .tag-editor-item>span{display:flex;flex-direction:column;gap:2px}
 .tag-editor-item>span b{font-size:14px}.tag-editor-item>span small{font-size:12px;font-weight:500;opacity:.85}
+
+/* ---- V30.13: inline nav badges (employee), value reasons, reply thread ---- */
+.hb-nav .nav-label{position:relative;display:inline-block}
+.hb-nav .nav-badge.nav-badge--inline{position:absolute;top:-10px;right:-18px;left:auto;background:#FF3B30;box-shadow:0 2px 6px rgba(255,59,48,.4);min-width:18px;height:18px;line-height:18px;font-size:11px}
+.culture-card-why{display:block;font-size:12.5px;line-height:1.5;color:#C9571B;font-weight:600}
+.culture-card-why:empty{display:none}
+.kudos-compose-page .culture-chip.culture-card.selected .culture-card-why{color:#fff}
+#ai-values{line-height:1.6}#ai-values b{color:#0E4174}#ai-values span{color:var(--muted)}
+.reply-chip{display:inline-block;margin-top:8px;font-size:12.5px;font-weight:700;color:#205C9E;background:#EAF2FB;border-radius:999px;padding:4px 10px}
+.reply-chip.is-new{background:#FFEDEB;color:#D63A2B}
+.kd-reply-panel .reply-list{display:grid;gap:8px;margin:10px 0 12px}
+.reply-msg{max-width:88%;padding:9px 12px;border-radius:14px 14px 14px 4px;background:#F2F6FB}
+.reply-msg.is-mine{margin-left:auto;border-radius:14px 14px 4px 14px;background:#FFF1E6}
+.reply-msg b{display:block;font-size:12.5px;color:#0E4174}.reply-msg p{margin:2px 0 4px;font-size:14px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}.reply-msg time{font-size:11.5px;color:var(--muted)}
+.reply-empty{font-size:14px;color:var(--muted)}
+.reply-quick{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.reply-quick button{border:1px solid #E7D3C2;background:#fff;color:#8A4B1F;border-radius:999px;padding:6px 11px;font:600 12.5px/1.2 inherit;cursor:pointer}
+.reply-form{display:flex;gap:8px;align-items:flex-end}.reply-form textarea{flex:1;min-height:44px}.reply-form .btn{flex:0 0 auto}
