@@ -10,7 +10,7 @@ const read = p => readFileSync(p, 'utf8');
 const walk = d => readdirSync(d).flatMap(f => { const p = path.join(d, f); return statSync(p).isDirectory() ? walk(p) : [p]; });
 
 // 1. Required files
-const REQUIRED = ['api/page.js', 'api/bridge.js', 'api/dev-login.js', 'api/health.js', 'api/background.js', 'api/avatar.js', 'lib/config.js', 'lib/http.js', 'lib/identity.js', 'lib/jwt.js', 'lib/bridge.js',
+const REQUIRED = ['api/page.js', 'api/bridge.js', 'api/dev-login.js', 'api/health.js', 'api/background.js', 'api/avatar.js', 'api/feedback.js', 'api/review-login.js', 'lib/review-auth.js', 'private/review-login.html', 'public/review/review-login.js', 'lib/review-data.js', 'lib/review-snapshot.json', 'lib/feedback.js', 'lib/review-sandbox.js', 'public/review/review.css', 'public/review/feedback-sections.js', 'public/review/feedback-service.js', 'public/review/feedback-store.js', 'public/review/feedback-ui.js', 'lib/config.js', 'lib/http.js', 'lib/identity.js', 'lib/jwt.js', 'lib/bridge.js',
   'private/workspace.html', 'private/login.html', 'private/error.html', 'public/app/app.js', 'public/app/app.css', 'public/app/boot.js',
   'public/app/illustrations.js', 'public/app/dev-login.js', 'public/robots.txt'];
 REQUIRED.forEach(p => { if (!existsSync(p)) fail('Missing ' + p); });
@@ -22,7 +22,7 @@ for (const f of [...walk('api'), ...walk('lib')].filter(f => f.endsWith('.js')))
   if (r.status !== 0) fail('Syntax error in ' + f + ':\n' + r.stderr);
 }
 // 3. Browser scripts: classic-script syntax check + duplicate top-level declarations
-for (const f of walk('public/app').filter(f => f.endsWith('.js'))) {
+for (const f of [...walk('public/app'), ...(existsSync('public/review') ? walk('public/review') : [])].filter(f => f.endsWith('.js'))) {
   const src = read(f);
   try { new vm.Script(src, { filename: f }); } catch (e) { fail('Browser JS syntax error in ' + f + ': ' + e.message); }
   const names = [...src.matchAll(/^(?:async\s+)?function\s+([A-Za-z0-9_$]+)|^(?:const|let|var|class)\s+([A-Za-z0-9_$]+)/gm)].map(m => m[1] || m[2]);
@@ -47,7 +47,7 @@ for (const f of walk('private').filter(f => f.endsWith('.html'))) {
     fail(f + ': inline executable <script> is not allowed (CSP script-src \'self\')');
   }
   if (/\son[a-z]+=/i.test(html)) fail(f + ': inline event handler attribute');
-  const unknown = [...html.matchAll(/\{\{([A-Z_]+)\}\}/g)].map(m => m[1]).filter(n => !['BASE', 'BUILD', 'CONFIG_JSON', 'HANDBOOK_URL', 'TITLE', 'MESSAGE'].includes(n));
+  const unknown = [...html.matchAll(/\{\{([A-Z_]+)\}\}/g)].map(m => m[1]).filter(n => !['BASE', 'BUILD', 'CONFIG_JSON', 'HANDBOOK_URL', 'TITLE', 'MESSAGE', 'REVIEW_ASSETS'].includes(n));
   if (unknown.length) fail(f + ': unknown placeholders ' + unknown.join(','));
   if (html.length > 20000) fail(f + ': template is ' + html.length + ' bytes (assets belong in /public)');
   if (/\[TEST|bản test|TEST_ACCESS_KEY/i.test(html)) fail(f + ': test copy');

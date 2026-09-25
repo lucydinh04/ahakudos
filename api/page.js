@@ -7,6 +7,7 @@ import { existsSync } from 'node:fs';
 import { getConfig } from '../lib/config.js';
 import { noCache } from '../lib/http.js';
 import { getCurrentIdentity } from '../lib/identity.js';
+import { getReviewer } from '../lib/review-auth.js';
 
 const templates = new Map();
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -33,9 +34,15 @@ export function render(tpl, config, extra = {}) {
   const base = config ? config.basePath : '';
   const build = config ? config.buildId : 'dev';
   const client = { basePath: base, env: config ? config.env : 'unknown', buildId: build, handbookUrl: config ? config.handbookOrigin : '', devIdentity: !!(config && config.dev.enabled) };
+  if (config && config.review) client.review = { version: config.reviewVersion, feedback: !!config.feedback.enabled, reviewer: extra.reviewer || '', role: extra.role || '', needKey: !!config.reviewAccess.key };
+  // Review layer assets are injected ONLY on the review deployment; production pages never load them.
+  const reviewAssets = config && config.review
+    ? ['<link rel="stylesheet" href="' + escAttr(base) + '/review/review.css?v=' + escAttr(build) + '">',
+      ...['feedback-sections', 'feedback-service', 'feedback-store', 'feedback-ui'].map(f => '<script src="' + escAttr(base) + '/review/' + f + '.js?v=' + escAttr(build) + '"></script>')].join('\n  ')
+    : '';
   return tpl.split('{{BASE}}').join(escAttr(base)).split('{{BUILD}}').join(escAttr(build))
     .split('{{HANDBOOK_URL}}').join(escAttr(client.handbookUrl || '#')).split('{{TITLE}}').join(escAttr(extra.title || 'AHAKUDOS'))
-    .split('{{MESSAGE}}').join(escAttr(extra.message || '')).split('{{CONFIG_JSON}}').join(jsonForScript(client));
+    .split('{{MESSAGE}}').join(escAttr(extra.message || '')).split('{{CONFIG_JSON}}').join(jsonForScript(client)).split('{{REVIEW_ASSETS}}').join(reviewAssets);
 }
 export async function handle(req, res, deps = {}) {
   noCache(res);
@@ -48,6 +55,13 @@ export async function handle(req, res, deps = {}) {
   }
   securityHeaders(res, config);
   if (req.method !== 'GET' && req.method !== 'HEAD') return res.status(405).send('');
+  // REVIEW deployment: no sign-in; the review scenario (fictional data) decides who is shown.
+  if (config.review) {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    const reviewer = getReviewer(req, config); // allowlisted reviewers only (REVIEW_ALLOWED_EMAILS)
+    if (!reviewer) return res.status(200).send(render(await template('review-login.html'), config, { title: 'AHAKUDOS Review' }));
+    return res.status(200).send(render(await template('workspace.html'), config, { title: 'AHAKUDOS Review', reviewer: reviewer.email, role: reviewer.role }));
+  }
   let identity = null;
   try { identity = await getCurrentIdentity(req, config, deps); } catch (e) { identity = null; console.warn('[ahakudos] identity rejected', e.code, e.details || ''); }
   if (identity) return res.status(200).send(render(await template('workspace.html'), config));

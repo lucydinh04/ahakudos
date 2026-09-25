@@ -9,7 +9,8 @@
       "maxDuration": 30
     },
     "api/bridge.js": {
-      "maxDuration": 60
+      "maxDuration": 60,
+      "includeFiles": "lib/review-snapshot.json"
     },
     "api/dev-login.js": {
       "maxDuration": 10
@@ -22,6 +23,12 @@
     },
     "api/avatar.js": {
       "maxDuration": 30
+    },
+    "api/feedback.js": {
+      "maxDuration": 30
+    },
+    "api/review-login.js": {
+      "maxDuration": 10
     }
   },
   "rewrites": [
