@@ -18,15 +18,17 @@ const BG=(()=>{
  // retired: no longer offered in pickers, still rendered for KUDOS already sent with them.
  const LIST=[{id:'wish',name:'Tri ân',sticker:'🧧',fallback:'#FFF4D8',retired:true},{id:'move',name:'Đồng đội',sticker:'🛵',fallback:'#FFF0DB',retired:true},
   {id:'hpbd',name:'Happy Birthday',sticker:'🎉',fallback:'#FBEBDD',ext:'webp',zone:[5,8,45,82],shade:[-20,58,-30]},
+  {id:'dinhnoc',name:'Đỉnh nóc kịch trần',sticker:'👑',fallback:'#F8B9D4',ext:'webp',zone:[53,8,43,82],shade:[46,116,-30]},
   {id:'birthday',name:'Sinh nhật',sticker:'🎂',fallback:'#FFE3EA'},{id:'tech',name:'Cảm hứng',sticker:'🤖',fallback:'#DDEEFF',retired:true},
   {id:'camon',name:'Cảm ơn vì đã đến',sticker:'💞',fallback:'#FBF3EA',ext:'webp',zone:[50,8,40,80],shade:[38,106,-30]},
   {id:'cheers',name:'Tuyệt vời, uống nào',sticker:'🥂',fallback:'#FBE3EC',ext:'webp',zone:[58,7,39,86],shade:[48,116,-30]},
-  {id:'tenpoint',name:'10 điểm không có nhưng',sticker:'🏅',fallback:'#FDF0DC',ext:'webp',zone:[4,6,43,86],shade:[-20,55,-30]},
+  {id:'tenpoint',name:'10 điểm không có nhưng',sticker:'🏅',fallback:'#FDF0DC',ext:'webp',zone:[4,7,52,84],shade:[-20,64,-30]},
   {id:'proud',name:'Tớ tự hào về cậu',sticker:'🙌',fallback:'#FDE7D4',ext:'webp',zone:[4,6,49,86],shade:[-20,62,-30]},
   {id:'codetask',name:'Đồng cam cộng task',sticker:'💻',fallback:'#E3ECFB',ext:'webp',zone:[56,9,41,80],shade:[47,116,-30]},
-  {id:'coccoc',name:'Cốc cốc KUDOS tới',sticker:'🌸',fallback:'#FBEBD9',ext:'webp',zone:[8,8,43,82],shade:[-4,59,-30]},
+  {id:'coccoc',name:'Cốc cốc KUDOS tới',sticker:'🌸',fallback:'#FBEBD9',ext:'webp',zone:[6,8,46,82],shade:[-6,60,-30]},
   {id:'chualanh',name:'KUDOS chữa lành',sticker:'🌱',fallback:'#FBF6EC',ext:'webp',zone:[48,10,44,80],shade:[41,114,-30]},
   {id:'amazing',name:'Ơ mây zing gút chóp',sticker:'👍',fallback:'#BFE0F8',ext:'webp',zone:[5,8,44,82],shade:[-20,58,-30]},
+  {id:'aidriven',name:'AI-Driven Company',sticker:'🤖',fallback:'#D6E8FB',ext:'webp',zone:[58,7,39,78],shade:[52,116,-30]},
   {id:'aiways',name:'AI-ways Moving',sticker:'🚀',fallback:'#0F2C7A',ext:'webp',zone:[46,11,50,70],shade:[38,116,-30],dark:true}];
  const byId={};LIST.forEach(t=>{byId[t.id]=t;});
  return {LIST,get(id){const t=byId[id]||LIST[0];return {id:t.id,name:t.name,sticker:t.sticker,fallback:t.fallback,zone:t.zone||null,shade:t.shade||null,dark:!!t.dark,url:BASE+'/backgrounds/'+t.id+'.'+(t.ext||'png')+'?v='+encodeURIComponent(String(CONFIG.buildId||'1'))};}};
@@ -73,7 +75,7 @@ catch(e){
 const legacyLinkId=new URLSearchParams(location.search).get('id')||''; // V28 emails used ?id=<kudosId>
 
 // The web app and Apps Script are deployed separately. If Apps Script is older, new features (e.g. Giá trị cốt lõi) fail with old errors.
-const REQUIRED_BACKEND='V30.23';
+const REQUIRED_BACKEND='V30.25';
 function backendOutdated(){const v=String((BOOT.config&&BOOT.config.version)||'');const m=v.match(/^V(\d+)\.(\d+)/),r=REQUIRED_BACKEND.match(/^V(\d+)\.(\d+)/);return !m||Number(m[1])<Number(r[1])||(Number(m[1])===Number(r[1])&&Number(m[2])<Number(r[2]));}
 if(backendOutdated())console.warn('[AHAKUDOS] Apps Script '+((BOOT.config&&BOOT.config.version)||'?')+' cũ hơn web app ('+REQUIRED_BACKEND+'). Dán Code.gs mới và tạo New version.');
 const PEOPLE=BOOT.people||[];
@@ -341,7 +343,7 @@ function typeGroup(){return state.kudosType==='recognition'?'recognition':'other
 function isOccasion(){return !!occasionOf(state.kudosType);}
 function occasionOf(type){return OCCASIONS.find(o=>o.id===type)||null;}
 function kudosTypeLabel(t,k){const o=occasionOf(t);if(o&&o.custom&&k&&k.occasionLabel)return o.icon+' '+k.occasionLabel;return o?o.icon+' '+o.label:'👥 Đồng nghiệp';}
-const BIRTHDAY_TEMPLATE_IDS=(BOOT.config&&BOOT.config.birthdayTemplateIds)||['hpbd','birthday'];
+const BIRTHDAY_TEMPLATE_IDS=(BOOT.config&&BOOT.config.birthdayTemplateIds)||['hpbd','dinhnoc','birthday'];
 const BIRTHDAY_WINDOW_DAYS=Number(BOOT.config&&BOOT.config.birthdayWindowDays)||2;
 function typeTemplates(type){if(type==='other')type='birthday';return type==='birthday'?allTemplates().filter(t=>BIRTHDAY_TEMPLATE_IDS.includes(t.id)):allTemplates().filter(t=>!BIRTHDAY_TEMPLATE_IDS.includes(t.id));}
 function templateMeta(id){return cardTemplates.concat(customBgTemplates()).find(t=>t.id===id)||cardTemplates[0];}
