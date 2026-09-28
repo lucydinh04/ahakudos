@@ -4493,3 +4493,15 @@ p,li,small,.sub,blockquote,.coach-nudge,.home-def-v2__lead,.home-def-v2__support
 /* Gửi KUDOS hero: "Ghi nhận và cảm ơn" / "điều tuyệt vời mỗi ngày!" on two lines at every width */
 .compose-hero .ch-copy h1.ch-title span{display:block;white-space:nowrap}
 @media (min-width:701px){.compose-hero .ch-copy h1.ch-title{font-size:clamp(26px,2.7vw,36px)}}
+
+/* "AHAKUDOS là gì?" as an infographic: one short lead + 3 visual points */
+.hb-home .home-def-v2__copy > p.home-def-v2__lead{font-size:17px;line-height:1.7;margin:0 0 20px;max-width:620px}
+.hb-home .home-def-v2__lead b{color:var(--def-navy,#0E4174)}
+.home-def-points{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.home-def-point{display:flex;flex-direction:column;gap:8px;padding:18px 16px;border-radius:18px;background:rgba(255,255,255,.78);border:1px solid rgba(14,65,116,.08);box-shadow:0 10px 24px rgba(14,65,116,.06)}
+.home-def-point__icon{display:inline-flex;align-items:center;justify-content:center;gap:2px;height:44px;min-width:44px;align-self:flex-start;padding:0 8px;border-radius:14px;background:#FFF1E6;font-size:22px;line-height:1}
+.home-def-point__icon--values{background:#EAF3FF}
+.home-def-point__icon--values img{width:26px;height:26px;object-fit:contain}
+.home-def-point b{font-size:15.5px;line-height:1.4;color:var(--def-navy,#0E4174)}
+.home-def-point span:not(.home-def-point__icon){font-size:14px;line-height:1.6;color:#4A5D75}
+@media (max-width:900px){.home-def-points{grid-template-columns:1fr}.home-def-point{flex-direction:row;flex-wrap:wrap;align-items:center;column-gap:12px}.home-def-point span:not(.home-def-point__icon){flex:1 1 100%}}

@@ -27,13 +27,13 @@ const BG=(()=>{
   {id:'chualanh',name:'KUDOS chữa lành',sticker:'🌱',fallback:'#FBF6EC',ext:'webp',zone:[48,10,44,80],shade:[41,114,-30]},
   {id:'respect',name:'Respect',sticker:'😎',fallback:'#F8B4DE',ext:'webp',zone:[5,8,48,82],shade:[-20,58,-30]},
   {id:'cheers',name:'Tuyệt vời, uống nào',sticker:'🥂',fallback:'#FBE3EC',ext:'webp',zone:[58,7,39,86],shade:[48,116,-30]},
+  {id:'dinhnoc',name:'Đỉnh nóc kịch trần',sticker:'👑',fallback:'#F8B9D4',ext:'webp',zone:[50,8,46,82],shade:[43,116,-30]},
   {id:'amazing',name:'Ơ mây zing gút chóp',sticker:'👍',fallback:'#BFE0F8',ext:'webp',zone:[5,8,47,82],shade:[-20,60,-30]},
   {id:'aidriven',name:'AI-Driven Company',sticker:'🤖',fallback:'#D6E8FB',ext:'webp',zone:[58,7,39,78],shade:[52,116,-30]},
   {id:'codetask',name:'Đồng cam cộng task',sticker:'💻',fallback:'#E3ECFB',ext:'webp',zone:[56,9,41,80],shade:[47,116,-30]},
   {id:'aiways',name:'AI-ways Moving',sticker:'🚀',fallback:'#0F2C7A',ext:'webp',zone:[46,11,50,70],shade:[38,116,-30],dark:true},
   {id:'hpbd',name:'Happy Birthday',sticker:'🎉',fallback:'#FBEBDD',ext:'webp',zone:[5,8,45,82],shade:[-20,58,-30]},
-  {id:'birthday',name:'Sinh nhật',sticker:'🎂',fallback:'#FFE3EA'},
-  {id:'dinhnoc',name:'Đỉnh nóc kịch trần',sticker:'👑',fallback:'#F8B9D4',ext:'webp',zone:[50,8,46,82],shade:[43,116,-30]}];
+  {id:'birthday',name:'Sinh nhật',sticker:'🎂',fallback:'#FFE3EA'}];
  const byId={};LIST.forEach(t=>{byId[t.id]=t;});
  return {LIST,get(id){const t=byId[id]||LIST[0];return {id:t.id,name:t.name,sticker:t.sticker,fallback:t.fallback,zone:t.zone||null,shade:t.shade||null,dark:!!t.dark,url:BASE+'/backgrounds/'+t.id+'.'+(t.ext||'png')+'?v='+encodeURIComponent(String(CONFIG.buildId||'1'))};}};
 })();
@@ -79,7 +79,7 @@ catch(e){
 const legacyLinkId=new URLSearchParams(location.search).get('id')||''; // V28 emails used ?id=<kudosId>
 
 // The web app and Apps Script are deployed separately. If Apps Script is older, new features (e.g. Giá trị cốt lõi) fail with old errors.
-const REQUIRED_BACKEND='V30.26';
+const REQUIRED_BACKEND='V30.27';
 function backendOutdated(){const v=String((BOOT.config&&BOOT.config.version)||'');const m=v.match(/^V(\d+)\.(\d+)/),r=REQUIRED_BACKEND.match(/^V(\d+)\.(\d+)/);return !m||Number(m[1])<Number(r[1])||(Number(m[1])===Number(r[1])&&Number(m[2])<Number(r[2]));}
 if(backendOutdated())console.warn('[AHAKUDOS] Apps Script '+((BOOT.config&&BOOT.config.version)||'?')+' cũ hơn web app ('+REQUIRED_BACKEND+'). Dán Code.gs mới và tạo New version.');
 const PEOPLE=BOOT.people||[];
@@ -349,7 +349,7 @@ function occasionOf(type){return OCCASIONS.find(o=>o.id===type)||null;}
 function kudosTypeLabel(t,k){const o=occasionOf(t);if(o&&o.custom&&k&&k.occasionLabel)return o.icon+' '+k.occasionLabel;return o?o.icon+' '+o.label:'👥 Đồng nghiệp';}
 const BIRTHDAY_TEMPLATE_IDS=(BOOT.config&&BOOT.config.birthdayTemplateIds)||['hpbd','birthday','cheers','dinhnoc'];
 // Backgrounds offered for both KUDOS Đồng nghiệp and KUDOS Sinh nhật.
-const SHARED_TEMPLATE_IDS=(BOOT.config&&BOOT.config.sharedTemplateIds)||['cheers'];
+const SHARED_TEMPLATE_IDS=(BOOT.config&&BOOT.config.sharedTemplateIds)||['cheers','dinhnoc'];
 const BIRTHDAY_WINDOW_DAYS=Number(BOOT.config&&BOOT.config.birthdayWindowDays)||2;
 function typeTemplates(type){if(type==='other')type='birthday';const all=allTemplates();if(type==='birthday')return BIRTHDAY_TEMPLATE_IDS.map(id=>all.find(t=>t.id===id)).filter(Boolean);return all.filter(t=>!BIRTHDAY_TEMPLATE_IDS.includes(t.id)||SHARED_TEMPLATE_IDS.includes(t.id));}
 function templateMeta(id){return cardTemplates.concat(customBgTemplates()).find(t=>t.id===id)||cardTemplates[0];}
@@ -605,9 +605,12 @@ const recvCount=rec.length, noJourneyYet=sentCount===0&&recvCount===0;
     <div class="home-def-v2__copy">
      <span class="home-def-v2__badge">GIỚI THIỆU AHAKUDOS</span>
      <h2 id="home-def-title" class="home-def-v2__title">AHAKUDOS <span>là gì?</span></h2>
-     <p class="home-def-v2__lead">AHAKUDOS là nền tảng ghi nhận và cảm ơn nội bộ của Ahamove, được xây dựng để giúp Ahamovers dễ dàng ghi nhận những hành động tích cực của đồng nghiệp và cùng nhau lan tỏa Giá trị cốt lõi của Ahamove trong công việc hằng ngày.</p>
-     <p class="home-def-v2__support">Đó có thể là một lần chủ động hỗ trợ, cùng nhau giải quyết một vấn đề khó, chia sẻ kiến thức, đồng hành cùng team hay tạo ra một tác động tích cực trong công việc.</p>
-     <p class="home-def-v2__support">Mỗi lời KUDOS được gửi đi sẽ gắn với một hoặc nhiều Giá trị cốt lõi của Ahamove, bởi đó cũng là cách những giá trị này được thể hiện rõ nhất: qua cách Ahamovers hành động, phối hợp và tạo ra giá trị mỗi ngày. AHAKUDOS giúp những “chuyển động” tích cực ấy được nhìn thấy, ghi nhận và tiếp tục lan tỏa.</p>
+     <p class="home-def-v2__lead">Nền tảng <b>ghi nhận và cảm ơn</b> nội bộ của Ahamove — nơi Ahamovers ghi nhận hành động tích cực của đồng nghiệp và cùng lan tỏa <b>Giá trị cốt lõi</b> mỗi ngày.</p>
+     <ol class="home-def-points" aria-label="AHAKUDOS trong 3 ý">
+      <li class="home-def-point"><span class="home-def-point__icon" aria-hidden="true">🤝</span><b>Ghi nhận hành động tích cực</b><span>Chủ động hỗ trợ, cùng giải quyết vấn đề khó, chia sẻ kiến thức, đồng hành cùng team.</span></li>
+      <li class="home-def-point"><span class="home-def-point__icon home-def-point__icon--values" aria-hidden="true">${['speed','together','innovation'].map(v=>`<img src="${CULTURE_IMG(v)}" alt="" width="28" height="28" data-hide-on-error>`).join('')}</span><b>Gắn với Giá trị cốt lõi</b><span>Mỗi KUDOS gắn với một hoặc nhiều giá trị: Tốc độ · Đồng hành · Đổi mới.</span></li>
+      <li class="home-def-point"><span class="home-def-point__icon" aria-hidden="true">✨</span><b>Lan tỏa “chuyển động” tích cực</b><span>Để những đóng góp ấy được nhìn thấy, ghi nhận và tiếp tục lan tỏa.</span></li>
+     </ol>
      <div class="home-def-v2__note"><span class="home-def-v2__note-icon" aria-hidden="true">i</span><p><strong>Lưu ý:</strong> AHAKUDOS không thay thế hệ thống đánh giá hiệu suất.</p></div>
     </div>
     <div class="home-def-v2__visual" aria-hidden="true">
