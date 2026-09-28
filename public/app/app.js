@@ -19,11 +19,13 @@ const BG=(()=>{
   {id:'camon',name:'Cảm ơn vì đã đến',sticker:'💞',fallback:'#FBF3EA',ext:'webp',zone:[50,8,40,80],shade:[38,106,-30]},
   {id:'cheers',name:'Tuyệt vời, uống nào',sticker:'🥂',fallback:'#FBE3EC',ext:'webp',zone:[58,7,39,86],shade:[48,116,-30]},
   {id:'tenpoint',name:'10 điểm không có nhưng',sticker:'🏅',fallback:'#FDF0DC',ext:'webp',zone:[4,6,43,86],shade:[-20,55,-30]},
-  {id:'proud',name:'Tớ tự hào về cậu',sticker:'🙌',fallback:'#FDE7D4',ext:'webp',zone:[5,6,56,76],shade:[-20,71,-30]},
-  {id:'codetask',name:'Đồng cam cộng task',sticker:'💻',fallback:'#E3ECFB',ext:'webp',zone:[49,27,49,70],shade:[38,116,17]},
-  {id:'coccoc',name:'Cốc cốc KUDOS tới',sticker:'🌸',fallback:'#FBEBD9',ext:'webp',zone:[4,5,46,86],shade:[-20,60,-30]}];
+  {id:'proud',name:'Tớ tự hào về cậu',sticker:'🙌',fallback:'#FDE7D4',ext:'webp',zone:[4,6,49,86],shade:[-20,62,-30]},
+  {id:'codetask',name:'Đồng cam cộng task',sticker:'💻',fallback:'#E3ECFB',ext:'webp',zone:[56,9,41,80],shade:[47,116,-30]},
+  {id:'coccoc',name:'Cốc cốc KUDOS tới',sticker:'🌸',fallback:'#FBEBD9',ext:'webp',zone:[4,5,46,86],shade:[-20,60,-30]},
+  {id:'chualanh',name:'KUDOS chữa lành',sticker:'🌱',fallback:'#FBF6EC',ext:'webp',zone:[59,8,39,84],shade:[52,116,-30]},
+  {id:'aiways',name:'AI-ways Moving',sticker:'🚀',fallback:'#0F2C7A',ext:'webp',zone:[46,11,50,70],shade:[38,116,-30],dark:true}];
  const byId={};LIST.forEach(t=>{byId[t.id]=t;});
- return {LIST,get(id){const t=byId[id]||LIST[0];return {id:t.id,name:t.name,sticker:t.sticker,fallback:t.fallback,zone:t.zone||null,shade:t.shade||null,url:BASE+'/backgrounds/'+t.id+'.'+(t.ext||'png')};}};
+ return {LIST,get(id){const t=byId[id]||LIST[0];return {id:t.id,name:t.name,sticker:t.sticker,fallback:t.fallback,zone:t.zone||null,shade:t.shade||null,dark:!!t.dark,url:BASE+'/backgrounds/'+t.id+'.'+(t.ext||'png')+'?v='+encodeURIComponent(String(CONFIG.buildId||'1'))};}};
 })();
 function safeGet(key){try{return localStorage.getItem(key);}catch(e){return null;}}
 function safeSet(key,value){try{if(value===null)localStorage.removeItem(key);else localStorage.setItem(key,value);return true;}catch(e){return false;}}
@@ -67,7 +69,7 @@ catch(e){
 const legacyLinkId=new URLSearchParams(location.search).get('id')||''; // V28 emails used ?id=<kudosId>
 
 // The web app and Apps Script are deployed separately. If Apps Script is older, new features (e.g. Giá trị cốt lõi) fail with old errors.
-const REQUIRED_BACKEND='V30.20';
+const REQUIRED_BACKEND='V30.21';
 function backendOutdated(){const v=String((BOOT.config&&BOOT.config.version)||'');const m=v.match(/^V(\d+)\.(\d+)/),r=REQUIRED_BACKEND.match(/^V(\d+)\.(\d+)/);return !m||Number(m[1])<Number(r[1])||(Number(m[1])===Number(r[1])&&Number(m[2])<Number(r[2]));}
 if(backendOutdated())console.warn('[AHAKUDOS] Apps Script '+((BOOT.config&&BOOT.config.version)||'?')+' cũ hơn web app ('+REQUIRED_BACKEND+'). Dán Code.gs mới và tạo New version.');
 const PEOPLE=BOOT.people||[];
@@ -180,7 +182,7 @@ function buildKudosCard(k,opts){
  const z=Array.isArray(bg.zone)&&bg.zone.length===4?bg.zone.map(Number):null;
  const sh=z&&Array.isArray(bg.shade)&&bg.shade.length===3?bg.shade.map(Number):(z?[z[0]-8,z[0]+z[2]+8,-20]:null);
  const zoneAttr=z?` style="--zl:${z[0]}%;--zt:${z[1]}%;--zw:${z[2]}%;--zh:${z[3]}%;--sx0:${sh[0]}%;--sx1:${sh[1]}%;--sy0:${sh[2]}%;--zbg:${escapeHtml(bg.fallback||'#FFF7EF')}"`:'';
- return `<div class="kd-card kd-card-fullbg tpl-${escapeHtml(bg.id||k.templateId||'wish')} ${opts.mode==='public'?'kd-card-public':''}${z?' kd-card-zoned':''}"${zoneAttr}>
+ return `<div class="kd-card kd-card-fullbg tpl-${escapeHtml(bg.id||k.templateId||'wish')} ${opts.mode==='public'?'kd-card-public':''}${z?' kd-card-zoned':''}${bg.dark?' kd-card-dark':''}"${zoneAttr}>
    ${bgLayer}
    <div class="kd-card-shade" aria-hidden="true"></div>
    <div class="kd-card-content">
@@ -323,11 +325,11 @@ const KUDOS_TYPES=[{id:'recognition',label:'Đồng nghiệp',icon:'👥',hint:'
 // Occasions under "Khác". Each occasion: the Master Data date it uses (or typed when the recipient is not in DATA) and a ±2-day window.
 const OCCASIONS=[
  {id:'birthday',label:'Sinh nhật',icon:'🎂',field:'birthday',manualLabel:'Ngày sinh người nhận',payloadKey:'recipientBirthday',dataName:'Date of Birth',
-  what:'Sinh nhật',placeholder:'Ví dụ: Chúc mừng sinh nhật bạn! Chúc bạn tuổi mới thật nhiều niềm vui, sức khỏe và những hành trình đáng nhớ cùng Ahamove.'},
+  what:'Sinh nhật',placeholder:'Ví dụ: Chúc mừng sinh nhật bạn! Chúc bạn tuổi mới thật nhiều niềm vui và sức khỏe 🎂'},
  {id:'anniversary',label:'Thâm niên',icon:'✦',field:'anniversary',manualLabel:'Ngày vào Ahamove của người nhận',payloadKey:'recipientOnboard',dataName:'Onboard Day',
-  what:'Ngày kỷ niệm vào Ahamove',placeholder:'Ví dụ: Cảm ơn bạn đã đồng hành cùng Ahamove thêm một năm. Chúc bạn tiếp tục có thêm nhiều dấu ấn và hành trình đáng nhớ phía trước.'},
+  what:'Ngày kỷ niệm vào Ahamove',placeholder:'Ví dụ: Cảm ơn bạn đã đồng hành cùng Ahamove thêm một năm, chúc bạn thêm nhiều dấu ấn đáng nhớ ✨'},
  // Dịp khác: người viết tự đặt tên dịp và nội dung (không có điều kiện ngày).
- {id:'custom',label:'Dịp khác',icon:'✎',custom:true,what:'Dịp',placeholder:'Ví dụ: Chúc mừng bạn đã chính thức trở thành Team Lead! Mình tin bạn sẽ tiếp tục truyền cảm hứng cho cả team trên chặng đường mới.'}
+ {id:'custom',label:'Dịp khác',icon:'✎',custom:true,what:'Dịp',placeholder:'Ví dụ: Chúc mừng bạn đã chính thức trở thành Team Lead! Chúc bạn thật nhiều thành công trên chặng đường mới 🎉'}
 ];
 const OCCASION_SUGGESTIONS=['Thăng chức','Chào mừng thành viên mới','Hoàn thành dự án','Chúc mừng kết hôn','Chào đón em bé','Chia tay đồng nghiệp'];
 function typeGroup(){return state.kudosType==='recognition'?'recognition':'other';}
@@ -416,16 +418,29 @@ function envBadge(){
  // Chỉ hiện ở development/staging để tránh nhầm môi trường. Production không có nhãn này.
  return CONFIG.env&&CONFIG.env!=='production'?`<span class="hb-demo-label" title="Môi trường ${escapeHtml(CONFIG.env)}"><i></i>${escapeHtml(String(CONFIG.env).toUpperCase())}</span>`:'';
 }
+// Greeting under "Xin chào": received-KUDOS count once there is at least one, otherwise the thank-you line.
+function greetingLine(){
+ const u=me(),tenureDays=employeeTenureDays(u),n=(store.received||[]).length;
+ if(isOnboardToday()||tenureDays===0)return 'Cùng khám phá AHAKUDOS — nơi mọi lời ghi nhận và cảm ơn được lưu lại ✨';
+ if(n>0)return `Chúc mừng bạn đã nhận được <strong class="tenure-days">${n.toLocaleString('vi-VN')}</strong> KUDOS 🎉`;
+ return tenureDays!==null?`Cảm ơn bạn đã đồng hành cùng Ahamove <strong class="tenure-days">${tenureDays.toLocaleString('vi-VN')}</strong> ngày.`:'Cảm ơn bạn đã đồng hành cùng Ahamove.';
+}
+// Keep the count fresh: every 3 minutes while the tab is visible and whenever the tab comes back.
+// Only the greeting text is patched (no full re-render), so a KUDOS being written is never lost.
+let greetingTimer=null,greetingBusy=false;
+async function refreshGreetingCount(){
+ if(greetingBusy||state.mode!=='employee'||document.visibilityState!=='visible'||sending)return;
+ greetingBusy=true;
+ try{await refreshEmployeeData();const el=document.querySelector('.hb-greeting-line');if(el)el.innerHTML=greetingLine();}
+ catch(e){console.warn('[AHAKUDOS] greeting refresh',e);}
+ finally{greetingBusy=false;}
+}
+function startGreetingRefresh(){if(greetingTimer)return;greetingTimer=setInterval(refreshGreetingCount,180000);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refreshGreetingCount();});}
 function contextbar(){
  const u=me();
  const firstName=escapeHtml((u.name||'bạn').split(' ').slice(-1)[0]);
  const tenureDays=employeeTenureDays(u);
- const tenureLine=isOnboardToday()||tenureDays===0
-   ?'Cùng khám phá AHAKUDOS — nơi mọi lời ghi nhận và cảm ơn được lưu lại ✨'
-   :tenureDays!==null
-   ?`Cảm ơn bạn đã đồng hành cùng Ahamove <strong class="tenure-days">${tenureDays.toLocaleString('vi-VN')}</strong> ngày.`
-   :'Cảm ơn bạn đã đồng hành cùng Ahamove.';
- const employeeGreeting=`<b>Xin chào, ${firstName}! <span class="wave" aria-hidden="true">👋</span></b><span>${tenureLine}</span>`;
+ const employeeGreeting=`<b>Xin chào, ${firstName}! <span class="wave" aria-hidden="true">👋</span></b><span class="hb-greeting-line">${greetingLine()}</span>`;
  return `<div class="hb-contextbar">
   <div class="hb-context-left"><span class="hb-context-icon">${svg(state.mode==='employee'?'profile':'shield')}</span><div class="greeting">${state.mode==='employee'?employeeGreeting:'<b>Trung tâm quản trị</b><span>Không gian vận hành AHAKUDOS toàn công ty.</span>'}</div></div>
   <div class="hb-context-right">${envBadge()}<div class="search hb-directory"><input id="hb-directory-search" placeholder="Tìm đồng nghiệp, phòng ban..." autocomplete="off" aria-label="Tìm đồng nghiệp" aria-expanded="false" aria-controls="hb-directory-results">${svg('search')}<div class="recipient-suggestions hidden" id="hb-directory-results"></div></div></div>
@@ -821,7 +836,7 @@ return `<section class="page active kudos-compose-page">
       <span><strong>01</strong> Khoảnh khắc khiến bạn muốn ghi nhận và cảm ơn</span>
       <span><strong>02</strong> Sự hỗ trợ / Năng lượng mà bạn đã nhận được</span>
      </div>
-     <textarea id="message" class="textarea" aria-describedby="count" placeholder="Ví dụ: Cảm ơn bạn đã chủ động hỗ trợ team xử lý gấp đầu việc trước deadline. Nhờ vậy cả team kịp tiến độ và tránh được một lỗi quan trọng. Mình rất trân trọng sự chủ động và tinh thần đồng đội của bạn."></textarea>
+     <textarea id="message" class="textarea" aria-describedby="count" placeholder="Ví dụ: Cảm ơn bạn đã chủ động hỗ trợ team xử lý việc gấp trước deadline, nhờ vậy cả team kịp tiến độ 🧡"></textarea>
      <span class="field-hint" id="count">0 ký tự</span>
     </div>
     <div class="coach coach--featured ${isOccasion()?'hidden':''}" role="region" aria-label="Thư ký hỗ trợ nội dung KUDOS">
@@ -2079,7 +2094,7 @@ function syncCultureRequirement(){
  ['.kudos-content-format','.coach','#culture-field'].forEach(sel=>document.querySelector(sel)?.classList.toggle('hidden',birthday));
  if(birthday&&state.values.size){state.values.clear();document.querySelectorAll('.culture-chip').forEach(c=>{c.classList.remove('selected','suggested');c.setAttribute('aria-pressed','false');});}
  const msg=document.querySelector('#message');
- if(msg)msg.placeholder=occ?occ.placeholder:'Ví dụ: Cảm ơn bạn đã chủ động hỗ trợ team xử lý gấp đầu việc trước deadline. Nhờ vậy cả team kịp tiến độ và tránh được một lỗi quan trọng. Mình rất trân trọng sự chủ động và tinh thần đồng đội của bạn.';
+ if(msg)msg.placeholder=occ?occ.placeholder:'Ví dụ: Cảm ơn bạn đã chủ động hỗ trợ team xử lý việc gấp trước deadline, nhờ vậy cả team kịp tiến độ 🧡';
  const label=document.querySelector('#culture-picker-label .optional-label');
  if(label)label.textContent=optional?'· không bắt buộc':'· chọn từ 1 đến 3';
  const dated=occ&&!occ.custom;
@@ -2369,6 +2384,7 @@ handleDeepLink();
 if(REVIEW)window.AhaKudosApp=Object.freeze({isAdmin:()=>!!BOOT.isAdmin,page:()=>state.page,mode:()=>state.mode,go(page){if(!page)return;const admin=/^admin-/.test(page);if(admin&&!BOOT.isAdmin){toast('Mục này thuộc Giao diện Admin — chọn kịch bản "Admin".');return;}state.mode=admin?'admin':'employee';if(page==='kudos-detail')return;goToPage(page);}});
 render();
 initHomeHandbookProgress();
+startGreetingRefresh();
 window.AhaKudosBoot.ready();
 migrateLegacyAvatar();
 window.addEventListener('error',e=>{if(e.target&&e.target!==window)return;console.error('[AHAKUDOS] runtime error',e.error||e.message);toast('Có lỗi hiển thị. Nếu màn hình không phản hồi, vui lòng tải lại trang.');});

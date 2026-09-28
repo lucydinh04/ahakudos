@@ -4452,7 +4452,7 @@ p,li,small,.sub,blockquote,.coach-nudge,.home-def-v2__lead,.home-def-v2__support
 /* Same treatment as the original backgrounds: one full-height horizontal fade band (transparent -> soft white -> transparent)
    behind the text; it only fades in from the top (--sy0) when a slogan sits above the text. No frame. */
 .kd-card-fullbg.kd-card-zoned .kd-card-shade{display:block;inset:0;
- background:linear-gradient(90deg,rgba(255,255,255,0) var(--sx0),rgba(255,255,255,0.05) calc(var(--sx0) + 3.2%),rgba(255,255,255,0.18) calc(var(--sx0) + 6.4%),rgba(255,255,255,0.4) calc(var(--sx0) + 9.6%),rgba(255,255,255,0.64) calc(var(--sx0) + 12.8%),rgba(255,255,255,0.82) calc(var(--sx0) + 16%),rgba(255,255,255,0.9) calc(var(--sx0) + 22%),rgba(255,255,255,0.9) calc(var(--sx1) - 22%),rgba(255,255,255,0.82) calc(var(--sx1) - 16%),rgba(255,255,255,0.64) calc(var(--sx1) - 12.8%),rgba(255,255,255,0.4) calc(var(--sx1) - 9.6%),rgba(255,255,255,0.18) calc(var(--sx1) - 6.4%),rgba(255,255,255,0.05) calc(var(--sx1) - 3.2%),rgba(255,255,255,0) var(--sx1));
+ background:linear-gradient(90deg,rgba(var(--shrgb,255,255,255),0) var(--sx0),rgba(var(--shrgb,255,255,255),0.05) calc(var(--sx0) + 3.2%),rgba(var(--shrgb,255,255,255),0.18) calc(var(--sx0) + 6.4%),rgba(var(--shrgb,255,255,255),0.4) calc(var(--sx0) + 9.6%),rgba(var(--shrgb,255,255,255),0.64) calc(var(--sx0) + 12.8%),rgba(var(--shrgb,255,255,255),0.82) calc(var(--sx0) + 16%),rgba(var(--shrgb,255,255,255),0.9) calc(var(--sx0) + 22%),rgba(var(--shrgb,255,255,255),0.9) calc(var(--sx1) - 22%),rgba(var(--shrgb,255,255,255),0.82) calc(var(--sx1) - 16%),rgba(var(--shrgb,255,255,255),0.64) calc(var(--sx1) - 12.8%),rgba(var(--shrgb,255,255,255),0.4) calc(var(--sx1) - 9.6%),rgba(var(--shrgb,255,255,255),0.18) calc(var(--sx1) - 6.4%),rgba(var(--shrgb,255,255,255),0.05) calc(var(--sx1) - 3.2%),rgba(var(--shrgb,255,255,255),0) var(--sx1));
  -webkit-mask-image:linear-gradient(180deg,transparent var(--sy0),rgba(0,0,0,.18) calc(var(--sy0) + 4%),rgba(0,0,0,.5) calc(var(--sy0) + 8%),rgba(0,0,0,.82) calc(var(--sy0) + 12%),#000 calc(var(--sy0) + 16%));mask-image:linear-gradient(180deg,transparent var(--sy0),rgba(0,0,0,.18) calc(var(--sy0) + 4%),rgba(0,0,0,.5) calc(var(--sy0) + 8%),rgba(0,0,0,.82) calc(var(--sy0) + 12%),#000 calc(var(--sy0) + 16%))}
 .kd-card-fullbg.kd-card-zoned .kd-card-content{position:absolute!important;left:var(--zl);top:var(--zt);width:var(--zw)!important;height:var(--zh)!important;margin:0!important;padding:1.2cqw 1.6cqw!important;justify-content:center;background:none;border:0;box-shadow:none}
 .kd-card-fullbg.kd-card-zoned .kd-template-brand{margin-bottom:1cqw}
@@ -4474,3 +4474,13 @@ p,li,small,.sub,blockquote,.coach-nudge,.home-def-v2__lead,.home-def-v2__support
 .kd-card-fullbg.kd-card-zoned.kd-card-stacked .kd-sender-dept{font-size:12px}
 .kd-card-fullbg.kd-card-zoned.kd-card-stacked .kd-card-msg,.kd-card-fullbg.kd-card-zoned.kd-card-stacked .kd-card-msg[class*="kd-card-msg--"]{font-size:15px;line-height:1.6!important}
 .kd-card-fullbg.kd-card-zoned.kd-card-stacked .kd-values-block{margin-top:10px}
+
+/* Dark artwork (AI-ways Moving): the fade band is deep navy and the text is light, instead of washing the night sky with white */
+.kd-card-fullbg.kd-card-dark{--shrgb:10,30,88}
+.kd-card-fullbg.kd-card-dark .kd-card-label{color:#FFB27A}
+.kd-card-fullbg.kd-card-dark .kd-sender-caption,.kd-card-fullbg.kd-card-dark .kd-value-caption{color:#A9C0F0}
+.kd-card-fullbg.kd-card-dark .kd-sender-name{color:#FFFFFF}
+.kd-card-fullbg.kd-card-dark .kd-sender-dept{color:#CFDBF7}
+.kd-card-fullbg.kd-card-dark .kd-recipient-stack{border-color:rgba(255,255,255,.28)}
+.kd-card-fullbg.kd-card-dark .kd-card-msg{color:#FFFFFF;text-shadow:0 1px 2px rgba(0,10,40,.35)}
+.kd-card-fullbg.kd-card-dark .kd-value-chip{background:rgba(255,255,255,.14);color:#FFFFFF;border-color:rgba(255,255,255,.35)}
