@@ -15,14 +15,18 @@ const ART=window.AHAKUDOS_ART;
 const A={logoLight:BASE+'/branding/logo-light.png',logoDark:BASE+'/branding/logo-dark.png',logoMark:BASE+'/branding/logo-mark.png',kudosLogo:BASE+'/branding/ahamove-logo-kudos.png',mascotCutout:BASE+'/illustrations/mascot-cutout.png'};
 // Base KUDOS backgrounds are static files in /public/backgrounds; event backgrounds come from tab EVENTS.
 const BG=(()=>{
- const LIST=[{id:'wish',name:'Tri ân',sticker:'🧧',fallback:'#FFF4D8'},{id:'move',name:'Đồng đội',sticker:'🛵',fallback:'#FFF0DB'},{id:'birthday',name:'Sinh nhật',sticker:'🎂',fallback:'#FFE3EA'},{id:'tech',name:'Cảm hứng',sticker:'🤖',fallback:'#DDEEFF'},
+ // retired: no longer offered in pickers, still rendered for KUDOS already sent with them.
+ const LIST=[{id:'wish',name:'Tri ân',sticker:'🧧',fallback:'#FFF4D8',retired:true},{id:'move',name:'Đồng đội',sticker:'🛵',fallback:'#FFF0DB',retired:true},
+  {id:'hpbd',name:'Happy Birthday',sticker:'🎉',fallback:'#FBEBDD',ext:'webp',zone:[5,8,45,82],shade:[-20,58,-30]},
+  {id:'birthday',name:'Sinh nhật',sticker:'🎂',fallback:'#FFE3EA'},{id:'tech',name:'Cảm hứng',sticker:'🤖',fallback:'#DDEEFF',retired:true},
   {id:'camon',name:'Cảm ơn vì đã đến',sticker:'💞',fallback:'#FBF3EA',ext:'webp',zone:[50,8,40,80],shade:[38,106,-30]},
   {id:'cheers',name:'Tuyệt vời, uống nào',sticker:'🥂',fallback:'#FBE3EC',ext:'webp',zone:[58,7,39,86],shade:[48,116,-30]},
   {id:'tenpoint',name:'10 điểm không có nhưng',sticker:'🏅',fallback:'#FDF0DC',ext:'webp',zone:[4,6,43,86],shade:[-20,55,-30]},
   {id:'proud',name:'Tớ tự hào về cậu',sticker:'🙌',fallback:'#FDE7D4',ext:'webp',zone:[4,6,49,86],shade:[-20,62,-30]},
   {id:'codetask',name:'Đồng cam cộng task',sticker:'💻',fallback:'#E3ECFB',ext:'webp',zone:[56,9,41,80],shade:[47,116,-30]},
-  {id:'coccoc',name:'Cốc cốc KUDOS tới',sticker:'🌸',fallback:'#FBEBD9',ext:'webp',zone:[4,5,46,86],shade:[-20,60,-30]},
-  {id:'chualanh',name:'KUDOS chữa lành',sticker:'🌱',fallback:'#FBF6EC',ext:'webp',zone:[59,8,39,84],shade:[52,116,-30]},
+  {id:'coccoc',name:'Cốc cốc KUDOS tới',sticker:'🌸',fallback:'#FBEBD9',ext:'webp',zone:[8,8,43,82],shade:[-4,59,-30]},
+  {id:'chualanh',name:'KUDOS chữa lành',sticker:'🌱',fallback:'#FBF6EC',ext:'webp',zone:[48,10,44,80],shade:[41,114,-30]},
+  {id:'amazing',name:'Ơ mây zing gút chóp',sticker:'👍',fallback:'#BFE0F8',ext:'webp',zone:[5,8,44,82],shade:[-20,58,-30]},
   {id:'aiways',name:'AI-ways Moving',sticker:'🚀',fallback:'#0F2C7A',ext:'webp',zone:[46,11,50,70],shade:[38,116,-30],dark:true}];
  const byId={};LIST.forEach(t=>{byId[t.id]=t;});
  return {LIST,get(id){const t=byId[id]||LIST[0];return {id:t.id,name:t.name,sticker:t.sticker,fallback:t.fallback,zone:t.zone||null,shade:t.shade||null,dark:!!t.dark,url:BASE+'/backgrounds/'+t.id+'.'+(t.ext||'png')+'?v='+encodeURIComponent(String(CONFIG.buildId||'1'))};}};
@@ -69,7 +73,7 @@ catch(e){
 const legacyLinkId=new URLSearchParams(location.search).get('id')||''; // V28 emails used ?id=<kudosId>
 
 // The web app and Apps Script are deployed separately. If Apps Script is older, new features (e.g. Giá trị cốt lõi) fail with old errors.
-const REQUIRED_BACKEND='V30.21';
+const REQUIRED_BACKEND='V30.23';
 function backendOutdated(){const v=String((BOOT.config&&BOOT.config.version)||'');const m=v.match(/^V(\d+)\.(\d+)/),r=REQUIRED_BACKEND.match(/^V(\d+)\.(\d+)/);return !m||Number(m[1])<Number(r[1])||(Number(m[1])===Number(r[1])&&Number(m[2])<Number(r[2]));}
 if(backendOutdated())console.warn('[AHAKUDOS] Apps Script '+((BOOT.config&&BOOT.config.version)||'?')+' cũ hơn web app ('+REQUIRED_BACKEND+'). Dán Code.gs mới và tạo New version.');
 const PEOPLE=BOOT.people||[];
@@ -283,7 +287,7 @@ const state={
   page:me().inMasterData===false&&BOOT.isAdmin?'admin-home':'employee-home',
   values:new Set(),
   kudosType:'recognition',
-  selectedTemplate:(BG.LIST[0]||{id:'wish'}).id,
+  selectedTemplate:'camon',
   sendVisibility:'public', // Nhân viên luôn đề xuất CỘNG ĐỒNG KUDOS; Admin kiểm soát trước khi publish.
   prefillRecipient:'',
   selectedRecipient:null,
@@ -311,7 +315,7 @@ function birthdaySuggestionsFor(currentEmail){
 }
 // Background templates = 4 ảnh 3D thật (backgrounds.js). Fallback nếu module vắng.
 const cardTemplates=(BG&&BG.LIST&&BG.LIST.length)
-  ? BG.LIST.map(t=>({id:t.id,name:t.name,sticker:t.sticker}))
+  ? BG.LIST.map(t=>({id:t.id,name:t.name,sticker:t.sticker,retired:!!t.retired}))
   : [{id:'warm',name:'Ấm áp',sticker:'🧡'}];
 // Background theo sự kiện (Admin quản lý) — chỉ hiện sự kiện đang kích hoạt trong picker.
 // Admin-uploaded backgrounds for special occasions (served privately via /api/background). Employees only render them.
@@ -319,7 +323,8 @@ let CUSTOM_BGS=BOOT.backgrounds||[];
 function customBg(id){return CUSTOM_BGS.find(b=>b.id===id)||null;}
 function customBgTemplates(){return CUSTOM_BGS.filter(b=>b.status==='ACTIVE').map(b=>({id:b.id,name:b.name,sticker:'🎁',custom:true}));}
 // Only offer backgrounds the Apps Script accepts (web may be deployed before Code.gs is updated).
-function allTemplates(){const ok=Array.isArray(BOOT.templateIds)&&BOOT.templateIds.length?BOOT.templateIds:null;return cardTemplates.filter(t=>!ok||ok.includes(t.id));}
+function allTemplates(){const ok=Array.isArray(BOOT.templateIds)&&BOOT.templateIds.length?BOOT.templateIds:null;return cardTemplates.filter(t=>!t.retired&&(!ok||ok.includes(t.id)));}
+function firstTemplateId(){return (typeTemplates('recognition')[0]||{id:'camon'}).id;}
 // KUDOS type is an explicit choice; each type shows only its own backgrounds.
 const KUDOS_TYPES=[{id:'recognition',label:'Đồng nghiệp',icon:'👥',hint:'Ghi nhận và cảm ơn hành động, đóng góp của đồng nghiệp'},{id:'other',label:'Khác',icon:'🎁',hint:'Sinh nhật / Thâm niên / …'}];
 // Occasions under "Khác". Each occasion: the Master Data date it uses (or typed when the recipient is not in DATA) and a ±2-day window.
@@ -336,10 +341,10 @@ function typeGroup(){return state.kudosType==='recognition'?'recognition':'other
 function isOccasion(){return !!occasionOf(state.kudosType);}
 function occasionOf(type){return OCCASIONS.find(o=>o.id===type)||null;}
 function kudosTypeLabel(t,k){const o=occasionOf(t);if(o&&o.custom&&k&&k.occasionLabel)return o.icon+' '+k.occasionLabel;return o?o.icon+' '+o.label:'👥 Đồng nghiệp';}
-const BIRTHDAY_TEMPLATE_IDS=(BOOT.config&&BOOT.config.birthdayTemplateIds)||['birthday'];
+const BIRTHDAY_TEMPLATE_IDS=(BOOT.config&&BOOT.config.birthdayTemplateIds)||['hpbd','birthday'];
 const BIRTHDAY_WINDOW_DAYS=Number(BOOT.config&&BOOT.config.birthdayWindowDays)||2;
 function typeTemplates(type){if(type==='other')type='birthday';return type==='birthday'?allTemplates().filter(t=>BIRTHDAY_TEMPLATE_IDS.includes(t.id)):allTemplates().filter(t=>!BIRTHDAY_TEMPLATE_IDS.includes(t.id));}
-function templateMeta(id){return allTemplates().concat(customBgTemplates()).find(t=>t.id===id)||cardTemplates[0];}
+function templateMeta(id){return cardTemplates.concat(customBgTemplates()).find(t=>t.id===id)||cardTemplates[0];}
 function bgFor(id){if(/^bg_[a-z0-9]{8,32}$/.test(String(id||''))){const c=customBg(id);return {id,name:c?c.name:'Background dịp đặc biệt',sticker:'🎁',fallback:'#FFF3E6',url:BASE+'/api/background?id='+encodeURIComponent(id)};}return BG?BG.get(id):null;}
 
 const icons={
@@ -592,10 +597,10 @@ const recvCount=rec.length, noJourneyYet=sentCount===0&&recvCount===0;
     <div class="home-def-v2__copy">
      <span class="home-def-v2__badge">GIỚI THIỆU AHAKUDOS</span>
      <h2 id="home-def-title" class="home-def-v2__title">AHAKUDOS <span>là gì?</span></h2>
-     <p class="home-def-v2__lead">AHAKUDOS là nền tảng ghi nhận và cảm ơn nội bộ của Ahamove, được xây dựng để giúp nhân viên dễ dàng ghi nhận và cảm ơn những hành động tích cực, đồng thời lan tỏa các giá trị cốt lõi trong công việc hằng ngày.</p>
-     <blockquote class="home-def-v2__quote"><span class="home-def-v2__quote-mark" aria-hidden="true">“</span><p>Khi một đồng nghiệp làm điều gì đó có ý nghĩa, đóng góp ấy xứng đáng được nhìn thấy và trân trọng.</p></blockquote>
-     <p class="home-def-v2__support">Đó có thể là khi một đồng nghiệp chủ động hỗ trợ bạn, giải quyết một vấn đề khó, chia sẻ kiến thức, đồng hành cùng team hoặc tạo ra một tác động tích cực.</p>
-     <div class="home-def-v2__note"><span class="home-def-v2__note-icon" aria-hidden="true">i</span><p>AHAKUDOS là chương trình văn hóa ghi nhận và cảm ơn, <strong>không thay thế hệ thống đánh giá hiệu suất.</strong></p></div>
+     <p class="home-def-v2__lead">AHAKUDOS là nền tảng ghi nhận và cảm ơn nội bộ của Ahamove, được xây dựng để giúp Ahamovers dễ dàng ghi nhận những hành động tích cực của đồng nghiệp và cùng nhau lan tỏa Giá trị cốt lõi của Ahamove trong công việc hằng ngày.</p>
+     <p class="home-def-v2__support">Đó có thể là một lần chủ động hỗ trợ, cùng nhau giải quyết một vấn đề khó, chia sẻ kiến thức, đồng hành cùng team hay tạo ra một tác động tích cực trong công việc.</p>
+     <p class="home-def-v2__support">Mỗi lời KUDOS được gửi đi sẽ gắn với một hoặc nhiều Giá trị cốt lõi của Ahamove, bởi đó cũng là cách những giá trị này được thể hiện rõ nhất: qua cách Ahamovers hành động, phối hợp và tạo ra giá trị mỗi ngày. AHAKUDOS giúp những “chuyển động” tích cực ấy được nhìn thấy, ghi nhận và tiếp tục lan tỏa.</p>
+     <div class="home-def-v2__note"><span class="home-def-v2__note-icon" aria-hidden="true">i</span><p><strong>Lưu ý:</strong> AHAKUDOS không thay thế hệ thống đánh giá hiệu suất.</p></div>
     </div>
     <div class="home-def-v2__visual" aria-hidden="true">
      <div class="home-def-v2__slogan">
@@ -1545,7 +1550,7 @@ function adminRecognition(){
          </div>
        </div>
        <div class="field"><label>Chọn background</label>
-         <div class="template-gallery admin-template-gallery" id="admin-template-gallery">${adminGalleryHtml('wish')}</div>
+         <div class="template-gallery admin-template-gallery" id="admin-template-gallery">${adminGalleryHtml(firstTemplateId())}</div>
          <span class="field-hint">4 mẫu có sẵn và các background dịp đặc biệt do Admin tải lên. Chỉ Admin dùng được background tải lên.</span>
          <div id="admin-bg-upload" class="admin-bg-upload hidden">
            <div class="admin-bg-upload-grid">
@@ -1691,14 +1696,14 @@ function openScheduleEditor(email,type){
  });
 }
 function bindAdminOps(){
- document.querySelectorAll('[data-ops-send]').forEach(b=>b.addEventListener('click',()=>{state.adminPrefill={email:b.dataset.opsSend,template:b.dataset.opsType==='birthday'?'birthday':'wish',type:b.dataset.opsType};goToPage('admin-recognition');}));
+ document.querySelectorAll('[data-ops-send]').forEach(b=>b.addEventListener('click',()=>{state.adminPrefill={email:b.dataset.opsSend,template:b.dataset.opsType==='birthday'?(typeTemplates('birthday')[0]||{id:'birthday'}).id:firstTemplateId(),type:b.dataset.opsType};goToPage('admin-recognition');}));
  document.querySelectorAll('[data-ops-review]').forEach(b=>b.addEventListener('click',()=>openScheduleEditor(b.dataset.opsReview,b.dataset.opsType)));
  document.querySelectorAll('[data-ops-cancel]').forEach(b=>b.addEventListener('click',async()=>{if(!window.confirm('Huỷ lịch gửi này?'))return;b.disabled=true;try{const res=await rpc('huyLichGui',b.dataset.opsCancel);ADMIN.schedules=res.schedules||[];render();toast(res.notice);}catch(e){b.disabled=false;toast(e.message);}}));
  document.querySelector('[data-ops-bulk]')?.addEventListener('click',async e=>{
   const up=ADMIN.upcoming||{};const today=vnDay(new Date().toISOString());
   const list=[...(up.birthdays||[]).map(r=>[r,'birthday']),...(up.anniversaries||[]).map(r=>[r,'anniversary'])].filter(([r,t])=>!scheduleFor(r.email,t,r.date));
   if(!window.confirm('Hẹn giờ tự động gửi cho '+list.length+' người với nội dung mẫu, 09:00 đúng ngày, phạm vi Riêng tư?\n\nBạn vẫn có thể Sửa / Huỷ từng lịch sau đó.'))return;
-  e.target.disabled=true;let okN=0;const bgAnn=(allTemplates().find(t=>t.id!=='birthday')||{id:'wish'}).id;
+  e.target.disabled=true;let okN=0;const bgAnn=firstTemplateId();
   for(const [r,t] of list){try{const res=await rpc('datLichGui',{type:t,email:r.email,date:r.date<today?today:r.date,time:'09:00',message:opsDefaultMessage(r,t),templateId:t==='birthday'?'birthday':bgAnn,visibility:'private'});ADMIN.schedules=res.schedules||[];ADMIN.autoSend=!!res.autoSend;okN++;}catch(err){console.warn('[AHAKUDOS] schedule',r.email,err);}}
   render();toast('Đã hẹn giờ '+okN+'/'+list.length+' lịch gửi.');
  });
@@ -1918,7 +1923,7 @@ function bindTabs(){
 function bindAdminRecognition(){
  const emailInput=document.querySelector('#admin-recipient-email');const suggestions=document.querySelector('#admin-recipient-suggestions');const selectedBox=document.querySelector('#admin-selected-recipient');const message=document.querySelector('#admin-recognition-message');const title=document.querySelector('#admin-recognition-title');
  const noCompany=document.querySelector('#admin-no-company-email');const companyMode=document.querySelector('#admin-company-mode');const manualMode=document.querySelector('#admin-manual-mode');const manualName=document.querySelector('#admin-manual-name');const manualDept=document.querySelector('#admin-manual-dept');const manualEmail=document.querySelector('#admin-manual-email');
- let selectedEmployee=null;let selectedTemplate='wish';let selectedType='acting';let selectedVisibility='public';let manualRecipient=false;
+ let selectedEmployee=null;let selectedTemplate=firstTemplateId();let selectedType='acting';let selectedVisibility='public';let manualRecipient=false;
  function renderEmployee(emp){selectedEmployee=emp;if(!emp){selectedBox.classList.add('hidden');selectedBox.innerHTML='';document.querySelector('#admin-recipient-preview').innerHTML='<div class="mini-avatar">@</div><div><b>Chưa chọn người nhận</b><span>Nhập email nhân sự để tìm kiếm</span></div>';return;}selectedBox.innerHTML=`${miniAvatar(emp.email,emp.name)}<div><b>${escapeHtml(emp.name)}</b><span>${escapeHtml(emp.email)}</span><em>${escapeHtml(emp.dept||'')}</em></div><span class="recipient-ok">✓ Đã chọn</span>`;selectedBox.classList.remove('hidden');document.querySelector('#admin-recipient-preview').innerHTML=`${miniAvatar(emp.email,emp.name)}<div><b>${escapeHtml(emp.name)}</b><span>${escapeHtml(emp.email)}</span><em>${escapeHtml(emp.dept||'')}</em></div>`;}
  function visibilityUi(){document.querySelectorAll('[data-admin-visibility]').forEach(x=>{x.disabled=false;x.classList.remove('disabled');x.classList.toggle('selected',x.dataset.adminVisibility===selectedVisibility);});}
  function syncManualPreview(){if(!manualRecipient)return;const emp={name:manualName.value.trim(),dept:manualDept.value.trim(),email:manualEmail.value.trim(),manual:true};if(emp.name||emp.email)renderEmployee(emp);else renderEmployee(null);updatePreview();}
@@ -2047,7 +2052,7 @@ function runCoach(){
 }
 function templateGalleryHtml(){
  const list=typeTemplates(state.kudosType);
- if(!list.some(t=>t.id===state.selectedTemplate))state.selectedTemplate=(list[0]||{id:'wish'}).id;
+ if(!list.some(t=>t.id===state.selectedTemplate))state.selectedTemplate=(list[0]||{id:firstTemplateId()}).id;
  return list.map(t=>`<button type="button" class="template-option ${state.selectedTemplate===t.id?'selected':''}" data-template="${escapeHtml(t.id)}" aria-label="Background ${escapeHtml(t.name)}" aria-pressed="${state.selectedTemplate===t.id}">
         <span class="template-thumb tpl-${escapeHtml(t.id)}" style="background:${bgFor(t.id).fallback}"><img class="art-img" src="${escapeHtml(bgFor(t.id).url)}" alt="" aria-hidden="true"><span class="thumb-tick" aria-hidden="true">✓</span></span>
       </button>`).join('');
