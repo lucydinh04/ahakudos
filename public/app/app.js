@@ -16,15 +16,16 @@ const A={logoLight:BASE+'/branding/logo-light.png',logoDark:BASE+'/branding/logo
 // Base KUDOS backgrounds are static files in /public/backgrounds; event backgrounds come from tab EVENTS.
 const BG=(()=>{
  // retired: no longer offered in pickers, still rendered for KUDOS already sent with them.
- const LIST=[// Order = picker order, grouped by colour tone (cream → warm orange → pink → light blue → deep blue; birthday warm → pink).
+ const LIST=[// Order = picker order, grouped by colour tone (cream → warm orange → pink → light blue → deep blue). Birthday order: BIRTHDAY_TEMPLATE_IDS.
   {id:'wish',name:'Tri ân',sticker:'🧧',fallback:'#FFF4D8',retired:true},
   {id:'move',name:'Đồng đội',sticker:'🛵',fallback:'#FFF0DB',retired:true},
   {id:'tech',name:'Cảm hứng',sticker:'🤖',fallback:'#DDEEFF',retired:true},
-  {id:'chualanh',name:'KUDOS chữa lành',sticker:'🌱',fallback:'#FBF6EC',ext:'webp',zone:[48,10,44,80],shade:[41,114,-30]},
   {id:'camon',name:'Cảm ơn vì đã đến',sticker:'💞',fallback:'#FBF3EA',ext:'webp',zone:[50,8,40,80],shade:[38,106,-30]},
   {id:'coccoc',name:'Cốc cốc KUDOS tới',sticker:'🌸',fallback:'#FBEBD9',ext:'webp',zone:[6,8,46,82],shade:[-6,60,-30]},
   {id:'tenpoint',name:'10 điểm không có nhưng',sticker:'🏅',fallback:'#FDF0DC',ext:'webp',zone:[4,7,52,84],shade:[-20,64,-30]},
   {id:'proud',name:'Tớ tự hào về cậu',sticker:'🙌',fallback:'#FDE7D4',ext:'webp',zone:[4,6,49,86],shade:[-20,62,-30]},
+  {id:'chualanh',name:'KUDOS chữa lành',sticker:'🌱',fallback:'#FBF6EC',ext:'webp',zone:[48,10,44,80],shade:[41,114,-30]},
+  {id:'respect',name:'Respect',sticker:'😎',fallback:'#F8B4DE',ext:'webp',zone:[5,8,48,82],shade:[-20,58,-30]},
   {id:'cheers',name:'Tuyệt vời, uống nào',sticker:'🥂',fallback:'#FBE3EC',ext:'webp',zone:[58,7,39,86],shade:[48,116,-30]},
   {id:'amazing',name:'Ơ mây zing gút chóp',sticker:'👍',fallback:'#BFE0F8',ext:'webp',zone:[5,8,47,82],shade:[-20,60,-30]},
   {id:'aidriven',name:'AI-Driven Company',sticker:'🤖',fallback:'#D6E8FB',ext:'webp',zone:[58,7,39,78],shade:[52,116,-30]},
@@ -78,7 +79,7 @@ catch(e){
 const legacyLinkId=new URLSearchParams(location.search).get('id')||''; // V28 emails used ?id=<kudosId>
 
 // The web app and Apps Script are deployed separately. If Apps Script is older, new features (e.g. Giá trị cốt lõi) fail with old errors.
-const REQUIRED_BACKEND='V30.25';
+const REQUIRED_BACKEND='V30.26';
 function backendOutdated(){const v=String((BOOT.config&&BOOT.config.version)||'');const m=v.match(/^V(\d+)\.(\d+)/),r=REQUIRED_BACKEND.match(/^V(\d+)\.(\d+)/);return !m||Number(m[1])<Number(r[1])||(Number(m[1])===Number(r[1])&&Number(m[2])<Number(r[2]));}
 if(backendOutdated())console.warn('[AHAKUDOS] Apps Script '+((BOOT.config&&BOOT.config.version)||'?')+' cũ hơn web app ('+REQUIRED_BACKEND+'). Dán Code.gs mới và tạo New version.');
 const PEOPLE=BOOT.people||[];
@@ -346,9 +347,11 @@ function typeGroup(){return state.kudosType==='recognition'?'recognition':'other
 function isOccasion(){return !!occasionOf(state.kudosType);}
 function occasionOf(type){return OCCASIONS.find(o=>o.id===type)||null;}
 function kudosTypeLabel(t,k){const o=occasionOf(t);if(o&&o.custom&&k&&k.occasionLabel)return o.icon+' '+k.occasionLabel;return o?o.icon+' '+o.label:'👥 Đồng nghiệp';}
-const BIRTHDAY_TEMPLATE_IDS=(BOOT.config&&BOOT.config.birthdayTemplateIds)||['hpbd','birthday','dinhnoc'];
+const BIRTHDAY_TEMPLATE_IDS=(BOOT.config&&BOOT.config.birthdayTemplateIds)||['hpbd','birthday','cheers','dinhnoc'];
+// Backgrounds offered for both KUDOS Đồng nghiệp and KUDOS Sinh nhật.
+const SHARED_TEMPLATE_IDS=(BOOT.config&&BOOT.config.sharedTemplateIds)||['cheers'];
 const BIRTHDAY_WINDOW_DAYS=Number(BOOT.config&&BOOT.config.birthdayWindowDays)||2;
-function typeTemplates(type){if(type==='other')type='birthday';return type==='birthday'?allTemplates().filter(t=>BIRTHDAY_TEMPLATE_IDS.includes(t.id)):allTemplates().filter(t=>!BIRTHDAY_TEMPLATE_IDS.includes(t.id));}
+function typeTemplates(type){if(type==='other')type='birthday';const all=allTemplates();if(type==='birthday')return BIRTHDAY_TEMPLATE_IDS.map(id=>all.find(t=>t.id===id)).filter(Boolean);return all.filter(t=>!BIRTHDAY_TEMPLATE_IDS.includes(t.id)||SHARED_TEMPLATE_IDS.includes(t.id));}
 function templateMeta(id){return cardTemplates.concat(customBgTemplates()).find(t=>t.id===id)||cardTemplates[0];}
 function bgFor(id){if(/^bg_[a-z0-9]{8,32}$/.test(String(id||''))){const c=customBg(id);return {id,name:c?c.name:'Background dịp đặc biệt',sticker:'🎁',fallback:'#FFF3E6',url:BASE+'/api/background?id='+encodeURIComponent(id)};}return BG?BG.get(id):null;}
 

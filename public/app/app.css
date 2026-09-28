@@ -4490,3 +4490,6 @@ p,li,small,.sub,blockquote,.coach-nudge,.home-def-v2__lead,.home-def-v2__support
 .hb-home .home-def-v2__copy > p.home-def-v2__support{margin:0 0 16px}
 .hb-home .home-def-v2__copy > p.home-def-v2__support:last-of-type{margin-bottom:0}
 @media (max-width:560px){.hb-home .home-def-v2__copy > p.home-def-v2__lead,.hb-home .home-def-v2__copy > p.home-def-v2__support{margin-bottom:12px}}
+/* Gửi KUDOS hero: "Ghi nhận và cảm ơn" / "điều tuyệt vời mỗi ngày!" on two lines at every width */
+.compose-hero .ch-copy h1.ch-title span{display:block;white-space:nowrap}
+@media (min-width:701px){.compose-hero .ch-copy h1.ch-title{font-size:clamp(26px,2.7vw,36px)}}
