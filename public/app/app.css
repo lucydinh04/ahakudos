@@ -4447,3 +4447,30 @@ p,li,small,.sub,blockquote,.coach-nudge,.home-def-v2__lead,.home-def-v2__support
  .compose-hero .ch-copy h1.ch-title span{display:block}
 }
 @media (max-width:380px){.compose-hero .ch-copy h1.ch-title{font-size:23px}}
+
+/* ---- Backgrounds with a safe zone: content sits only in the empty area of the artwork (never over characters / slogans) ---- */
+/* Same treatment as the original backgrounds: one full-height horizontal fade band (transparent -> soft white -> transparent)
+   behind the text; it only fades in from the top (--sy0) when a slogan sits above the text. No frame. */
+.kd-card-fullbg.kd-card-zoned .kd-card-shade{display:block;inset:0;
+ background:linear-gradient(90deg,rgba(255,255,255,0) var(--sx0),rgba(255,255,255,0.05) calc(var(--sx0) + 3.2%),rgba(255,255,255,0.18) calc(var(--sx0) + 6.4%),rgba(255,255,255,0.4) calc(var(--sx0) + 9.6%),rgba(255,255,255,0.64) calc(var(--sx0) + 12.8%),rgba(255,255,255,0.82) calc(var(--sx0) + 16%),rgba(255,255,255,0.9) calc(var(--sx0) + 22%),rgba(255,255,255,0.9) calc(var(--sx1) - 22%),rgba(255,255,255,0.82) calc(var(--sx1) - 16%),rgba(255,255,255,0.64) calc(var(--sx1) - 12.8%),rgba(255,255,255,0.4) calc(var(--sx1) - 9.6%),rgba(255,255,255,0.18) calc(var(--sx1) - 6.4%),rgba(255,255,255,0.05) calc(var(--sx1) - 3.2%),rgba(255,255,255,0) var(--sx1));
+ -webkit-mask-image:linear-gradient(180deg,transparent var(--sy0),rgba(0,0,0,.18) calc(var(--sy0) + 4%),rgba(0,0,0,.5) calc(var(--sy0) + 8%),rgba(0,0,0,.82) calc(var(--sy0) + 12%),#000 calc(var(--sy0) + 16%));mask-image:linear-gradient(180deg,transparent var(--sy0),rgba(0,0,0,.18) calc(var(--sy0) + 4%),rgba(0,0,0,.5) calc(var(--sy0) + 8%),rgba(0,0,0,.82) calc(var(--sy0) + 12%),#000 calc(var(--sy0) + 16%))}
+.kd-card-fullbg.kd-card-zoned .kd-card-content{position:absolute!important;left:var(--zl);top:var(--zt);width:var(--zw)!important;height:var(--zh)!important;margin:0!important;padding:1.2cqw 1.6cqw!important;justify-content:center;background:none;border:0;box-shadow:none}
+.kd-card-fullbg.kd-card-zoned .kd-template-brand{margin-bottom:1cqw}
+.kd-card-fullbg.kd-card-zoned .kd-card-label{margin-bottom:.9cqw}
+.kd-card-fullbg.kd-card-zoned .kd-sender-stack{margin-bottom:1cqw}
+/* Narrow cards (phone, small columns): full artwork on top, full content below — nothing is covered, text stays readable */
+.kd-card-fullbg.kd-card-zoned.kd-card-stacked{aspect-ratio:auto!important;height:auto!important;flex-direction:column;background:var(--zbg,#FFF7EF)}
+.kd-card-fullbg.kd-card-zoned.kd-card-stacked .kd-card-bg{position:relative!important;inset:auto;height:auto!important;aspect-ratio:16/9}
+.kd-card-fullbg.kd-card-zoned.kd-card-stacked .kd-card-content{position:relative!important;left:auto;top:auto;width:auto!important;height:auto!important;margin:0!important;padding:14px 20px 22px!important;background:none;border:0;box-shadow:none;overflow:visible}
+.kd-card-fullbg.kd-card-zoned.kd-card-stacked .kd-card-shade{display:none}
+.kd-card-fullbg.kd-card-zoned.kd-card-stacked .kd-card-bg{-webkit-mask-image:linear-gradient(180deg,#000 94%,transparent 100%);mask-image:linear-gradient(180deg,#000 94%,transparent 100%)}
+.kd-card-fullbg.kd-card-zoned.kd-card-stacked .kd-template-brand{padding:6px 11px;margin-bottom:10px}
+.kd-card-fullbg.kd-card-zoned.kd-card-stacked .kd-template-brand-logo img{height:18px}
+.kd-card-fullbg.kd-card-zoned.kd-card-stacked .kd-template-brand-name{font-size:11px}
+.kd-card-fullbg.kd-card-zoned.kd-card-stacked .kd-card-label{font-size:10px;margin-bottom:10px}
+.kd-card-fullbg.kd-card-zoned.kd-card-stacked .kd-sender-stack{margin-bottom:10px}
+.kd-card-fullbg.kd-card-zoned.kd-card-stacked .kd-sender-caption{font-size:9px}
+.kd-card-fullbg.kd-card-zoned.kd-card-stacked .kd-sender-name{font-size:15px}
+.kd-card-fullbg.kd-card-zoned.kd-card-stacked .kd-sender-dept{font-size:12px}
+.kd-card-fullbg.kd-card-zoned.kd-card-stacked .kd-card-msg,.kd-card-fullbg.kd-card-zoned.kd-card-stacked .kd-card-msg[class*="kd-card-msg--"]{font-size:15px;line-height:1.6!important}
+.kd-card-fullbg.kd-card-zoned.kd-card-stacked .kd-values-block{margin-top:10px}

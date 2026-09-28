@@ -15,9 +15,15 @@ const ART=window.AHAKUDOS_ART;
 const A={logoLight:BASE+'/branding/logo-light.png',logoDark:BASE+'/branding/logo-dark.png',logoMark:BASE+'/branding/logo-mark.png',kudosLogo:BASE+'/branding/ahamove-logo-kudos.png',mascotCutout:BASE+'/illustrations/mascot-cutout.png'};
 // Base KUDOS backgrounds are static files in /public/backgrounds; event backgrounds come from tab EVENTS.
 const BG=(()=>{
- const LIST=[{id:'wish',name:'Tri ân',sticker:'🧧',fallback:'#FFF4D8'},{id:'move',name:'Đồng đội',sticker:'🛵',fallback:'#FFF0DB'},{id:'birthday',name:'Sinh nhật',sticker:'🎂',fallback:'#FFE3EA'},{id:'tech',name:'Cảm hứng',sticker:'🤖',fallback:'#DDEEFF'}];
+ const LIST=[{id:'wish',name:'Tri ân',sticker:'🧧',fallback:'#FFF4D8'},{id:'move',name:'Đồng đội',sticker:'🛵',fallback:'#FFF0DB'},{id:'birthday',name:'Sinh nhật',sticker:'🎂',fallback:'#FFE3EA'},{id:'tech',name:'Cảm hứng',sticker:'🤖',fallback:'#DDEEFF'},
+  {id:'camon',name:'Cảm ơn vì đã đến',sticker:'💞',fallback:'#FBF3EA',ext:'webp',zone:[50,8,40,80],shade:[38,106,-30]},
+  {id:'cheers',name:'Tuyệt vời, uống nào',sticker:'🥂',fallback:'#FBE3EC',ext:'webp',zone:[58,7,39,86],shade:[48,116,-30]},
+  {id:'tenpoint',name:'10 điểm không có nhưng',sticker:'🏅',fallback:'#FDF0DC',ext:'webp',zone:[4,6,43,86],shade:[-20,55,-30]},
+  {id:'proud',name:'Tớ tự hào về cậu',sticker:'🙌',fallback:'#FDE7D4',ext:'webp',zone:[5,6,56,76],shade:[-20,71,-30]},
+  {id:'codetask',name:'Đồng cam cộng task',sticker:'💻',fallback:'#E3ECFB',ext:'webp',zone:[49,27,49,70],shade:[38,116,17]},
+  {id:'coccoc',name:'Cốc cốc KUDOS tới',sticker:'🌸',fallback:'#FBEBD9',ext:'webp',zone:[4,5,46,86],shade:[-20,60,-30]}];
  const byId={};LIST.forEach(t=>{byId[t.id]=t;});
- return {LIST,get(id){const t=byId[id]||LIST[0];return {id:t.id,name:t.name,sticker:t.sticker,fallback:t.fallback,url:BASE+'/backgrounds/'+t.id+'.png'};}};
+ return {LIST,get(id){const t=byId[id]||LIST[0];return {id:t.id,name:t.name,sticker:t.sticker,fallback:t.fallback,zone:t.zone||null,shade:t.shade||null,url:BASE+'/backgrounds/'+t.id+'.'+(t.ext||'png')};}};
 })();
 function safeGet(key){try{return localStorage.getItem(key);}catch(e){return null;}}
 function safeSet(key,value){try{if(value===null)localStorage.removeItem(key);else localStorage.setItem(key,value);return true;}catch(e){return false;}}
@@ -61,7 +67,7 @@ catch(e){
 const legacyLinkId=new URLSearchParams(location.search).get('id')||''; // V28 emails used ?id=<kudosId>
 
 // The web app and Apps Script are deployed separately. If Apps Script is older, new features (e.g. Giá trị cốt lõi) fail with old errors.
-const REQUIRED_BACKEND='V30.17';
+const REQUIRED_BACKEND='V30.20';
 function backendOutdated(){const v=String((BOOT.config&&BOOT.config.version)||'');const m=v.match(/^V(\d+)\.(\d+)/),r=REQUIRED_BACKEND.match(/^V(\d+)\.(\d+)/);return !m||Number(m[1])<Number(r[1])||(Number(m[1])===Number(r[1])&&Number(m[2])<Number(r[2]));}
 if(backendOutdated())console.warn('[AHAKUDOS] Apps Script '+((BOOT.config&&BOOT.config.version)||'?')+' cũ hơn web app ('+REQUIRED_BACKEND+'). Dán Code.gs mới và tạo New version.');
 const PEOPLE=BOOT.people||[];
@@ -171,7 +177,10 @@ function buildKudosCard(k,opts){
    ?`<img class="kd-card-bg" src="${escapeHtml(bgUrl)}" alt="Background KUDOS ${escapeHtml(bg.name||'')}" loading="eager">`
    :`<div class="kd-card-bg kd-card-bg-fallback" aria-hidden="true"></div>`;
  const cardLabel=opts.mode==='public'?'NỘI DUNG KUDOS':'LỜI GHI NHẬN & CẢM ƠN DÀNH CHO BẠN';
- return `<div class="kd-card kd-card-fullbg tpl-${escapeHtml(bg.id||k.templateId||'wish')} ${opts.mode==='public'?'kd-card-public':''}">
+ const z=Array.isArray(bg.zone)&&bg.zone.length===4?bg.zone.map(Number):null;
+ const sh=z&&Array.isArray(bg.shade)&&bg.shade.length===3?bg.shade.map(Number):(z?[z[0]-8,z[0]+z[2]+8,-20]:null);
+ const zoneAttr=z?` style="--zl:${z[0]}%;--zt:${z[1]}%;--zw:${z[2]}%;--zh:${z[3]}%;--sx0:${sh[0]}%;--sx1:${sh[1]}%;--sy0:${sh[2]}%;--zbg:${escapeHtml(bg.fallback||'#FFF7EF')}"`:'';
+ return `<div class="kd-card kd-card-fullbg tpl-${escapeHtml(bg.id||k.templateId||'wish')} ${opts.mode==='public'?'kd-card-public':''}${z?' kd-card-zoned':''}"${zoneAttr}>
    ${bgLayer}
    <div class="kd-card-shade" aria-hidden="true"></div>
    <div class="kd-card-content">
@@ -307,7 +316,8 @@ const cardTemplates=(BG&&BG.LIST&&BG.LIST.length)
 let CUSTOM_BGS=BOOT.backgrounds||[];
 function customBg(id){return CUSTOM_BGS.find(b=>b.id===id)||null;}
 function customBgTemplates(){return CUSTOM_BGS.filter(b=>b.status==='ACTIVE').map(b=>({id:b.id,name:b.name,sticker:'🎁',custom:true}));}
-function allTemplates(){return cardTemplates.slice();}
+// Only offer backgrounds the Apps Script accepts (web may be deployed before Code.gs is updated).
+function allTemplates(){const ok=Array.isArray(BOOT.templateIds)&&BOOT.templateIds.length?BOOT.templateIds:null;return cardTemplates.filter(t=>!ok||ok.includes(t.id));}
 // KUDOS type is an explicit choice; each type shows only its own backgrounds.
 const KUDOS_TYPES=[{id:'recognition',label:'Đồng nghiệp',icon:'👥',hint:'Ghi nhận và cảm ơn hành động, đóng góp của đồng nghiệp'},{id:'other',label:'Khác',icon:'🎁',hint:'Sinh nhật / Thâm niên / …'}];
 // Occasions under "Khác". Each occasion: the Master Data date it uses (or typed when the recipient is not in DATA) and a ±2-day window.
@@ -1686,6 +1696,8 @@ function fitKudosCard(card){
  const msg=card.querySelector('.kd-card-msg');
  if(!content||!msg)return;
  msg.style.fontSize='';msg.style.lineHeight='';content.style.padding='';
+ const zoned=card.classList.contains('kd-card-zoned');
+ if(zoned){card.classList.toggle('kd-card-stacked',card.getBoundingClientRect().width<600);if(card.classList.contains('kd-card-stacked'))return;}
  let size=parseFloat(getComputedStyle(msg).fontSize)||20;
  let line=1.48;let guard=0;
  const overflowing=()=>content.scrollHeight>content.clientHeight+1;
@@ -1697,6 +1709,8 @@ function fitKudosCard(card){
    content.style.padding='3.3cqw 2.2cqw';guard=0;
    while(overflowing()&&size>7.5&&guard<20){size-=0.4;msg.style.fontSize=size+'px';guard++;}
  }
+ // Safe-zone backgrounds: if the message would need to shrink below 11px, show the artwork on top and the full content below instead.
+ if(zoned&&size<11){msg.style.fontSize='';msg.style.lineHeight='';content.style.padding='';card.classList.add('kd-card-stacked');}
 }
 function fitAllKudosCards(scope){
  const root=scope||document;
