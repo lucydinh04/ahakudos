@@ -20,22 +20,25 @@ const BG=(()=>{
   {id:'wish',name:'Tri ân',sticker:'🧧',fallback:'#FFF4D8',retired:true},
   {id:'move',name:'Đồng đội',sticker:'🛵',fallback:'#FFF0DB',retired:true},
   {id:'tech',name:'Cảm hứng',sticker:'🤖',fallback:'#DDEEFF',retired:true},
-  {id:'camon',name:'Cảm ơn vì đã đến',sticker:'💞',fallback:'#FBF3EA',ext:'webp',zone:[50,8,40,80],shade:[38,106,-30]},
-  {id:'coccoc',name:'Cốc cốc KUDOS tới',sticker:'🌸',fallback:'#FBEBD9',ext:'webp',zone:[6,8,46,82],shade:[-6,60,-30]},
-  {id:'tenpoint',name:'10 điểm không có nhưng',sticker:'🏅',fallback:'#FDF0DC',ext:'webp',zone:[4,7,52,84],shade:[-20,64,-30]},
-  {id:'proud',name:'Tớ tự hào về cậu',sticker:'🙌',fallback:'#FDE7D4',ext:'webp',zone:[4,6,49,86],shade:[-20,62,-30]},
-  {id:'chualanh',name:'KUDOS chữa lành',sticker:'🌱',fallback:'#FBF6EC',ext:'webp',zone:[48,10,44,80],shade:[41,114,-30]},
-  {id:'respect',name:'Respect',sticker:'😎',fallback:'#F8B4DE',ext:'webp',zone:[5,8,48,82],shade:[-20,58,-30]},
-  {id:'cheers',name:'Tuyệt vời, uống nào',sticker:'🥂',fallback:'#FBE3EC',ext:'webp',zone:[58,7,39,86],shade:[48,116,-30]},
-  {id:'dinhnoc',name:'Đỉnh nóc kịch trần',sticker:'👑',fallback:'#F8B9D4',ext:'webp',zone:[50,8,46,82],shade:[43,116,-30]},
-  {id:'amazing',name:'Ơ mây zing gút chóp',sticker:'👍',fallback:'#BFE0F8',ext:'webp',zone:[5,8,47,82],shade:[-20,60,-30]},
-  {id:'aidriven',name:'AI-Driven Company',sticker:'🤖',fallback:'#D6E8FB',ext:'webp',zone:[58,7,39,78],shade:[52,116,-30]},
-  {id:'codetask',name:'Đồng cam cộng task',sticker:'💻',fallback:'#E3ECFB',ext:'webp',zone:[56,9,41,80],shade:[47,116,-30]},
+  {id:'camon',name:'Cảm ơn vì đã đến',sticker:'💞',fallback:'#FBF3EA',ext:'webp',zone:[50,8,40,80],shade:[38,106,-30],tint:'255,249,240'},
+  {id:'coccoc',name:'Cốc cốc KUDOS tới',sticker:'🌸',fallback:'#FBEBD9',ext:'webp',zone:[6,8,46,82],shade:[-6,60,-30],tint:'255,247,236'},
+  {id:'tenpoint',name:'10 điểm không có nhưng',sticker:'🏅',fallback:'#FDF0DC',ext:'webp',zone:[4,7,52,84],shade:[-20,64,-30],tint:'255,248,234'},
+  {id:'proud',name:'Tớ tự hào về cậu',sticker:'🙌',fallback:'#FDE7D4',ext:'webp',zone:[4,6,49,86],shade:[-20,62,-30],tint:'255,244,234'},
+  {id:'chualanh',name:'KUDOS chữa lành',sticker:'🌱',fallback:'#FBF6EC',ext:'webp',zone:[48,10,44,80],shade:[41,114,-30],tint:'255,253,246'},
+  {id:'respect',name:'Respect',sticker:'😎',fallback:'#F8B4DE',ext:'webp',zone:[5,8,48,82],shade:[-20,58,-30],tint:'252,228,242'},
+  {id:'cheers',name:'Tuyệt vời, uống nào',sticker:'🥂',fallback:'#FBE3EC',ext:'webp',zone:[58,7,39,86],shade:[48,116,-30],tint:'252,234,243'},
+  {id:'dinhnoc',name:'Đỉnh nóc kịch trần',sticker:'👑',fallback:'#F8B9D4',ext:'webp',zone:[50,8,46,82],shade:[43,116,-30],tint:'252,230,242'},
+  {id:'maidet',name:'Mai Đẹt Ti Ni',sticker:'🌼',fallback:'#F8C2D2',ext:'webp',zone:[5,8,50,82],shade:[-20,60,-30],tint:'252,232,238'},
+  {id:'borntoslay',name:'Born to Slay',sticker:'😎',fallback:'#BDC2F7',ext:'webp',zone:[55,8,41,82],shade:[48,116,-30],tint:'238,238,255'},
+  {id:'amazing',name:'Ơ mây zing gút chóp',sticker:'👍',fallback:'#BFE0F8',ext:'webp',zone:[5,8,47,82],shade:[-20,60,-30],tint:'232,245,255'},
+  {id:'ikudos',name:'I KUDOS You',sticker:'💋',fallback:'#A9D8F8',ext:'webp',zone:[5,8,55,82],shade:[-20,64,-30],tint:'232,245,255'},
+  {id:'aidriven',name:'AI-Driven Company',sticker:'🤖',fallback:'#D6E8FB',ext:'webp',zone:[58,7,39,78],shade:[52,116,-30],tint:'238,246,255'},
+  {id:'codetask',name:'Đồng cam cộng task',sticker:'💻',fallback:'#E3ECFB',ext:'webp',zone:[56,9,41,80],shade:[47,116,-30],tint:'236,243,255'},
   {id:'aiways',name:'AI-ways Moving',sticker:'🚀',fallback:'#0F2C7A',ext:'webp',zone:[46,11,50,70],shade:[38,116,-30],dark:true},
-  {id:'hpbd',name:'Happy Birthday',sticker:'🎉',fallback:'#FBEBDD',ext:'webp',zone:[5,8,45,82],shade:[-20,58,-30]},
+  {id:'hpbd',name:'Happy Birthday',sticker:'🎉',fallback:'#FBEBDD',ext:'webp',zone:[5,8,45,82],shade:[-20,58,-30],tint:'255,246,236'},
   {id:'birthday',name:'Sinh nhật',sticker:'🎂',fallback:'#FFE3EA'}];
  const byId={};LIST.forEach(t=>{byId[t.id]=t;});
- return {LIST,get(id){const t=byId[id]||LIST[0];return {id:t.id,name:t.name,sticker:t.sticker,fallback:t.fallback,zone:t.zone||null,shade:t.shade||null,dark:!!t.dark,url:BASE+'/backgrounds/'+t.id+'.'+(t.ext||'png')+'?v='+encodeURIComponent(String(CONFIG.buildId||'1'))};}};
+ return {LIST,get(id){const t=byId[id]||LIST[0];return {id:t.id,name:t.name,sticker:t.sticker,fallback:t.fallback,zone:t.zone||null,shade:t.shade||null,tint:t.tint||'',dark:!!t.dark,url:BASE+'/backgrounds/'+t.id+'.'+(t.ext||'png')+'?v='+encodeURIComponent(String(CONFIG.buildId||'1'))};}};
 })();
 function safeGet(key){try{return localStorage.getItem(key);}catch(e){return null;}}
 function safeSet(key,value){try{if(value===null)localStorage.removeItem(key);else localStorage.setItem(key,value);return true;}catch(e){return false;}}
@@ -79,7 +82,7 @@ catch(e){
 const legacyLinkId=new URLSearchParams(location.search).get('id')||''; // V28 emails used ?id=<kudosId>
 
 // The web app and Apps Script are deployed separately. If Apps Script is older, new features (e.g. Giá trị cốt lõi) fail with old errors.
-const REQUIRED_BACKEND='V30.27';
+const REQUIRED_BACKEND='V30.28';
 function backendOutdated(){const v=String((BOOT.config&&BOOT.config.version)||'');const m=v.match(/^V(\d+)\.(\d+)/),r=REQUIRED_BACKEND.match(/^V(\d+)\.(\d+)/);return !m||Number(m[1])<Number(r[1])||(Number(m[1])===Number(r[1])&&Number(m[2])<Number(r[2]));}
 if(backendOutdated())console.warn('[AHAKUDOS] Apps Script '+((BOOT.config&&BOOT.config.version)||'?')+' cũ hơn web app ('+REQUIRED_BACKEND+'). Dán Code.gs mới và tạo New version.');
 const PEOPLE=BOOT.people||[];
@@ -191,7 +194,7 @@ function buildKudosCard(k,opts){
  const cardLabel=opts.mode==='public'?'NỘI DUNG KUDOS':'LỜI GHI NHẬN & CẢM ƠN DÀNH CHO BẠN';
  const z=Array.isArray(bg.zone)&&bg.zone.length===4?bg.zone.map(Number):null;
  const sh=z&&Array.isArray(bg.shade)&&bg.shade.length===3?bg.shade.map(Number):(z?[z[0]-8,z[0]+z[2]+8,-20]:null);
- const zoneAttr=z?` style="--zl:${z[0]}%;--zt:${z[1]}%;--zw:${z[2]}%;--zh:${z[3]}%;--sx0:${sh[0]}%;--sx1:${sh[1]}%;--sy0:${sh[2]}%;--zbg:${escapeHtml(bg.fallback||'#FFF7EF')}"`:'';
+ const zoneAttr=z?` style="--zl:${z[0]}%;--zt:${z[1]}%;--zw:${z[2]}%;--zh:${z[3]}%;--sx0:${sh[0]}%;--sx1:${sh[1]}%;--sy0:${sh[2]}%;${bg.tint&&/^[0-9]{1,3},[0-9]{1,3},[0-9]{1,3}$/.test(bg.tint)?'--shrgb:'+bg.tint+';':''}--zbg:${escapeHtml(bg.fallback||'#FFF7EF')}"`:'';
  return `<div class="kd-card kd-card-fullbg tpl-${escapeHtml(bg.id||k.templateId||'wish')} ${opts.mode==='public'?'kd-card-public':''}${z?' kd-card-zoned':''}${bg.dark?' kd-card-dark':''}"${zoneAttr}>
    ${bgLayer}
    <div class="kd-card-shade" aria-hidden="true"></div>
@@ -605,7 +608,7 @@ const recvCount=rec.length, noJourneyYet=sentCount===0&&recvCount===0;
     <div class="home-def-v2__copy">
      <span class="home-def-v2__badge">GIỚI THIỆU AHAKUDOS</span>
      <h2 id="home-def-title" class="home-def-v2__title">AHAKUDOS <span>là gì?</span></h2>
-     <p class="home-def-v2__lead">Nền tảng <b>ghi nhận và cảm ơn</b> nội bộ của Ahamove — nơi Ahamovers ghi nhận hành động tích cực của đồng nghiệp và cùng lan tỏa <b>Giá trị cốt lõi</b> mỗi ngày.</p>
+     <p class="home-def-v2__lead">AHAKUDOS là nền tảng <b>ghi nhận và cảm ơn</b> nội bộ của Ahamove, được xây dựng để giúp Ahamovers dễ dàng ghi nhận những hành động tích cực của đồng nghiệp và cùng nhau lan tỏa <b>Giá trị cốt lõi</b> của Ahamove trong công việc hằng ngày.</p>
      <ol class="home-def-points" aria-label="AHAKUDOS trong 3 ý">
       <li class="home-def-point"><span class="home-def-point__icon" aria-hidden="true">🤝</span><b>Ghi nhận hành động tích cực</b><span>Chủ động hỗ trợ, cùng giải quyết vấn đề khó, chia sẻ kiến thức, đồng hành cùng team.</span></li>
       <li class="home-def-point"><span class="home-def-point__icon home-def-point__icon--values" aria-hidden="true">${['speed','together','innovation'].map(v=>`<img src="${CULTURE_IMG(v)}" alt="" width="28" height="28" data-hide-on-error>`).join('')}</span><b>Gắn với Giá trị cốt lõi</b><span>Mỗi KUDOS gắn với một hoặc nhiều giá trị: Tốc độ · Đồng hành · Đổi mới.</span></li>
