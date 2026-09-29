@@ -636,7 +636,7 @@ const recvCount=rec.length, noJourneyYet=sentCount===0&&recvCount===0;
     <div class="home-def-v2__copy">
      <span class="home-def-v2__badge">GIỚI THIỆU AHAKUDOS</span>
      <h2 id="home-def-title" class="home-def-v2__title">AHAKUDOS <span>là gì?</span></h2>
-     <p class="home-def-v2__lead">AHAKUDOS là nền tảng <b>ghi nhận và cảm ơn</b> nội bộ của Ahamove, được xây dựng để giúp Ahamovers dễ dàng ghi nhận những hành động tích cực của đồng nghiệp và cùng nhau lan tỏa <b>Giá trị cốt lõi</b> của Ahamove trong công việc hằng ngày.</p>
+     <p class="home-def-v2__lead"><strong class="home-def-brand">AHAKUDOS</strong> là nền tảng <b>ghi nhận và cảm ơn</b> nội bộ của Ahamove, được xây dựng để giúp Ahamovers dễ dàng ghi nhận và cảm ơn những hành động tích cực của đồng nghiệp và cùng nhau lan tỏa <b>Giá trị cốt lõi</b> của Ahamove trong công việc hằng ngày.</p>
      <ol class="home-def-points" aria-label="AHAKUDOS trong 3 ý">
       <li class="home-def-point"><span class="home-def-point__icon" aria-hidden="true">🤝</span><b>Ghi nhận hành động tích cực</b><span>Chủ động hỗ trợ, cùng giải quyết vấn đề khó, chia sẻ kiến thức, đồng hành cùng team.</span></li>
       <li class="home-def-point"><span class="home-def-point__icon home-def-point__icon--values" aria-hidden="true">${['speed','together','innovation'].map(v=>`<img src="${CULTURE_IMG(v)}" alt="" width="28" height="28" data-hide-on-error>`).join('')}</span><b>Gắn với Giá trị cốt lõi</b><span>Mỗi KUDOS gắn với một hoặc nhiều giá trị: Tốc độ · Đồng hành · Đổi mới.</span></li>
