@@ -82,7 +82,7 @@ catch(e){
 const legacyLinkId=new URLSearchParams(location.search).get('id')||''; // V28 emails used ?id=<kudosId>
 
 // The web app and Apps Script are deployed separately. If Apps Script is older, new features (e.g. Giá trị cốt lõi) fail with old errors.
-const REQUIRED_BACKEND='V30.28';
+const REQUIRED_BACKEND='V30.29';
 function backendOutdated(){const v=String((BOOT.config&&BOOT.config.version)||'');const m=v.match(/^V(\d+)\.(\d+)/),r=REQUIRED_BACKEND.match(/^V(\d+)\.(\d+)/);return !m||Number(m[1])<Number(r[1])||(Number(m[1])===Number(r[1])&&Number(m[2])<Number(r[2]));}
 if(backendOutdated())console.warn('[AHAKUDOS] Apps Script '+((BOOT.config&&BOOT.config.version)||'?')+' cũ hơn web app ('+REQUIRED_BACKEND+'). Dán Code.gs mới và tạo New version.');
 const PEOPLE=BOOT.people||[];
@@ -107,7 +107,10 @@ function zeroValues(){const o={};VALUE_IDS.forEach(v=>o[v]=0);return o;}
 function asciiLabel(s){return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D');}
 const store={received:BOOT.received||[],sent:BOOT.sent||[],community:BOOT.community||[],detail:{}};
 let QUOTA=BOOT.quota||{used:0,limit:5,remaining:5};
-const ADMIN={loaded:false,loading:false,error:'',records:[],blacklist:[],settings:{},master:null,upcoming:{birthdays:[],anniversaries:[]},health:{}};
+const ADMIN={loaded:false,loading:false,error:'',records:[],blacklist:[],settings:{},master:null,upcoming:{birthdays:[],anniversaries:[],tenure:[]},directory:[],health:{}};
+// Admin-only HR fields from tab DATA, looked up by Work Email (Employee ID = primary key of DATA).
+function hrOf(email){const e=String(email||'').toLowerCase();return (ADMIN.directory||[]).find(d=>d.email===e)||null;}
+function hrTag(email){const h=hrOf(email);if(!h)return '';const bits=[h.employeeId?'Mã NV '+h.employeeId:'',h.gender||''].filter(Boolean);return bits.length?`<span class="hr-tag">${escapeHtml(bits.join(' · '))}</span>`:'';}
 let employeeStale=false;
 
 function me(){return BOOT.me;}
@@ -152,7 +155,7 @@ async function refreshEmployeeData(){
 async function loadAdminData(force){
  if(ADMIN.loading||(ADMIN.loaded&&!force))return;
  ADMIN.loading=true;ADMIN.error='';
- try{const d=await rpc('layDuLieuAdmin');if(d.backgrounds)CUSTOM_BGS=d.backgrounds;Object.assign(ADMIN,{records:d.records||[],blacklist:d.blacklist||[],settings:d.settings||{},master:d.master||null,upcoming:d.upcoming||{birthdays:[],anniversaries:[]},health:d.health||{},schedules:d.schedules||[],autoSend:!!d.autoSend,loaded:true});}
+ try{const d=await rpc('layDuLieuAdmin');if(d.backgrounds)CUSTOM_BGS=d.backgrounds;Object.assign(ADMIN,{records:d.records||[],blacklist:d.blacklist||[],settings:d.settings||{},master:d.master||null,upcoming:d.upcoming||{birthdays:[],anniversaries:[],tenure:[]},directory:d.directory||[],health:d.health||{},schedules:d.schedules||[],autoSend:!!d.autoSend,loaded:true});}
  catch(e){ADMIN.error=e.message;console.error('[AHAKUDOS] admin data',e);}
  finally{ADMIN.loading=false;}
  if(state.mode==='admin')render();
@@ -1130,10 +1133,10 @@ function adminDataDashboard(){
 function dashExportCsv(){
  const recs=dashScoped();
  const CULT={};Object.keys(LEGACY_CULTURE).concat(VALUE_IDS).forEach(v=>CULT[v]=asciiLabel(valueLabel(v)));
- const head=['Thoi_gian_tao','Nguoi_gui','Phong_ban_gui','Nguoi_nhan','Phong_ban_nhan','Gia_tri_van_hoa','Pham_vi','Duyet_cong_khai','Kiem_duyet','Email','Noi_dung'];
+ const head=['Thoi_gian_tao','Ma_NV_gui','Nguoi_gui','Phong_ban_gui','Ma_NV_nhan','Nguoi_nhan','Phong_ban_nhan','Gia_tri_van_hoa','Pham_vi','Duyet_cong_khai','Kiem_duyet','Email','Noi_dung'];
  const esc=(v)=>{const s=String(v==null?'':v).replace(/"/g,'""');return /[",\n\r]/.test(s)?`"${s}"`:s;};
  const lines=[head.join(',')];
- recs.forEach(r=>{lines.push([r.createdAt||'',r.senderName||'',r.senderDept||'',r.recipientName||'',r.recipientDept||'',(r.values||[]).map(v=>CULT[v]||v).join(' | '),r.visibility||'',r.publicConsent||'',modStatusOf(r),(r.email&&r.email.status)||'AWAITING_APPROVAL',String(r.message||'').replace(/\r?\n/g,' ')].map(esc).join(','));});
+ recs.forEach(r=>{lines.push([r.createdAt||'',r.senderEmployeeId||(hrOf(r.senderEmail)||{}).employeeId||'',r.senderName||'',r.senderDept||'',r.recipientEmployeeId||(hrOf(r.recipientEmail)||{}).employeeId||'',r.recipientName||'',r.recipientDept||'',(r.values||[]).map(v=>CULT[v]||v).join(' | '),r.visibility||'',r.publicConsent||'',modStatusOf(r),(r.email&&r.email.status)||'AWAITING_APPROVAL',String(r.message||'').replace(/\r?\n/g,' ')].map(esc).join(','));});
  const csv='﻿'+lines.join('\r\n');
  try{
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
@@ -1167,8 +1170,8 @@ function adminHome(){
  const emailFailed=recs.filter(k=>k.email&&k.email.status==='FAILED').length;
  const emailPending=recs.filter(k=>k.email&&k.email.status==='PENDING').length;
  const mi=(ADMIN.master&&ADMIN.master.issues)||{};
- const masterWarn=ADMIN.master&&(mi.missingTab||(mi.missingRequired||[]).length||mi.skippedNoEmail||mi.skippedNoName||mi.invalidEmail||(mi.duplicates||[]).length)
-   ?`<div class="ops-note" role="status">⚠ Dữ liệu nhân sự (tab DATA): ${escapeHtml([mi.missingTab?'thiếu tab DATA':'',(mi.missingRequired||[]).length?'thiếu cột '+mi.missingRequired.join(', '):'',mi.skippedNoEmail?mi.skippedNoEmail+' dòng thiếu Work Email':'',mi.skippedNoName?mi.skippedNoName+' dòng thiếu Full Name':'',mi.invalidEmail?mi.invalidEmail+' email sai định dạng':'',(mi.duplicates||[]).length?(mi.duplicates.length+' email trùng'):''].filter(Boolean).join(' · '))}. Các dòng này được bỏ qua.</div>`:'';
+ const masterWarn=ADMIN.master&&(mi.missingTab||(mi.missingRequired||[]).length||mi.skippedNoEmail||mi.skippedNoName||mi.invalidEmail||(mi.duplicates||[]).length||(mi.duplicateIds||[]).length)
+   ?`<div class="ops-note" role="status">⚠ Dữ liệu nhân sự (tab DATA): ${escapeHtml([mi.missingTab?'thiếu tab DATA':'',(mi.missingRequired||[]).length?'thiếu cột '+mi.missingRequired.join(', '):'',mi.skippedNoEmail?mi.skippedNoEmail+' dòng thiếu Work Email':'',mi.skippedNoName?mi.skippedNoName+' dòng thiếu Full Name':'',mi.invalidEmail?mi.invalidEmail+' email sai định dạng':'',(mi.duplicates||[]).length?(mi.duplicates.length+' email trùng'):'',(mi.duplicateIds||[]).length?(mi.duplicateIds.length+' Employee ID trùng ('+mi.duplicateIds.slice(0,5).join(', ')+') — dòng sau bị bỏ qua'):''].filter(Boolean).join(' · '))}. Các dòng này được bỏ qua.</div>`:'';
  return `<section class="page active">
  <div class="admin-head"><div class="admin-logo-chip">${logo(true)}</div><div><h1>Trung tâm quản trị</h1><p>Không gian vận hành AHAKUDOS toàn công ty.</p></div></div>
  <div class="page-head"><div><div class="kicker">PROGRAM CONTROL</div><h1>Tổng quan AHAKUDOS</h1><p class="page-sub">Ghi nhận & cảm ơn · Chất lượng · AHAKUDOS từ Admin · Sinh nhật & Thâm niên · Giá trị cốt lõi</p></div><button class="btn primary" data-page="admin-recognition">+ Gửi AHAKUDOS</button></div>
@@ -1394,7 +1397,7 @@ function peopleFiltered(){
 function normalizeSearch(s){return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/gi,'d').toLowerCase().trim();}
 function peopleRowsHtml(list){
  return list.slice(0,300).map(p=>`<tr class="people-row" data-person="${escapeHtml(p.email)}" tabindex="0" role="button" aria-label="Xem chi tiết ${escapeHtml(p.name)}">
-   <td><div class="people-cell">${miniAvatar(p.email,p.name)}<div><b>${escapeHtml(p.name)}</b><span>${escapeHtml(p.email)}${p.inData?'':' · ngoài danh sách nhân sự'}</span></div></div></td>
+   <td><div class="people-cell">${miniAvatar(p.email,p.name)}<div><b>${escapeHtml(p.name)}</b><span>${escapeHtml(p.email)}${p.inData?'':' · ngoài danh sách nhân sự'}</span>${hrTag(p.email)}</div></div></td>
    <td>${escapeHtml(p.dept||'—')}${p.section?`<span class="people-sub">${escapeHtml(p.section)}</span>`:''}</td>
    <td><b>${p.sentOk}</b><span class="people-sub">/${p.sent} đã gửi</span></td>
    <td><b>${p.receivedOk}</b><span class="people-sub">/${p.received} đã nhận</span></td>
@@ -1450,7 +1453,7 @@ function adminPersonDetail(email){
   <button class="kd-back" data-person-back>← Danh sách nhân viên</button>
   <div class="person-head card admin-card">
    ${miniAvatar(st.email,st.name,'person-avatar')}
-   <div class="person-id"><h1>${escapeHtml(st.name)}</h1><p>${escapeHtml(st.email)}${st.dept?' · '+escapeHtml(st.dept):''}${st.section?' · '+escapeHtml(st.section):''}${st.inData?'':' · <b>ngoài danh sách nhân sự</b>'}</p></div>
+   <div class="person-id"><h1>${escapeHtml(st.name)}</h1>${hrTag(st.email)}<p>${escapeHtml(st.email)}${st.dept?' · '+escapeHtml(st.dept):''}${st.section?' · '+escapeHtml(st.section):''}${st.inData?'':' · <b>ngoài danh sách nhân sự</b>'}</p></div>
    <button class="btn secondary" data-person-export="${escapeHtml(email)}">⬇ Xuất CSV</button>
   </div>
   ${filterBar('people')}
@@ -1684,7 +1687,7 @@ function opsDefaultMessage(r,type){const first=String(r.name||'').split(' ').sli
 function scheduleFor(email,type,date){return (ADMIN.schedules||[]).filter(x=>x.email===email&&x.type===type&&(x.status==='SCHEDULED'||x.date===date)).sort((a,b)=>(a.status==='SCHEDULED'?-1:1))[0]||null;}
 function adminOps(){
  const gate=adminGate();if(gate)return gate;
- const up=ADMIN.upcoming||{birthdays:[],anniversaries:[],windowDays:30};
+ const up=Object.assign({birthdays:[],anniversaries:[],tenure:[],windowDays:30},ADMIN.upcoming||{});
  const fmt=d=>{const p=String(d||'').split('-');return p.length===3?p[2]+'/'+p[1]:'';};
  const when=n=>n===0?'Hôm nay':n===1?'Ngày mai':'Còn '+n+' ngày';
  const statusHtml=(sc)=>!sc?'':sc.status==='SCHEDULED'?`<span class="ops-sched ops-sched--on">⏰ Tự động gửi ${escapeHtml(sc.time)} · ${escapeHtml(fmt(sc.date))}</span>`:sc.status==='SENT'?`<span class="ops-sched ops-sched--sent">✓ Đã gửi tự động</span>`:sc.status==='FAILED'?`<span class="ops-sched ops-sched--fail" title="${escapeHtml(sc.note||'')}">⚠ Gửi lỗi</span>`:'';
@@ -1698,13 +1701,16 @@ function adminOps(){
    <div class="ops-auto ${ADMIN.autoSend?'is-on':'is-off'}"><b>${ADMIN.autoSend?'● Tự động gửi đang BẬT':'○ Tự động gửi đang TẮT'}</b><span>${ADMIN.autoSend?'Hệ thống kiểm tra lịch mỗi 15 phút và gửi đúng giờ đã hẹn.':'Lịch vẫn được lưu, nhưng chỉ gửi khi bật: trong Apps Script chạy hàm <code>batTuDongGui</code> (một lần).'}</span>${unscheduled.length?`<button class="btn secondary" data-ops-bulk>Hẹn giờ tất cả (${unscheduled.length}) · nội dung mẫu, 09:00</button>`:''}</div>
    <div class="milestone-admin-summary">
      <article class="card milestone-summary-card"><div class="milestone-summary-icon">🎂</div><div><span>Sinh nhật sắp tới</span><strong>${up.birthdays.length}</strong><small>${missingDob?'DATA chưa có cột Date of Birth':'từ cột Date of Birth'}</small></div></article>
-     <article class="card milestone-summary-card"><div class="milestone-summary-icon navy">✦</div><div><span>Kỷ niệm thâm niên</span><strong>${up.anniversaries.length}</strong><small>từ cột Onboard Day</small></div></article>
+     <article class="card milestone-summary-card"><div class="milestone-summary-icon navy">✦</div><div><span>Kỷ niệm thâm niên</span><strong>${up.anniversaries.length}</strong><small>tròn năm · từ cột Onboard Day</small></div></article>
+     <article class="card milestone-summary-card"><div class="milestone-summary-icon">🎯</div><div><span>Cột mốc onboard đặc biệt</span><strong>${up.tenure.length}</strong><small>111 · 1.000 ngày… · Onboard Day / Tenure (Days)</small></div></article>
    </div>
    <div class="ops-grid milestone-ops-grid">
      <article class="card admin-card"><div class="card-head"><div><div class="kicker">SINH NHẬT</div><h3>Danh sách sắp tới</h3></div></div>
        <div class="milestone-admin-list">${up.birthdays.map(r=>row(r,'birthday')).join('')||empty(missingDob?'Tab DATA chưa có cột Date of Birth / DOB / Birthday.':'Không có sinh nhật nào trong khoảng này.')}</div></article>
      <article class="card admin-card"><div class="card-head"><div><div class="kicker">THÂM NIÊN</div><h3>Danh sách sắp tới</h3></div></div>
        <div class="milestone-admin-list">${up.anniversaries.map(r=>row(r,'anniversary')).join('')||empty('Không có kỷ niệm thâm niên nào trong khoảng này.')}</div></article>
+     <article class="card admin-card milestone-tenure-card"><div class="card-head"><div><div class="kicker">CỘT MỐC ONBOARD ĐẶC BIỆT</div><h3>111 ngày, 1.000 ngày…</h3></div></div>
+       <div class="milestone-admin-list">${up.tenure.map(r=>`<div class="milestone-admin-row milestone-admin-row--live">${miniAvatar(r.email,r.name)}<div class="milestone-admin-info"><b>${escapeHtml(r.name)}</b><span>${escapeHtml([r.dept||'',r.employeeId?'Mã NV '+r.employeeId:'',r.gender||''].filter(Boolean).join(' · '))}</span><em><b class="tenure-pill">${Number(r.days).toLocaleString('vi-VN')} ngày</b> ${escapeHtml(when(r.inDays))} · ${escapeHtml(fmt(r.date))}</em></div><div class="ops-actions"><button class="link-btn" data-tenure-send="${escapeHtml(r.email)}" data-tenure-days="${Number(r.days)}">Gửi AHAKUDOS →</button></div></div>`).join('')||empty('Không có cột mốc onboard đặc biệt nào trong khoảng này.')}</div></article>
    </div>
  </section>`;
 }
@@ -1741,6 +1747,7 @@ function openScheduleEditor(email,type){
  });
 }
 function bindAdminOps(){
+ document.querySelectorAll('[data-tenure-send]').forEach(b=>b.addEventListener('click',()=>{state.adminPrefill={email:b.dataset.tenureSend,template:firstTemplateId(),type:'tenure',days:Number(b.dataset.tenureDays)};goToPage('admin-recognition');}));
  document.querySelectorAll('[data-ops-send]').forEach(b=>b.addEventListener('click',()=>{state.adminPrefill={email:b.dataset.opsSend,template:b.dataset.opsType==='birthday'?(typeTemplates('birthday')[0]||{id:'birthday'}).id:firstTemplateId(),type:b.dataset.opsType};goToPage('admin-recognition');}));
  document.querySelectorAll('[data-ops-review]').forEach(b=>b.addEventListener('click',()=>openScheduleEditor(b.dataset.opsReview,b.dataset.opsType)));
  document.querySelectorAll('[data-ops-cancel]').forEach(b=>b.addEventListener('click',async()=>{if(!window.confirm('Huỷ lịch gửi này?'))return;b.disabled=true;try{const res=await rpc('huyLichGui',b.dataset.opsCancel);ADMIN.schedules=res.schedules||[];render();toast(res.notice);}catch(e){b.disabled=false;toast(e.message);}}));
@@ -2028,7 +2035,7 @@ function bindAdminRecognition(){
   const emp=employees.find(e=>e.email===pre.email);
   if(emp){emailInput.value=emp.email;renderEmployee(emp);}
   const tplBtn=document.querySelector(`[data-admin-template="${pre.template}"]`);if(tplBtn)tplBtn.click();
-  if(pre.type==='birthday'){title.value='Chúc mừng sinh nhật bạn 🎂';}else if(pre.type==='anniversary'){title.value='Cảm ơn bạn vì một hành trình đáng nhớ cùng Ahamove';}
+  if(pre.type==='birthday'){title.value='Chúc mừng sinh nhật bạn 🎂';}else if(pre.type==='anniversary'){title.value='Cảm ơn bạn vì một hành trình đáng nhớ cùng Ahamove';}else if(pre.type==='tenure'){title.value='Chúc mừng '+Number(pre.days).toLocaleString('vi-VN')+' ngày đồng hành cùng Ahamove 🎯';}
   updatePreview();
  }
 }
