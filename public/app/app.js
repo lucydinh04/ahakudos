@@ -82,7 +82,7 @@ catch(e){
 const legacyLinkId=new URLSearchParams(location.search).get('id')||''; // V28 emails used ?id=<kudosId>
 
 // The web app and Apps Script are deployed separately. If Apps Script is older, new features (e.g. Giá trị cốt lõi) fail with old errors.
-const REQUIRED_BACKEND='V30.29';
+const REQUIRED_BACKEND='V30.31';
 function backendOutdated(){const v=String((BOOT.config&&BOOT.config.version)||'');const m=v.match(/^V(\d+)\.(\d+)/),r=REQUIRED_BACKEND.match(/^V(\d+)\.(\d+)/);return !m||Number(m[1])<Number(r[1])||(Number(m[1])===Number(r[1])&&Number(m[2])<Number(r[2]));}
 if(backendOutdated())console.warn('[AHAKUDOS] Apps Script '+((BOOT.config&&BOOT.config.version)||'?')+' cũ hơn web app ('+REQUIRED_BACKEND+'). Dán Code.gs mới và tạo New version.');
 const PEOPLE=BOOT.people||[];
@@ -550,7 +550,7 @@ function employeeHome(){
    </div>`;
  const recentList=rec.slice(0,2).map(k=>receivedFeedItem(k)).join('')||`<div class="empty"><div class="icon">✦</div><h3>Chưa có KUDOS đã nhận</h3><p>Những lời ghi nhận và cảm ơn dành cho bạn sẽ xuất hiện và được lưu tại đây.</p></div>`;
  const approvedCommunity=publicFeedList().slice(0,2);
- const pendingOwn=sentBy(u.email).filter(k=>k.visibility==='public'&&k.publicConsent!=='approved'&&modStatusOf(k)!=='HIDDEN').slice(0,2);
+ const pendingOwn=sentBy(u.email).filter(k=>modStatusOf(k)==='HELD').slice(0,2);
  const homeCommunityItems=approvedCommunity.length?approvedCommunity:pendingOwn;
  const homeCommunityMode=approvedCommunity.length?'approved':(pendingOwn.length?'pending':'empty');
  const homeCommunityCards=homeCommunityItems.map(k=>`<article class="home-community-item">
@@ -778,12 +778,12 @@ function publicFeedPage(){
      <div>
        <div class="kicker">CỘNG ĐỒNG KUDOS</div>
        <h1>Những chuyển động tích cực đang được lan toả tại Ahamove</h1>
-       <p class="page-sub">Những KUDOS được Admin duyệt cho phạm vi CỘNG ĐỒNG KUDOS sẽ xuất hiện tại đây.</p>
+       <p class="page-sub">Những KUDOS mà người nhận chọn chia sẻ sẽ xuất hiện tại đây.</p>
      </div>
    </div>
    ${deptBar}
    <div class="public-feed-layout">
-     <div class="public-feed-list" id="public-feed-list">${cards||(dept?`<div class="empty"><div class="icon">✦</div><h3>Chưa có KUDOS của ${escapeHtml(dept)}</h3><p>Những lời ghi nhận và cảm ơn của phòng ban này trên CỘNG ĐỒNG KUDOS sẽ xuất hiện tại đây.</p></div>`:'')||`<div class="empty"><div class="icon">✦</div><h3>Chưa có CỘNG ĐỒNG KUDOS</h3><p>Những lời ghi nhận và cảm ơn được Admin duyệt cho CỘNG ĐỒNG KUDOS sẽ xuất hiện tại đây.</p></div>`}</div>
+     <div class="public-feed-list" id="public-feed-list">${cards||(dept?`<div class="empty"><div class="icon">✦</div><h3>Chưa có KUDOS của ${escapeHtml(dept)}</h3><p>Những lời ghi nhận và cảm ơn của phòng ban này trên CỘNG ĐỒNG KUDOS sẽ xuất hiện tại đây.</p></div>`:'')||`<div class="empty"><div class="icon">✦</div><h3>Chưa có CỘNG ĐỒNG KUDOS</h3><p>Khi người nhận chọn chia sẻ lời ghi nhận và cảm ơn của mình, KUDOS sẽ xuất hiện tại đây.</p></div>`}</div>
      <aside class="public-feed-rail">
        <article class="card public-feed-side-card">
          <div class="rail-title"><span>Lan tỏa hôm nay</span></div>
@@ -956,7 +956,7 @@ function profile(){
     </div>`;
  const sentHtml=sent.length?`<div class="public-feed-list profile-feed-list sent-history">${sent.map(k=>{
      const ms=modStatusOf(k);
-     const statusText=k.needsImprovement?'✎ Cần bổ sung nội dung':ms==='HIDDEN'?'● Không được duyệt hiển thị':ms==='HELD'?'🕓 Chờ Admin duyệt':k.visibility==='public'?'◎ CỘNG ĐỒNG KUDOS · Admin đã duyệt':'● Chỉ người nhận biết · Admin đã duyệt';
+     const statusText=k.needsImprovement?'✎ Cần bổ sung nội dung':ms==='HIDDEN'?'● Không được duyệt hiển thị':ms==='HELD'?'🕓 Chờ Admin duyệt':k.visibility==='public'?'◎ Người nhận đã chia sẻ lên CỘNG ĐỒNG KUDOS':'● Đã gửi tới người nhận · Riêng tư';
      return communityCard(k,{badge:`<span class="public-badge profile-badge sent-visibility ${k.visibility==='public'?'public':'private'}">${statusText}</span>`,extra:(k.needsImprovement?qualityNoticeHtml(k):'')+replyChip(k),reactions:inCommunity(k)});
    }).join('')}</div>`
    :`<div class="received-empty-state sent-empty-state">
@@ -1013,24 +1013,24 @@ function kudosDetail(){
  const status=modStatusOf(k);
  const emailStatusPill=isSender&&!isRecipient?`<span class="status-pill status-queued"><i></i>${escapeHtml(mailStatusText(k))}</span>`:'';
  const visPill=k.needsImprovement?`<span class="status-pill status-pending"><i></i>Cần bổ sung nội dung</span>`:status==='HIDDEN'?`<span class="status-pill status-private"><i></i>Không được duyệt hiển thị</span>`
-   :k.visibility==='public'
-   ?(status==='APPROVED'?`<span class="status-pill status-public"><i></i>CỘNG ĐỒNG KUDOS · Admin đã duyệt</span>`
-     :`<span class="status-pill status-pending"><i></i>Chờ Admin duyệt CỘNG ĐỒNG KUDOS</span>`)
-   :`<span class="status-pill status-private"><i></i>Chỉ người nhận biết</span>`;
+   :status!=='APPROVED'?`<span class="status-pill status-pending"><i></i>Chờ Admin duyệt</span>`
+   :k.visibility==='public'?`<span class="status-pill status-public"><i></i>Đang hiển thị trên CỘNG ĐỒNG KUDOS</span>`
+   :`<span class="status-pill status-private"><i></i>Riêng tư · chỉ người gửi và người nhận</span>`;
  let senderBlock='';
  if(isSender&&!isRecipient){
    const s=k.needsImprovement?'Admin mời bạn bổ sung thêm chi tiết trước khi gửi tới người nhận. Người nhận chưa nhận được thông báo.':status==='HIDDEN'?'KUDOS này không được Admin duyệt hiển thị. Người nhận sẽ không nhận được thông báo.'
-     :status==='HELD'?'KUDOS đang chờ Admin duyệt. Người nhận sẽ nhận email thông báo sau khi Admin duyệt.'
-     :k.visibility==='public'?'Admin đã duyệt CỘNG ĐỒNG KUDOS. Lời ghi nhận và cảm ơn đang hiển thị công khai với danh tính người gửi.'
-     :`Admin đã duyệt. Lời ghi nhận và cảm ơn được gửi riêng cho ${escapeHtml(k.recipientName)}.`;
+     :status==='HELD'?'KUDOS đang chờ Admin duyệt. Sau khi duyệt, người nhận sẽ nhận email thông báo.'
+     :k.visibility==='public'?`${escapeHtml(k.recipientName)} đã chia sẻ lời ghi nhận và cảm ơn này lên CỘNG ĐỒNG KUDOS.`
+     :`Admin đã duyệt và gửi tới ${escapeHtml(k.recipientName)}. KUDOS đang ở chế độ riêng tư; ${escapeHtml(k.recipientName)} có thể chọn chia sẻ lên CỘNG ĐỒNG KUDOS.`;
    senderBlock=`<div class="kd-panel"><h3>Trạng thái</h3><p class="kd-sender-status">${s}</p></div>`+(k.needsImprovement?qualityNoticeHtml(k):'');
  }
  const replyBlock=isRecipient?(k.canReply||(k.replies||[]).length?replyThreadHtml(k,true):''):isSender&&(k.replies||[]).length?replyThreadHtml(k,false):'';
- const shareBlock=isRecipient&&k.canShareToCommunity?`<div class="kd-panel kd-share-panel"><h3>${k.sharedByRecipient?'Đang hiển thị trên CỘNG ĐỒNG KUDOS':'Lan tỏa niềm vui này?'}</h3><p>${k.sharedByRecipient?'Mọi người trong Ahamove đang cùng chúc mừng bạn. Bạn có thể chuyển về Riêng tư bất cứ lúc nào.':'AHAKUDOS này đang ở chế độ riêng tư. Bạn có thể chia sẻ lên CỘNG ĐỒNG KUDOS để đồng nghiệp cùng chúc mừng.'}</p><button class="btn ${k.sharedByRecipient?'secondary':'primary'}" data-share-community="${escapeHtml(k.id)}" data-share="${k.sharedByRecipient?'0':'1'}">${k.sharedByRecipient?'Chuyển về Riêng tư':'Chia sẻ đến CỘNG ĐỒNG KUDOS →'}</button></div>`:'';
+ const onCommunity=k.visibility==='public';
+ const shareBlock=isRecipient&&k.canShareToCommunity?`<div class="kd-panel kd-share-panel"><h3>${onCommunity?'Đang hiển thị trên CỘNG ĐỒNG KUDOS':'Lan tỏa niềm vui này?'}</h3><p>${onCommunity?'Mọi người trong Ahamove đang cùng xem lời ghi nhận và cảm ơn này. Bạn có thể chuyển về Riêng tư bất cứ lúc nào.':'KUDOS này đang ở chế độ riêng tư — chỉ bạn và người gửi xem được. Bạn có thể chia sẻ lên CỘNG ĐỒNG KUDOS để đồng nghiệp cùng chúc mừng.'}</p><button class="btn ${onCommunity?'secondary':'primary'}" data-share-community="${escapeHtml(k.id)}" data-share="${onCommunity?'0':'1'}">${onCommunity?'Chuyển về Riêng tư':'Chia sẻ lên CỘNG ĐỒNG KUDOS'}</button></div>`:'';
  const backTarget=isSender&&!isRecipient?'kudos-profile':(k.isCommunity&&!isRecipient?'public-feed':'employee-home');
  const kicker=isRecipient?'KUDOS DÀNH CHO BẠN':isSender?'KUDOS BẠN ĐÃ GỬI':'CỘNG ĐỒNG KUDOS';
  const title=isRecipient&&k.welcome?'Lời nhắn từ AHAKUDOS 💌':isRecipient?'Có một lời ghi nhận và cảm ơn dành riêng cho bạn 🧡':isSender?'Lời ghi nhận và cảm ơn bạn đã gửi':'Một lời ghi nhận và cảm ơn đang được lan tỏa';
- const sub=isRecipient&&k.welcome?'Gửi đến bạn nhân ngày gia nhập Ahamove.':isRecipient&&k.source==='ADMIN'?'AHAKUDOS gửi đến bạn lời ghi nhận và cảm ơn nhân dịp đặc biệt này.':isRecipient?'Một đồng đội đã nhìn thấy điều bạn làm và muốn gửi đến bạn lời ghi nhận và cảm ơn này.':isSender?'Đây là lời ghi nhận và cảm ơn bạn đã gửi (trên background đã chọn).':'Lời ghi nhận và cảm ơn đã được Admin duyệt cho CỘNG ĐỒNG KUDOS.';
+ const sub=isRecipient&&k.welcome?'Gửi đến bạn nhân ngày gia nhập Ahamove.':isRecipient&&k.source==='ADMIN'?'AHAKUDOS gửi đến bạn lời ghi nhận và cảm ơn nhân dịp đặc biệt này.':isRecipient?'Một đồng đội đã nhìn thấy điều bạn làm và muốn gửi đến bạn lời ghi nhận và cảm ơn này.':isSender?'Đây là lời ghi nhận và cảm ơn bạn đã gửi (trên background đã chọn).':'Lời ghi nhận và cảm ơn được người nhận chia sẻ lên CỘNG ĐỒNG KUDOS.';
  return `<section class="page active kudos-detail-page">
    <button class="kd-back" data-page="${backTarget}">← ${backTarget==='kudos-profile'?'Về Hồ sơ':backTarget==='public-feed'?'Về Cộng đồng':'Về trang chủ'}</button>
    <div class="page-head"><div><div class="kicker">${kicker}</div><h1>${title}</h1><p class="page-sub">${sub}</p></div></div>
@@ -1244,7 +1244,7 @@ function adminQuality(){
       <div class="mod-item-who"><b>${escapeHtml(k.senderName||'Đồng nghiệp')}</b><span>${escapeHtml(k.senderDept||'')} → ${escapeHtml(k.recipientName||'')}${k.kudosType&&k.kudosType!=='recognition'?' · '+escapeHtml(kudosTypeLabel(k.kudosType,k)):''}</span></div>
       <span class="mod-flag">${({HELD:'Chờ Admin duyệt',APPROVED:'Đã duyệt',HIDDEN:'Đã ẩn'})[modStatusOf(k)]||''}${k.sentAtLabel?' · '+escapeHtml(k.sentAtLabel):''}</span>
     </div>
-    <div class="mod-reasons">${tags.map(t=>tagChip(t,k)).join('')}</div><div class="mod-scope-control"><span>Phạm vi:</span><button class="btn secondary ${k.visibility==='private'?'active':''}" data-mod-scope="private" data-kid="${k.id}">Riêng tư</button><button class="btn secondary ${k.visibility==='public'?'active':''}" data-mod-scope="public" data-kid="${k.id}">CỘNG ĐỒNG KUDOS</button></div>
+    <div class="mod-reasons">${tags.map(t=>tagChip(t,k)).join('')}</div>${k.source==='ADMIN'?`<div class="mod-scope-control"><span>Phạm vi:</span><button class="btn secondary ${k.visibility==='private'?'active':''}" data-mod-scope="private" data-kid="${k.id}">Riêng tư</button><button class="btn secondary ${k.visibility==='public'?'active':''}" data-mod-scope="public" data-kid="${k.id}">CỘNG ĐỒNG KUDOS</button></div>`:k.visibility==='public'?`<div class="mod-scope-control"><span>Phạm vi:</span><b class="mod-scope-note">◎ Người nhận đã chia sẻ lên CỘNG ĐỒNG KUDOS</b><button class="btn secondary" data-mod-scope="private" data-kid="${k.id}">Gỡ khỏi Cộng đồng</button></div>`:`<div class="mod-scope-control"><span>Phạm vi:</span><b class="mod-scope-note">Riêng tư · người nhận tự chọn chia sẻ</b></div>`}
     <div class="mod-msg">${escapeHtml(k.message||'').replace(/\r?\n/g,'<br>')}</div>
     ${modStatusOf(k)==='HIDDEN'&&k.moderation&&k.moderation.hiddenReason?`<div class="mod-reasons"><span class="mod-reason-chip">Lý do ẩn: ${escapeHtml(k.moderation.hiddenReason)}</span></div>`:''}
     <div class="mod-actions">
@@ -1265,7 +1265,7 @@ function adminQuality(){
   <button type="button" class="mod-tagfilter ${!modTags.size?'active':''}" data-mod-tag="" aria-pressed="${!modTags.size}">Tất cả <b>${base.length}</b></button>
   ${Object.keys(MOD_TAGS).map(t=>{const n=tagCount(t);return `<button type="button" class="mod-tagfilter mod-tag--${MOD_TAGS[t].tone} ${modTags.has(t)?'active':''}" data-mod-tag="${t}" aria-pressed="${modTags.has(t)}" ${n?'':'disabled'}><i aria-hidden="true">${MOD_TAGS[t].icon}</i>${escapeHtml(MOD_TAGS[t].label)} <b>${n}</b></button>`;}).join('')}
   <p class="mod-tagbar-note">Chọn nhiều tag cùng lúc để lọc (hiện KUDOS có bất kỳ tag nào đã chọn). Hệ thống tự gắn tag theo quy tắc ngay trong Google Apps Script (nội dung không gửi ra dịch vụ bên ngoài). Tag chỉ giúp lọc và ưu tiên — Admin vẫn là người quyết định.</p></div>`;
- const emptyText={HELD:'Không có KUDOS nào chờ duyệt. Khi Admin duyệt, email mới được gửi và CỘNG ĐỒNG KUDOS mới được publish.',APPROVED:'Chưa có KUDOS nào được duyệt.',HIDDEN:'Không có KUDOS nào bị ẩn.'}[modFilter];
+ const emptyText={HELD:'Không có KUDOS nào chờ duyệt. Khi Admin duyệt, KUDOS được gửi tới người nhận (kèm email); người nhận tự chọn có chia sẻ lên CỘNG ĐỒNG KUDOS hay không.',APPROVED:'Chưa có KUDOS nào được duyệt.',HIDDEN:'Không có KUDOS nào bị ẩn.'}[modFilter];
  const heldHtml=shown.length?shown.slice(0,200).map(card).join(''):`<div class="empty"><div class="icon">✅</div><h3>Không có mục nào</h3><p>${emptyText}</p></div>`;
  return `<section class="page active">
   <style>
@@ -1287,7 +1287,7 @@ function adminQuality(){
   
 </style>
   ${bannerHero('ai_review')}
-  <div class="page-head"><div><div class="kicker">ADMIN CONTROL</div><h1>Admin duyệt toàn bộ KUDOS</h1><p class="page-sub">Mọi KUDOS đều được giữ tại đây trước khi gửi email. Admin có thể xem chi tiết, chỉnh nội dung, chọn Riêng tư hoặc CỘNG ĐỒNG KUDOS, rồi mới Duyệt & gửi.</p></div></div>
+  <div class="page-head"><div><div class="kicker">ADMIN CONTROL</div><h1>Admin duyệt toàn bộ KUDOS</h1><p class="page-sub">Mọi KUDOS đều được giữ tại đây trước khi gửi email. Admin xem chi tiết, chỉnh nội dung rồi Duyệt & gửi tới người nhận. KUDOS của nhân viên luôn ở chế độ riêng tư — chỉ người nhận mới chọn chia sẻ lên CỘNG ĐỒNG KUDOS.</p></div></div>
   <div class="mod-stat-row" role="tablist" aria-label="Lọc theo trạng thái">
    ${[['HELD','Chờ duyệt',held.length],['APPROVED','Đã duyệt',approved.length],['HIDDEN','Đã ẩn',hidden.length]].map(([id,label,n])=>`<button type="button" role="tab" aria-selected="${modFilter===id}" class="mod-stat mod-stat-tab ${modFilter===id?'active':''}" data-mod-filter="${id}"><span>${label}</span><strong>${n}</strong></button>`).join('')}
   </div>
@@ -1926,7 +1926,7 @@ function bindHandbookUI(){
  const adminPreview=document.querySelector('#admin-recognition-preview');
  if(adminPreview)adminPreview.addEventListener('click',()=>{document.querySelector('.admin-recognition-preview')?.scrollIntoView({behavior:'smooth',block:'start'});});
  document.querySelectorAll('[data-modal="rules"]').forEach(btn=>btn.addEventListener('click',()=>{
-  document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="hb-rules-title"><button class="modal-close" aria-label="Đóng">×</button><div class="kicker">GỬI KUDOS</div><h2 id="hb-rules-title">Quy tắc ghi nhận và cảm ơn</h2><div class="rules"><div class="rule"><b>Người nhận</b><span>Tìm theo email Ahamove; nếu không có mail công ty, tick lựa chọn và nhập thông tin người nhận thủ công.</span></div><div class="rule"><b>Nội dung</b><span>Theo Format tiêu chuẩn:<span class="rule-list"><span><b>01</b> Khoảnh khắc khiến bạn muốn ghi nhận và cảm ơn</span><span><b>02</b> Sự hỗ trợ / Năng lượng mà bạn đã nhận được</span></span>Thư ký KUDOS sẽ hỗ trợ nếu nội dung KUDOS chưa đủ woah.</span></div><div class="rule"><b>Giá trị cốt lõi</b><span>Chọn từ 1 đến 3 giá trị (tham khảo định nghĩa ngay tại ô chọn):<span class="rule-list"><span><b>⚡ Tốc độ</b> · <b>🤝 Đồng hành</b> · <b>💡 Đổi mới</b></span></span></span></div><div class="rule"><b>KUDOS Khác</b><span><span class="rule-list"><span><b>🎂 Sinh nhật</b> — gửi trong vòng 2 ngày trước/sau ngày sinh.</span><span><b>✦ Thâm niên</b> — gửi trong vòng 2 ngày trước/sau ngày vào Ahamove (từ 1 năm).</span><span><b>✎ Dịp khác</b> — tự đặt tên dịp (Thăng chức, Chào mừng thành viên mới…).</span></span>Ngày được lấy tự động, hoặc nhập tay nếu người nhận không có mail công ty. Giá trị cốt lõi không bắt buộc.</span></div><div class="rule"><b>Phạm vi</b><span>Mặc định được đề xuất lên CỘNG ĐỒNG KUDOS và chỉ hiển thị sau khi Admin duyệt.</span></div><div class="rule"><b>Hạn mức gửi</b><span>Mỗi nhân sự được gửi tối đa 5 KUDOS mỗi ngày.</span></div></div><button class="btn primary wide hb-rules-close">Đã hiểu</button></div></div>`;
+  document.querySelector('#modal-root').innerHTML=`<div class="modal-backdrop"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="hb-rules-title"><button class="modal-close" aria-label="Đóng">×</button><div class="kicker">GỬI KUDOS</div><h2 id="hb-rules-title">Quy tắc ghi nhận và cảm ơn</h2><div class="rules"><div class="rule"><b>Người nhận</b><span>Tìm theo email Ahamove; nếu không có mail công ty, tick lựa chọn và nhập thông tin người nhận thủ công.</span></div><div class="rule"><b>Nội dung</b><span>Theo Format tiêu chuẩn:<span class="rule-list"><span><b>01</b> Khoảnh khắc khiến bạn muốn ghi nhận và cảm ơn</span><span><b>02</b> Sự hỗ trợ / Năng lượng mà bạn đã nhận được</span></span>Thư ký KUDOS sẽ hỗ trợ nếu nội dung KUDOS chưa đủ woah.</span></div><div class="rule"><b>Giá trị cốt lõi</b><span>Chọn từ 1 đến 3 giá trị (tham khảo định nghĩa ngay tại ô chọn):<span class="rule-list"><span><b>⚡ Tốc độ</b> · <b>🤝 Đồng hành</b> · <b>💡 Đổi mới</b></span></span></span></div><div class="rule"><b>KUDOS Khác</b><span><span class="rule-list"><span><b>🎂 Sinh nhật</b> — gửi trong vòng 2 ngày trước/sau ngày sinh.</span><span><b>✦ Thâm niên</b> — gửi trong vòng 2 ngày trước/sau ngày vào Ahamove (từ 1 năm).</span><span><b>✎ Dịp khác</b> — tự đặt tên dịp (Thăng chức, Chào mừng thành viên mới…).</span></span>Ngày được lấy tự động, hoặc nhập tay nếu người nhận không có mail công ty. Giá trị cốt lõi không bắt buộc.</span></div><div class="rule"><b>Phạm vi</b><span>Admin duyệt để gửi KUDOS tới người nhận. KUDOS ở chế độ riêng tư; chỉ người nhận mới chọn chia sẻ lên CỘNG ĐỒNG KUDOS.</span></div><div class="rule"><b>Hạn mức gửi</b><span>Mỗi nhân sự được gửi tối đa 5 KUDOS mỗi ngày.</span></div></div><button class="btn primary wide hb-rules-close">Đã hiểu</button></div></div>`;
   document.querySelectorAll('.modal-close,.hb-rules-close').forEach(b=>b.addEventListener('click',()=>document.querySelector('#modal-root').innerHTML=''));
  }));
 }
